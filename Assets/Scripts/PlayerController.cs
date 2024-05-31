@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         }
 
         anim.SetBool("grounded", grounded); 
-        anim.SetBool("run", horizontalInput != 0); 
+        anim.SetBool("run", horizontalInput != 0 ); 
 
     
     }

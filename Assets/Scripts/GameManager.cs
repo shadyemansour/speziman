@@ -14,6 +14,11 @@ public class  GameManager : MonoBehaviour
     public Slider colaSlider;
     public Slider orangeSlider;
 
+     public GameObject playerPrefab; 
+    public Transform spawnPoint;  
+
+    private GameObject currentPlayer; 
+
     void Awake()
     {
         // Singleton pattern
@@ -26,6 +31,8 @@ public class  GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        SpawnPlayer();
     }
 
     void Start()
@@ -64,13 +71,25 @@ public class  GameManager : MonoBehaviour
         ResetCollectables();
     }
 
-    // Call this method to load a new level
-    public void LoadLevel(string sceneName)
+public void LoadLevel(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
-        ResetCollectables();
+        SpawnPlayer();
     }
 
+    void SpawnPlayer()
+    {
+        if (currentPlayer != null) Destroy(currentPlayer); // Destroy existing player instance if any
+
+        if (playerPrefab != null && spawnPoint != null)
+        {
+            currentPlayer = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogError("Player prefab or spawn point not set.");
+        }
+    }
     // Update the collectable counts when loading a new level
    private void ResetCollectables()
     {
