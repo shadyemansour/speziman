@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class  GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
     public int totalOranges;
     public int collectedCola = 0;
     public int collectedOranges = 0;
+    public Slider colaSlider;
+    public Slider orangeSlider;
 
     void Awake()
     {
@@ -25,6 +28,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        InitializeCollectables();
+
+    }
+
+    private void InitializeCollectables()
+    {
+        // Finding the "Collectables" GameObject and counting children
+        GameObject collectables = GameObject.Find("Collectables");
+        if (collectables != null)
+        {
+            totalCola = 0;
+            totalOranges = 0;
+
+            foreach (Transform item in collectables.transform)
+            {
+                if (item.name.Contains("Cola"))
+                    totalCola++;
+                else if (item.name.Contains("Orange"))
+                    totalOranges++;
+            }
+
+            // Set sliders
+            if (colaSlider != null && orangeSlider != null)
+            {
+                colaSlider.maxValue = totalCola;
+                orangeSlider.maxValue = totalOranges;
+                colaSlider.value = collectedCola;
+                orangeSlider.value = collectedOranges;
+            }
+        }
+
+        ResetCollectables();
+    }
+
     // Call this method to load a new level
     public void LoadLevel(string sceneName)
     {
@@ -33,22 +72,32 @@ public class GameManager : MonoBehaviour
     }
 
     // Update the collectable counts when loading a new level
-    private void ResetCollectables()
+   private void ResetCollectables()
     {
-        // Assume these values are determined by each level
-        totalCola = FindObjectsOfType<Collectable>().Length;  // Update to reflect actual items in the scene
-        totalOranges = FindObjectsOfType<Collectable>().Length;  // Update to reflect actual items in the scene
+        // Reset and update stats
         collectedCola = 0;
         collectedOranges = 0;
+
+        // Reset sliders
+        if (colaSlider != null && orangeSlider != null)
+        {
+            colaSlider.maxValue = totalCola;
+            orangeSlider.maxValue = totalOranges;
+            colaSlider.value = collectedCola;
+            orangeSlider.value = collectedOranges;
+        }
 
         UpdateUI();
     }
 
-    // Call this method to update the UI
     public void UpdateUI()
     {
-        // Update UI elements here
-        Debug.Log("Update UI with new values.");
+        // Update UI sliders
+        if (colaSlider != null && orangeSlider != null)
+        {
+            colaSlider.value = collectedCola;
+            orangeSlider.value = collectedOranges;
+        }
     }
 
     public void CollectItem(string itemType)
@@ -56,13 +105,12 @@ public class GameManager : MonoBehaviour
         if (itemType == "Cola")
         {
             collectedCola++;
-            Debug.Log("Cola collected! "+ collectedCola);
         }
         else if (itemType == "Orange")
         {
             collectedOranges++;
-            Debug.Log("Orange collected! "+ collectedOranges);
         }
         UpdateUI();
     }
 }
+

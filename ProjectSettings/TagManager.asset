@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - Cola_Tag
+  - Cola_Text
+  - Orange_Text
+  - Orange_Tag
   layers:
   - Default
   - TransparentFX
