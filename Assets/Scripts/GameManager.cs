@@ -32,7 +32,7 @@ public class  GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        SpawnPlayer();
+        // SpawnPlayer();
     }
 
     void Start()
@@ -71,11 +71,44 @@ public class  GameManager : MonoBehaviour
         ResetCollectables();
     }
 
-public void LoadLevel(string sceneName)
+    public void LoadLevel(int sceneNumber)
     {
-        SceneManager.LoadScene(sceneName);
-        SpawnPlayer();
+        SceneManager.LoadScene("Level"+sceneNumber.ToString());
+        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the sceneLoaded event 
     }
+
+        public void LoadIntro()
+    {
+        SceneManager.LoadScene("Intro");
+    }
+
+    
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Attempt to load the spawn point for the loaded scene
+        LoadSpawnPoint(scene.name + "SpawnPoint");
+        SpawnPlayer();
+
+        // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void LoadSpawnPoint(string spawnPointName)
+    {
+                    Debug.Log("Spawn point name: " + spawnPointName);
+
+        GameObject spawnPointPrefab = Resources.Load<GameObject>("SpawnPoints/" + spawnPointName);
+        if (spawnPointPrefab != null)
+        {
+            this.spawnPoint = Instantiate(spawnPointPrefab).transform;
+        }
+        else
+        {
+            Debug.LogError("Spawn point prefab not found for: " + spawnPointName);
+        }
+    }
+
 
     void SpawnPlayer()
     {
