@@ -1830,6 +1830,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1969430881959826499, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_Size.x
+      value: 2.9257143
+      objectReference: {fileID: 0}
+    - target: {fileID: 1969430881959826499, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_Size.y
+      value: 2.1942856
+      objectReference: {fileID: 0}
+    - target: {fileID: 1969430881959826499, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: adc914e9ff7894541884cfb91fdc320a, type: 3}
+    - target: {fileID: 1969430881959826499, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3438,7 +3454,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2751d5c04865d4673889ae42b5977ed5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ca772006d82204778ae9bc5fb7e528bf, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
