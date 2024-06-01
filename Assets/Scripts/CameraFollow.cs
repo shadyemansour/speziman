@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class CameraFollow : MonoBehaviour
         GameObject ground = GameObject.Find("Ground");
         if (ground)
         {
-            BoxCollider2D groundCollider = ground.GetComponent<BoxCollider2D>();
+            TilemapCollider2D groundCollider = ground.GetComponent<TilemapCollider2D>();
             if (groundCollider)
             {
                 float groundWidth = groundCollider.bounds.size.x;
