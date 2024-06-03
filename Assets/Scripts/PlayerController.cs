@@ -17,40 +17,40 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         bc = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
+
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         HandleMovement();
     }
 
-    private void HandleMovement()
+   private void HandleMovement()
+{
+    float horizontalInput = Input.GetAxis("Horizontal");
+    if (horizontalInput > 0.01f && CanMoveRight())
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-
-        if (grounded && Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            Jump();
-        }
-
-        else if (horizontalInput > 0.01f && CanMoveRight())
-        {
-            rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-            transform.localScale =  Vector3.one;
-        }
-        else if (horizontalInput < -0.01f && CanMoveLeft()){
-            rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-            transform.localScale = new Vector3(-1, 1, 1); 
-        }
-
-        anim.SetBool("grounded", grounded); 
-        anim.SetBool("run", horizontalInput != 0 ); 
-
+        transform.localScale = Vector3.one;
+    }
+    else if (horizontalInput < -0.01f && CanMoveLeft())
+    {
+        transform.localScale = new Vector3(-1, 1, 1);
+    }
     
+    // Only set velocity once after determining direction and movement allowance
+    rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+
+    // Jump logic remains unchanged
+    if (grounded && Input.GetKeyDown(KeyCode.UpArrow))
+    {
+        Jump();
     }
 
+    // Update animations
+    anim.SetBool("grounded", grounded); 
+    anim.SetBool("run", horizontalInput != 0); 
+}
     private bool CanMoveRight()
     {
         RaycastHit2D raycastHit2D = Physics2D.Raycast(bc.bounds.center, Vector2.right , 0.53f, platformsLayerMask);

@@ -34,7 +34,7 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (player == null)
         {

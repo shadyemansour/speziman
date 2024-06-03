@@ -1730,7 +1730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c752559ba6fae4b0889591015bdf6e6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothSpeed: 0.125
+  smoothSpeed: 1
   verticalOffset: 0
 --- !u!1 &545232603
 GameObject:
@@ -1852,7 +1852,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4487778107780049313, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
       propertyPath: m_LocalPosition.x
