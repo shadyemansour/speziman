@@ -11,6 +11,7 @@ public class Collectable : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
+            SoundManager.Instance.PlaySound("collect" + itemType);
             GameManager.Instance.CollectItem(itemType);
             Destroy(gameObject);  // Destroy the collectable after it's been collected
         }

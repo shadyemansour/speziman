@@ -47,7 +47,6 @@ public class CameraFollow : MonoBehaviour
             desiredPosition.x = Mathf.Clamp(desiredPosition.x, minX, maxX);
             Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
             transform.position = smoothedPosition;
-         Debug.Log("Camera moved to: " + smoothedPosition);
         }
     }
 }

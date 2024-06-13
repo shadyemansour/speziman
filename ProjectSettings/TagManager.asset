@@ -9,6 +9,8 @@ TagManager:
   - Cola_Text
   - Orange_Text
   - Orange_Tag
+  - Enemy
+  - Boost
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - Player
+  - Background
   - 
   - 
   - 
@@ -43,6 +45,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Player
+    uniqueID: 2848982935
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

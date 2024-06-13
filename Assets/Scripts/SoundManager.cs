@@ -4,50 +4,70 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour {
 
-    public static AudioClip jump;
-    public static AudioClip splash;
-    public static AudioClip ring;
-    public static AudioClip check;
-    public static AudioClip life;
-    public static AudioSource source;
+    public static SoundManager Instance { get; private set; }
+    private Dictionary<string, AudioClip> audioClips;
+    private AudioSource musicSource;
+    private AudioSource sfxSource;
 
-    void Start()
+    void Awake()
     {
-        source = GetComponent<AudioSource>();
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+            AudioSource[] sources = GetComponents<AudioSource>();
+            musicSource = sources[0];
+            sfxSource = sources[1];        
+            audioClips = new Dictionary<string, AudioClip>
+        {
+            { "jump", Resources.Load<AudioClip>("Audio/jump") },
+            { "checkpoint", Resources.Load<AudioClip>("Audio/checkpoint") },
+            { "die", Resources.Load<AudioClip>("Audio/die") },
+            { "levelComplete", Resources.Load<AudioClip>("Audio/levelComplete") },
+            { "collectCola", Resources.Load<AudioClip>("Audio/Collect") },
+            { "collectOrange", Resources.Load<AudioClip>("Audio/Collect_2") },
+            { "pig", Resources.Load<AudioClip>("Audio/pig") },
+            { "boost", Resources.Load<AudioClip>("Audio/boost") },
+            { "levelFailed", Resources.Load<AudioClip>("Audio/levelFailed") }
+        };
     }
 
-    public static void PlayJumpSound()
+    public void PlaySound(string clipKey)
     {
-        Debug.Log("playing jump sound");
-        jump = Resources.Load<AudioClip>("Sounds/jump");
-        source.PlayOneShot(jump);
+        if (audioClips.TryGetValue(clipKey, out AudioClip clip))
+        {
+            sfxSource.PlayOneShot(clip);
+            Debug.Log("Playing sound: " + clipKey);
+        }
+        else
+        {
+            Debug.LogWarning("Sound clip not found: " + clipKey);
+        }
     }
 
-    public static void PlaySplashSound()
+public void FadeOutBackgroundSound(float fadeOutTime=2f)
     {
-        Debug.Log("playing splash sound");
-        splash = Resources.Load<AudioClip>("Sounds/splash");
-        source.PlayOneShot(splash);
+        StartCoroutine(FadeOut(musicSource, fadeOutTime));
     }
 
-    public static void PlayLifeSound()
+    private IEnumerator FadeOut(AudioSource audioSource, float fadeOutTime)
     {
-        Debug.Log("playing life sound");
-        life = Resources.Load<AudioClip>("Sounds/life");
-        source.PlayOneShot(life);
-    }
-    
-    public static void PlayRingSound()
-    {
-        Debug.Log("playing ring sound");
-        ring = Resources.Load<AudioClip>("Sounds/ring");
-        source.PlayOneShot(ring);
-    }
+        float startVolume = audioSource.volume;
 
-    public static void PlayCheckSound()
-    {
-        Debug.Log("playing check sound");
-        check = Resources.Load<AudioClip>("Sounds/check");
-        source.PlayOneShot(check);
+        while (audioSource.volume > 0)
+        {
+            audioSource.volume -= startVolume * Time.deltaTime / fadeOutTime;
+            yield return null;
+        }
+
+        audioSource.Stop();
+        audioSource.volume = startVolume;  // Optionally reset the volume to its original level if you'll play it again
     }
 }

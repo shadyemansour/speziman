@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,6 +19,11 @@ public class  GameManager : MonoBehaviour
     public Transform spawnPoint;  
 
     private GameObject currentPlayer; 
+    private Vector3 lastCheckpointPosition;
+    Cinemachine.CinemachineVirtualCamera vcam;
+
+    [SerializeField] private float[] levelDurations = {300f, 450f, 600f}; // Durations in seconds for each level
+
 
     void Awake()
     {
@@ -32,12 +38,19 @@ public class  GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+
         // SpawnPlayer();
     }
 
     void Start()
     {
         InitializeCollectables();
+        if (spawnPoint != null) lastCheckpointPosition = spawnPoint.position;
+        vcam = FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
+        if (currentPlayer == null) currentPlayer = GameObject.FindWithTag("Player");
+        vcam.Follow = currentPlayer.transform;
+       Debug.Log("vcam: " + vcam);
+
 
     }
 
@@ -75,6 +88,7 @@ public class  GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Level"+sceneNumber.ToString());
         SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the sceneLoaded event 
+
     }
 
         public void LoadIntro()
@@ -89,6 +103,8 @@ public class  GameManager : MonoBehaviour
         // Attempt to load the spawn point for the loaded scene
         LoadSpawnPoint(scene.name + "SpawnPoint");
         SpawnPlayer();
+        int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
+        Timer.Instance.StartTimer(levelDurations[sceneNumber - 1]);
 
         // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -96,7 +112,7 @@ public class  GameManager : MonoBehaviour
 
     private void LoadSpawnPoint(string spawnPointName)
     {
-                    Debug.Log("Spawn point name: " + spawnPointName);
+        Debug.Log("Spawn point name: " + spawnPointName);
 
         GameObject spawnPointPrefab = Resources.Load<GameObject>("SpawnPoints/" + spawnPointName);
         if (spawnPointPrefab != null)
@@ -117,12 +133,30 @@ public class  GameManager : MonoBehaviour
         if (playerPrefab != null && spawnPoint != null)
         {
             currentPlayer = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
+            
+            lastCheckpointPosition = spawnPoint.position;
         }
         else
         {
             Debug.LogError("Player prefab or spawn point not set.");
         }
     }
+    public void UpdateLastCheckpoint(Vector3 newCheckpointPosition)
+    {
+        // Check if the new checkpoint is further to the right than the last saved one
+        if (newCheckpointPosition.x > lastCheckpointPosition.x)
+        {
+            lastCheckpointPosition = newCheckpointPosition;
+            Debug.Log("Updated checkpoint position: " + lastCheckpointPosition);
+        }
+    }
+
+
+    public void RespawnPlayer(GameObject player)
+    {
+        player.transform.position = lastCheckpointPosition;
+    }
+    
     // Update the collectable counts when loading a new level
    private void ResetCollectables()
     {
@@ -163,6 +197,14 @@ public class  GameManager : MonoBehaviour
             collectedOranges++;
         }
         UpdateUI();
+    }
+
+    public void HandleTimerEnd()
+    {
+        Debug.Log("Time's up! Game over or level fail.");
+        SoundManager.Instance.FadeOutBackgroundSound();
+        SoundManager.Instance.PlaySound("levelFailed");
+        
     }
 }
 
