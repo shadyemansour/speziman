@@ -110,9 +110,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1445984361
-  m_SortingLayer: -1
-  m_SortingOrder: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: adc914e9ff7894541884cfb91fdc320a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -150,6 +150,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 6985890838842617642}
   runSpeed: 40
+  boostSpeed: 40
+  defaultSpeed: 30
+  defaultJumpForce: 400
+  boostJumpForce: 500
+  boostAnimationSpeed: 1.5
   anim: {fileID: 5817922354623032587}
 --- !u!114 &6985890838842617642
 MonoBehaviour:
@@ -168,7 +173,7 @@ MonoBehaviour:
   m_AirControl: 1
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
   m_GroundCheck: {fileID: 8971609865207090002}
   m_CeilingCheck: {fileID: 2689714525477105196}
   OnLandEvent:

@@ -1,19 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private bool isreached = false;
 
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.tag == "Player" && !isreached) {
             // get gameobject name
+            isreached = true; 
             string name = gameObject.name.Split(' ')[0].Trim();
             Sprite sprite = Resources.Load<Sprite>("Sprites/" + name);
             SoundManager.Instance.PlaySound("checkpoint");
