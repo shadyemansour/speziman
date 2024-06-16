@@ -10,10 +10,13 @@ public class PlayerMovement : MonoBehaviour {
 
 	[SerializeField] private float runSpeed;
     [SerializeField] private float boostSpeed = 40f;
+    [SerializeField] private float swimSpeed = 40f;
+    [SerializeField] private float mudSpeed = 3f;
 	[SerializeField] private float defaultSpeed = 30f;
     [SerializeField] private float defaultJumpForce = 400f;
     [SerializeField] private float boostJumpForce = 500f;
     [SerializeField] private float boostAnimationSpeed = 1.5f;
+    [SerializeField] private float reducedAnimationSpeed = .5f;
 
 
 
@@ -76,5 +79,17 @@ public class PlayerMovement : MonoBehaviour {
         controller.SetJumpForce(defaultJumpForce);
     }
 
+    public void ReduceSpeed(float speed, float jump) {
+        runSpeed = speed;
+        SetAnimationSpeed(reducedAnimationSpeed);
+        controller.SetJumpForce(jump);
+
+    }
+
+    public void ResetSpeed() {
+        runSpeed = defaultSpeed;
+        SetAnimationSpeed(1);
+        controller.SetJumpForce(defaultJumpForce);
+    }
 
 }
