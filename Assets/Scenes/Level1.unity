@@ -2704,7 +2704,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: playz
+      objectReference: {fileID: 0}
+    - target: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 4487778107780049313, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
       propertyPath: m_LocalPosition.x
