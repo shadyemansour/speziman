@@ -13,7 +13,6 @@ public class Timer : MonoBehaviour
     public UnityEvent onTimerEnd; // Event triggered when timer ends
 
 
-
     void Awake()
     {
         if (Instance == null)
@@ -59,6 +58,8 @@ public class Timer : MonoBehaviour
                 timerIsRunning = false;
                 UpdateDisplay();
                 onTimerEnd.Invoke();
+                var gameOver = FindObjectOfType<GameOverScript>();
+                gameOver.ShowButtons();
             }
         }
     }

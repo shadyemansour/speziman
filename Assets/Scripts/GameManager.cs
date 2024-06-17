@@ -22,7 +22,7 @@ public class  GameManager : MonoBehaviour
     private Vector3 lastCheckpointPosition;
     Cinemachine.CinemachineVirtualCamera vcam;
 
-    [SerializeField] private float[] levelDurations = {300f, 450f, 600f}; // Durations in seconds for each level
+    [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
 
 
     void Awake()
@@ -44,7 +44,7 @@ public class  GameManager : MonoBehaviour
 
     void Start()
     {
-        InitializeCollectables();
+        //InitializeCollectables();
         if (spawnPoint != null) lastCheckpointPosition = spawnPoint.position;
         vcam = FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
         if (currentPlayer == null) currentPlayer = GameObject.FindWithTag("Player");
@@ -100,11 +100,14 @@ public class  GameManager : MonoBehaviour
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log("OnSceneLoaded .. loaded ....");
+        InitializeCollectables();
         // Attempt to load the spawn point for the loaded scene
         LoadSpawnPoint(scene.name + "SpawnPoint");
-        SpawnPlayer();
+        //SpawnPlayer();
         int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
         Timer.Instance.StartTimer(levelDurations[sceneNumber - 1]);
+        Debug.Log("Set Level Duration to: " + levelDurations[sceneNumber - 1]);
 
         // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
         SceneManager.sceneLoaded -= OnSceneLoaded;
