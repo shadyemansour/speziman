@@ -52,3 +52,8 @@ MonoBehaviour:
   orangeSlider: {fileID: 0}
   playerPrefab: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
   spawnPoint: {fileID: 0}
+  timerPrefab: {fileID: 6814373221199184874, guid: 35149b0364ebc418d8bfe9ff8b126db5, type: 3}
+  levelDurations:
+  - 90
+  - 450
+  - 600
