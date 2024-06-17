@@ -149,13 +149,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 6985890838842617642}
-  runSpeed: 40
-  boostSpeed: 40
-  swimSpeed: 40
-  mudSpeed: 3
-  defaultSpeed: 30
-  defaultJumpForce: 400
-  boostJumpForce: 500
+  runSpeed: 20
+  boostSpeed: 30
+  swimSpeed: 15
+  mudSpeed: 5
+  defaultSpeed: 20
+  defaultJumpForce: 330
+  boostJumpForce: 380
   boostAnimationSpeed: 1.5
   reducedAnimationSpeed: 0.5
   anim: {fileID: 5817922354623032587}
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e852a89c5fc684f34980a0cb360eeea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_JumpForce: 400
+  m_JumpForce: 330
   m_MovementSmoothing: 0.05
   m_AirControl: 1
   m_WhatIsGround:

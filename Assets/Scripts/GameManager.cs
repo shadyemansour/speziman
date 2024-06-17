@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class  GameManager : MonoBehaviour
 {
@@ -20,7 +21,13 @@ public class  GameManager : MonoBehaviour
 
     private GameObject currentPlayer; 
     private Vector3 lastCheckpointPosition;
-    Cinemachine.CinemachineVirtualCamera vcam;
+    CinemachineVirtualCamera vcam;
+
+    private Timer timerInstance;
+
+    [SerializeField] private GameObject timerPrefab; 
+
+
 
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
 
@@ -44,14 +51,40 @@ public class  GameManager : MonoBehaviour
 
     void Start()
     {
-        //InitializeCollectables();
+        // InitializeCollectables();
         if (spawnPoint != null) lastCheckpointPosition = spawnPoint.position;
-        vcam = FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
-        if (currentPlayer == null) currentPlayer = GameObject.FindWithTag("Player");
-        vcam.Follow = currentPlayer.transform;
-       Debug.Log("vcam: " + vcam);
+        OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+    //     vcam = FindObjectOfType<CinemachineVirtualCamera>();
+    //     Debug.Log("vcam: " + vcam);
+    //     if (currentPlayer == null) currentPlayer = GameObject.FindWithTag("Player");
+
+    //     vcam.Follow = currentPlayer.transform;
+    //    Debug.Log("vcam: " + vcam);
 
 
+    }
+
+    void FindSliders()
+    {
+        colaSlider = GameObject.FindGameObjectWithTag("ColaSlider").GetComponent<Slider>();
+        if (colaSlider != null)
+        {
+            Debug.Log("ColaSlider found: " + colaSlider);
+        }
+        else
+        {
+            Debug.LogError("ColaSlider not found!");
+        }
+
+        orangeSlider = GameObject.FindGameObjectWithTag("OrangeSlider").GetComponent<Slider>();
+        if (orangeSlider != null)
+        {
+            Debug.Log("OrangeSlider found: " + orangeSlider);
+        }
+        else
+        {
+            Debug.LogError("OrangeSlider not found!");
+        }
     }
 
     private void InitializeCollectables()
@@ -71,14 +104,14 @@ public class  GameManager : MonoBehaviour
                     totalOranges++;
             }
 
+
             // Set sliders
-            if (colaSlider != null && orangeSlider != null)
-            {
-                colaSlider.maxValue = totalCola;
-                orangeSlider.maxValue = totalOranges;
-                colaSlider.value = collectedCola;
-                orangeSlider.value = collectedOranges;
-            }
+            FindSliders();
+            colaSlider.maxValue = totalCola;
+            orangeSlider.maxValue = totalOranges;
+            colaSlider.value = collectedCola;
+            orangeSlider.value = collectedOranges;
+            
         }
 
         ResetCollectables();
@@ -91,22 +124,30 @@ public class  GameManager : MonoBehaviour
 
     }
 
-        public void LoadIntro()
+    public void LoadIntro()
     {
         SceneManager.LoadScene("Intro");
     }
 
     
 
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded .. loaded ....");
         InitializeCollectables();
+        InstantiateTimer();
+
         // Attempt to load the spawn point for the loaded scene
         LoadSpawnPoint(scene.name + "SpawnPoint");
-        //SpawnPlayer();
+        SpawnPlayer();
+        var vcam = FindObjectOfType<CinemachineVirtualCamera>();
+        Debug.Log("vcam: " + vcam);
+        var currentPlayer = GameObject.FindWithTag("Player");
+        vcam.Follow = currentPlayer.transform;
+        Debug.Log("vcam: " + vcam);
+
         int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
-        Timer.Instance.StartTimer(levelDurations[sceneNumber - 1]);
+        timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
         Debug.Log("Set Level Duration to: " + levelDurations[sceneNumber - 1]);
 
         // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
@@ -208,6 +249,23 @@ public class  GameManager : MonoBehaviour
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
         
+    }
+
+   private void InstantiateTimer()
+    {
+        if (timerInstance != null)
+        {
+            Destroy(timerInstance.gameObject);
+        }
+
+        GameObject timerObject = Instantiate(timerPrefab);
+        timerInstance = timerObject.GetComponent<Timer>();
+        Debug.Log("Timer instance: " + timerInstance);
+
+        if (timerInstance != null)
+        {
+            timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
+        }
     }
 }
 

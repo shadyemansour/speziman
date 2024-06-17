@@ -11,6 +11,8 @@ TagManager:
   - Orange_Tag
   - Enemy
   - Boost
+  - ColaSlider
+  - OrangeSlider
   layers:
   - Default
   - TransparentFX
