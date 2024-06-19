@@ -47,7 +47,17 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    public void StartLevel(int levelNum) 
+    {
+        if (skipIntroToggle.isOn)
+        {
+            GameManager.Instance.LoadLevel(levelNum);
+        }
+        else
+        {
+            GameManager.Instance.LoadIntro();
+        }
+    }
 
-  
 
 }
