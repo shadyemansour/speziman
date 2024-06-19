@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,15 +11,13 @@ public class  GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     
     // Stats
-    public int totalCola;
-    public int totalOranges;
-    public int collectedCola = 0;
-    public int collectedOranges = 0;
-    public Slider colaSlider;
-    public Slider orangeSlider;
+    [SerializeField] private int totalCola;
+    [SerializeField] private  int totalOranges;
+    [SerializeField] private  Slider colaSlider;
+    [SerializeField] private  Slider orangeSlider;
 
-     public GameObject playerPrefab; 
-    public Transform spawnPoint;  
+     [SerializeField] private  GameObject playerPrefab; 
+    [SerializeField] private  Transform spawnPoint;  
 
     private GameObject currentPlayer; 
     private Vector3 lastCheckpointPosition;
@@ -30,7 +30,7 @@ public class  GameManager : MonoBehaviour
 
 
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
-
+    private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
 
     void Awake()
     {
@@ -67,55 +67,18 @@ public class  GameManager : MonoBehaviour
     void FindSliders()
     {
         colaSlider = GameObject.FindGameObjectWithTag("ColaSlider").GetComponent<Slider>();
-        if (colaSlider != null)
-        {
-            Debug.Log("ColaSlider found: " + colaSlider);
-        }
-        else
+        if (colaSlider == null)
         {
             Debug.LogError("ColaSlider not found!");
         }
 
         orangeSlider = GameObject.FindGameObjectWithTag("OrangeSlider").GetComponent<Slider>();
-        if (orangeSlider != null)
-        {
-            Debug.Log("OrangeSlider found: " + orangeSlider);
-        }
-        else
+        if (orangeSlider == null)
         {
             Debug.LogError("OrangeSlider not found!");
         }
     }
 
-    private void InitializeCollectables()
-    {
-        // Finding the "Collectables" GameObject and counting children
-        GameObject collectables = GameObject.Find("Collectables");
-        if (collectables != null)
-        {
-            totalCola = 0;
-            totalOranges = 0;
-
-            foreach (Transform item in collectables.transform)
-            {
-                if (item.name.Contains("Cola"))
-                    totalCola++;
-                else if (item.name.Contains("Orange"))
-                    totalOranges++;
-            }
-
-
-            // Set sliders
-            FindSliders();
-            colaSlider.maxValue = totalCola;
-            orangeSlider.maxValue = totalOranges;
-            colaSlider.value = collectedCola;
-            orangeSlider.value = collectedOranges;
-            
-        }
-
-        ResetCollectables();
-    }
 
     public void LoadLevel(int sceneNumber)
     {
@@ -133,31 +96,25 @@ public class  GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("OnSceneLoaded .. loaded ....");
         InitializeCollectables();
         InstantiateTimer();
+        InitializeUI();
+
 
         // Attempt to load the spawn point for the loaded scene
         LoadSpawnPoint(scene.name + "SpawnPoint");
         SpawnPlayer();
         var vcam = FindObjectOfType<CinemachineVirtualCamera>();
-        Debug.Log("vcam: " + vcam);
         var currentPlayer = GameObject.FindWithTag("Player");
         vcam.Follow = currentPlayer.transform;
-        Debug.Log("vcam: " + vcam);
-
         int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
         timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
-        Debug.Log("Set Level Duration to: " + levelDurations[sceneNumber - 1]);
-
         // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void LoadSpawnPoint(string spawnPointName)
     {
-        Debug.Log("Spawn point name: " + spawnPointName);
-
         GameObject spawnPointPrefab = Resources.Load<GameObject>("SpawnPoints/" + spawnPointName);
         if (spawnPointPrefab != null)
         {
@@ -185,62 +142,110 @@ public class  GameManager : MonoBehaviour
             Debug.LogError("Player prefab or spawn point not set.");
         }
     }
+   private void InitializeCollectables()
+    {
+        Collectable[] allCollectables = FindObjectsOfType<Collectable>();
+        foreach (Collectable collectable in allCollectables)
+        {
+            if (!collectables.ContainsKey(collectable.itemType))
+            {
+                collectables[collectable.itemType] = new List<Collectable>();
+            }
+            collectables[collectable.itemType].Add(collectable);
+        }
+    }
+
+public void CollectItem(Collectable collectable)
+    {
+        Debug.Log("collectedAfterCheckpoint: " + collectable.collectedAfterCheckpoint);
+        if (!collectable.collectedAfterCheckpoint)
+        {
+            collectable.collectedAfterCheckpoint = true;
+            UpdateUI(collectable.itemType, 1);
+        }
+    }
+
+    public void ResetCollectables()
+    {
+        foreach (var pair in collectables)
+        {
+            foreach (Collectable collectable in pair.Value)
+            {
+                if (collectable.collectedAfterCheckpoint)
+                {
+                    collectable.ResetCollectable();
+                }
+            }
+        }
+        ResetUI();  
+    }
+
     public void UpdateLastCheckpoint(Vector3 newCheckpointPosition)
     {
-        // Check if the new checkpoint is further to the right than the last saved one
         if (newCheckpointPosition.x > lastCheckpointPosition.x)
         {
             lastCheckpointPosition = newCheckpointPosition;
-            Debug.Log("Updated checkpoint position: " + lastCheckpointPosition);
+        }
+        foreach (var pair in collectables)
+        {
+            foreach (Collectable collectable in pair.Value)
+            {
+                collectable.collectedAfterCheckpoint = false;
+            }
         }
     }
 
-
-    public void RespawnPlayer(GameObject player)
+    private void InitializeUI()
     {
+        FindSliders();
+
+        if (colaSlider != null){
+            colaSlider.value = 0;
+            colaSlider.maxValue = collectables.ContainsKey("Cola") ? collectables["Cola"].Count : 0;
+        } 
+        if (orangeSlider != null) 
+        {
+            orangeSlider.value = 0;
+            orangeSlider.maxValue = collectables.ContainsKey("Orange") ? collectables["Orange"].Count : 0;
+
+        }
+
+    }
+
+    private void ResetUI()
+    {
+        if (colaSlider != null) colaSlider.value = 0;
+        if (orangeSlider != null) orangeSlider.value = 0;
+
+        foreach (var list in collectables.Values)
+        {
+            foreach (Collectable collectable in list)
+            {
+                if (!collectable.gameObject.activeSelf)
+                {
+                    UpdateUI(collectable.itemType, 1);
+                }
+            }
+        }
+    }
+
+     private void UpdateUI(string itemType, int change)
+    {
+        switch (itemType)
+        {
+            case "Cola":
+                if (colaSlider != null) colaSlider.value += change;
+                break;
+            case "Orange":
+                if (orangeSlider != null) orangeSlider.value += change;
+                break;
+        }
+    }
+
+     public void RespawnPlayer(GameObject player)
+    {
+        ResetCollectables();
         player.transform.position = lastCheckpointPosition;
-    }
-    
-    // Update the collectable counts when loading a new level
-   private void ResetCollectables()
-    {
-        // Reset and update stats
-        collectedCola = 0;
-        collectedOranges = 0;
-
-        // Reset sliders
-        if (colaSlider != null && orangeSlider != null)
-        {
-            colaSlider.maxValue = totalCola;
-            orangeSlider.maxValue = totalOranges;
-            colaSlider.value = collectedCola;
-            orangeSlider.value = collectedOranges;
-        }
-
-        UpdateUI();
-    }
-
-    public void UpdateUI()
-    {
-        // Update UI sliders
-        if (colaSlider != null && orangeSlider != null)
-        {
-            colaSlider.value = collectedCola;
-            orangeSlider.value = collectedOranges;
-        }
-    }
-
-    public void CollectItem(string itemType)
-    {
-        if (itemType == "Cola")
-        {
-            collectedCola++;
-        }
-        else if (itemType == "Orange")
-        {
-            collectedOranges++;
-        }
-        UpdateUI();
     }
 
     public void HandleTimerEnd()
@@ -260,7 +265,6 @@ public class  GameManager : MonoBehaviour
 
         GameObject timerObject = Instantiate(timerPrefab);
         timerInstance = timerObject.GetComponent<Timer>();
-        Debug.Log("Timer instance: " + timerInstance);
 
         if (timerInstance != null)
         {

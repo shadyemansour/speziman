@@ -3,17 +3,30 @@ using UnityEngine;
 public class Collectable : MonoBehaviour
 {
     public string itemType;  // "Cola" or "Orange"
+    public bool collectedAfterCheckpoint;  // True if collected after the last checkpoint
+    private Vector3 startPosition;
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void Start()
     {
-        Debug.Log("Triggered by: " + collision.name);
+        startPosition = transform.position;  // Save the initial position
+        collectedAfterCheckpoint = false;
+    }
 
-
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
         if (collision.CompareTag("Player"))
         {
             SoundManager.Instance.PlaySound("collect" + itemType);
-            GameManager.Instance.CollectItem(itemType);
-            Destroy(gameObject);  // Destroy the collectable after it's been collected
+            GameManager.Instance.CollectItem(this);
+            collectedAfterCheckpoint = true;
+            gameObject.SetActive(false);  // Instead of destroying, just deactivate
         }
+    }
+
+    public void ResetCollectable()
+    {
+        transform.position = startPosition;  // Reset position if needed
+        collectedAfterCheckpoint = false;
+        gameObject.SetActive(true);
     }
 }

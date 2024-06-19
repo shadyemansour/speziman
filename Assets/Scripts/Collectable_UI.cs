@@ -35,7 +35,6 @@ public class Collectible_UI : MonoBehaviour
 
 		//Get the point on the screen that relates to the point in the world that we picked this up
 		WorldToScreen = cam.WorldToScreenPoint (col.transform.position);
-		Debug.Log (WorldToScreen);
 		newCollectionUIImage = 	Instantiate (collectible_type, canvas.transform, false);
 
 		//Get the type of Resource from the CollectibleType

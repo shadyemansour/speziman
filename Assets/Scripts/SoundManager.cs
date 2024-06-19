@@ -44,7 +44,6 @@ public class SoundManager : MonoBehaviour {
         if (audioClips.TryGetValue(clipKey, out AudioClip clip))
         {
             sfxSource.PlayOneShot(clip);
-            Debug.Log("Playing sound: " + clipKey);
         }
         else
         {
