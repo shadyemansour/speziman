@@ -10,12 +10,14 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
 
-	const float k_GroundedRadius = .1f; // Radius of the overlap circle to determine if grounded
+	const float k_GroundedRadius = .05f; // Radius of the overlap circle to determine if grounded
 	private bool m_Grounded;            // Whether or not the player is grounded.
 	const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
 	private Rigidbody2D m_Rigidbody2D;
 	private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 	private Vector3 m_Velocity = Vector3.zero;
+	private float jumpCooldown = 0.1f; // Cooldown duration in seconds
+    private float jumpCooldownTimer;
 
 	[Header("Events")]
 	[Space]
@@ -39,6 +41,12 @@ public class CharacterController2D : MonoBehaviour
 		bool wasGrounded = m_Grounded;
 		m_Grounded = false;
 
+ 		if (jumpCooldownTimer > 0)
+        {
+            jumpCooldownTimer -= Time.fixedDeltaTime;
+        }
+        else
+        {
 		// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 		// This can be done using layers instead but Sample Assets will not overwrite your project settings.
 		Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
@@ -46,10 +54,12 @@ public class CharacterController2D : MonoBehaviour
 		{
 			if (colliders[i].gameObject != gameObject)
 			{
+				Debug.Log(colliders[i].gameObject.name);
 				m_Grounded = true;
 				if (!wasGrounded)
 					OnLandEvent.Invoke();
 			}
+		}
 		}
 	}
 
@@ -84,6 +94,7 @@ public class CharacterController2D : MonoBehaviour
 		{
 			// Add a vertical force to the player.
 			m_Grounded = false;
+			jumpCooldownTimer = jumpCooldown; // Start the cooldown
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
 	}

@@ -900,7 +900,7 @@ TilemapCollider2D:
   m_GameObject: {fileID: 278823957}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 32049288b98a54c0a9c18e6e7eb5f45f, type: 2}
+  m_Material: {fileID: 6200000, guid: a0664953a12b2439aab0228ccd21f2cd, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3221,6 +3221,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1291753269048990060, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: a0664953a12b2439aab0228ccd21f2cd, type: 2}
     - target: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
       propertyPath: m_Name
       value: Playerz
