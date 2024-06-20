@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Cinemachine;
+using TMPro;
 
 public class  GameManager : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class  GameManager : MonoBehaviour
     // Stats
     [SerializeField] private int totalCola;
     [SerializeField] private  int totalOranges;
-    [SerializeField] private  Slider colaSlider;
-    [SerializeField] private  Slider orangeSlider;
+    // [SerializeField] private  Slider colaSlider;
+    // [SerializeField] private  Slider orangeSlider;
 
      [SerializeField] private  GameObject playerPrefab; 
     [SerializeField] private  Transform spawnPoint;  
@@ -31,6 +32,7 @@ public class  GameManager : MonoBehaviour
 
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
     private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
+    private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
 
     void Awake()
     {
@@ -64,18 +66,19 @@ public class  GameManager : MonoBehaviour
 
     }
 
-    void FindSliders()
+    void FindTextObjects()
     {
-        colaSlider = GameObject.FindGameObjectWithTag("ColaSlider").GetComponent<Slider>();
-        if (colaSlider == null)
+        foreach (var pair in collectables)
         {
-            Debug.LogError("ColaSlider not found!");
-        }
-
-        orangeSlider = GameObject.FindGameObjectWithTag("OrangeSlider").GetComponent<Slider>();
-        if (orangeSlider == null)
-        {
-            Debug.LogError("OrangeSlider not found!");
+            TextMeshProUGUI text = GameObject.FindGameObjectWithTag(pair.Key + "_Text").GetComponent<TextMeshProUGUI>();
+            if (text != null)
+            {
+                collectableTexts[pair.Key] = text;
+            }
+            else
+            {
+                Debug.LogError("Text object not found for: " + pair.Key);
+            }
         }
     }
 
@@ -197,25 +200,20 @@ public void CollectItem(Collectable collectable)
 
     private void InitializeUI()
     {
-        FindSliders();
+        FindTextObjects();
+        ResetCollectablesTexts();
+    }
 
-        if (colaSlider != null){
-            colaSlider.value = 0;
-            colaSlider.maxValue = collectables.ContainsKey("Cola") ? collectables["Cola"].Count : 0;
-        } 
-        if (orangeSlider != null) 
+    private void ResetCollectablesTexts(){
+        foreach(var pair in collectableTexts)
         {
-            orangeSlider.value = 0;
-            orangeSlider.maxValue = collectables.ContainsKey("Orange") ? collectables["Orange"].Count : 0;
-
+            pair.Value.text = "0";
         }
-
     }
 
     private void ResetUI()
     {
-        if (colaSlider != null) colaSlider.value = 0;
-        if (orangeSlider != null) orangeSlider.value = 0;
+        ResetCollectablesTexts();
 
         foreach (var list in collectables.Values)
         {
@@ -231,14 +229,12 @@ public void CollectItem(Collectable collectable)
 
      private void UpdateUI(string itemType, int change)
     {
-        switch (itemType)
+        if (collectableTexts.ContainsKey(itemType))
         {
-            case "Cola":
-                if (colaSlider != null) colaSlider.value += change;
-                break;
-            case "Orange":
-                if (orangeSlider != null) orangeSlider.value += change;
-                break;
+            collectableTexts[itemType].text = (int.Parse(collectableTexts[itemType].text) + change).ToString();
+        }
+        else{
+            Debug.LogError("Text object not found for: " + itemType);
         }
     }
 

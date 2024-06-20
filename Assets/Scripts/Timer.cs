@@ -10,17 +10,19 @@ public class Timer : MonoBehaviour
     [SerializeField] private string timerDisplayName = "TimerText"; // Name of the GameObject with the TextMeshPro component
     private TextMeshProUGUI timerDisplay; // TextMeshPro component for displaying the timer
     public UnityEvent onTimerEnd; // Event triggered when timer ends
+    [SerializeField] private Animator animator; 
 
-    void Start()
+    void Awake()
     {
         // Find and assign the TextMeshPro component from the specified GameObject
         GameObject displayObject = GameObject.Find(timerDisplayName);
         if (displayObject != null)
         {
             timerDisplay = displayObject.GetComponent<TextMeshProUGUI>();
+            animator = timerDisplay.GetComponent<Animator>();
         }
 
-        ResetTimer();
+        // ResetTimer();
     }
 
     void Update()
@@ -52,6 +54,8 @@ public class Timer : MonoBehaviour
         timeRemaining = duration;
         initialTime = duration;
         timerIsRunning = true;
+
+        animator.Play("TimerText");
     }
 
     public void StopTimer()
