@@ -108,8 +108,11 @@ public class  GameManager : MonoBehaviour
         LoadSpawnPoint(scene.name + "SpawnPoint");
         SpawnPlayer();
         var vcam = FindObjectOfType<CinemachineVirtualCamera>();
+        var confiner = FindObjectOfType<CinemachineConfiner2D>();
+        var gridCollider = GameObject.FindWithTag("Ground")?.GetComponent<PolygonCollider2D>();
         var currentPlayer = GameObject.FindWithTag("Player");
         vcam.Follow = currentPlayer.transform;
+        confiner.m_BoundingShape2D = gridCollider;
         int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
         timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
         // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
