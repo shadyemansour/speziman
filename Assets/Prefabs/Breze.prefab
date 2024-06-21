@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boostLength: 20
+  uiImage: {fileID: 0}
 --- !u!50 &4071017801572319627
 Rigidbody2D:
   serializedVersion: 4

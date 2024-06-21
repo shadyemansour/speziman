@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private float boostJumpForce = 500f;
     [SerializeField] private float boostAnimationSpeed = 1.5f;
     [SerializeField] private float reducedAnimationSpeed = .5f;
+    private Action disableBoostCallback;
 
 
 
@@ -59,24 +60,23 @@ public class PlayerMovement : MonoBehaviour {
     }
 
 
-    public void Boost(float length) {
-        StartCoroutine(BoostDuration(length));
+    public void Boost(float length, Action onComplete) {
+        StartCoroutine(BoostDuration(length, onComplete));
     }
 
-     private IEnumerator BoostDuration(float length) {
+     private IEnumerator BoostDuration(float length, Action onComplete) {
         // Set boosted parameters
         runSpeed = boostSpeed;
         controller.SetJumpForce(boostJumpForce);
         SetAnimationSpeed(boostAnimationSpeed);
+        disableBoostCallback = onComplete;
 
 
         // Wait for 'length' seconds
         yield return new WaitForSeconds(length);
-
-        // Reset parameters to normal
-        runSpeed = defaultSpeed;
-        SetAnimationSpeed(1);
-        controller.SetJumpForce(defaultJumpForce);
+        onComplete?.Invoke();
+        disableBoostCallback = null;
+        ResetSpeed();
     }
 
     public void ReduceSpeed(float speed, float jump) {
@@ -87,6 +87,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public void ResetSpeed() {
+        if (disableBoostCallback!=null) disableBoostCallback?.Invoke();
         runSpeed = defaultSpeed;
         SetAnimationSpeed(1);
         controller.SetJumpForce(defaultJumpForce);

@@ -244,6 +244,7 @@ public void CollectItem(Collectable collectable)
      public void RespawnPlayer(GameObject player)
     {
         ResetCollectables();
+        player.GetComponent<PlayerMovement>().ResetSpeed();
         player.transform.position = lastCheckpointPosition;
     }
 
