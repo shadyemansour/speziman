@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Cinemachine;
 using TMPro;
 
-public class  GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     
     // Stats
     [SerializeField] private int totalCola;
-    [SerializeField] private  int totalOranges;
-    // [SerializeField] private  Slider colaSlider;
-    // [SerializeField] private  Slider orangeSlider;
+    [SerializeField] private int totalOranges;
 
-     [SerializeField] private  GameObject playerPrefab; 
-    [SerializeField] private  Transform spawnPoint;  
+    [SerializeField] private GameObject playerPrefab; 
+    [SerializeField] private Transform spawnPoint;  
 
     private GameObject currentPlayer; 
     private Vector3 lastCheckpointPosition;
@@ -28,11 +25,13 @@ public class  GameManager : MonoBehaviour
 
     [SerializeField] private GameObject timerPrefab; 
 
-
-
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
     private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
     private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
+
+    public LevelCompleteScript levelCompleteScript;
+    private bool levelComplete = false;
+    private float timer = 0f;
 
     void Awake()
     {
@@ -46,24 +45,26 @@ public class  GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-
-        // SpawnPlayer();
     }
 
     void Start()
     {
-        // InitializeCollectables();
         if (spawnPoint != null) lastCheckpointPosition = spawnPoint.position;
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
-    //     vcam = FindObjectOfType<CinemachineVirtualCamera>();
-    //     Debug.Log("vcam: " + vcam);
-    //     if (currentPlayer == null) currentPlayer = GameObject.FindWithTag("Player");
+    }
 
-    //     vcam.Follow = currentPlayer.transform;
-    //    Debug.Log("vcam: " + vcam);
-
-
+    void Update()
+    {
+        if (!levelComplete)
+        {
+            timer += Time.deltaTime;
+            if (AllItemsCollected())
+            {
+                levelComplete = true;
+                int collectedItems = CountCollectedItems();
+                levelCompleteScript.ShowLevelComplete(timer, collectedItems, collectables.Count);
+            }
+        }
     }
 
     void FindTextObjects()
@@ -82,12 +83,10 @@ public class  GameManager : MonoBehaviour
         }
     }
 
-
     public void LoadLevel(int sceneNumber)
     {
-        SceneManager.LoadScene("Level"+sceneNumber.ToString());
+        SceneManager.LoadScene("Level" + sceneNumber.ToString());
         SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the sceneLoaded event 
-
     }
 
     public void LoadIntro()
@@ -95,14 +94,11 @@ public class  GameManager : MonoBehaviour
         SceneManager.LoadScene("Intro");
     }
 
-    
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeCollectables();
         InstantiateTimer();
         InitializeUI();
-
 
         // Attempt to load the spawn point for the loaded scene
         LoadSpawnPoint(scene.name + "SpawnPoint");
@@ -132,7 +128,6 @@ public class  GameManager : MonoBehaviour
         }
     }
 
-
     void SpawnPlayer()
     {
         if (currentPlayer != null) Destroy(currentPlayer); // Destroy existing player instance if any
@@ -140,7 +135,6 @@ public class  GameManager : MonoBehaviour
         if (playerPrefab != null && spawnPoint != null)
         {
             currentPlayer = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-            
             lastCheckpointPosition = spawnPoint.position;
         }
         else
@@ -148,7 +142,8 @@ public class  GameManager : MonoBehaviour
             Debug.LogError("Player prefab or spawn point not set.");
         }
     }
-   private void InitializeCollectables()
+
+    private void InitializeCollectables()
     {
         Collectable[] allCollectables = FindObjectsOfType<Collectable>();
         foreach (Collectable collectable in allCollectables)
@@ -161,7 +156,7 @@ public class  GameManager : MonoBehaviour
         }
     }
 
-public void CollectItem(Collectable collectable)
+    public void CollectItem(Collectable collectable)
     {
         Debug.Log("collectedAfterCheckpoint: " + collectable.collectedAfterCheckpoint);
         if (!collectable.collectedAfterCheckpoint)
@@ -207,8 +202,9 @@ public void CollectItem(Collectable collectable)
         ResetCollectablesTexts();
     }
 
-    private void ResetCollectablesTexts(){
-        foreach(var pair in collectableTexts)
+    private void ResetCollectablesTexts()
+    {
+        foreach (var pair in collectableTexts)
         {
             pair.Value.text = "0";
         }
@@ -230,18 +226,19 @@ public void CollectItem(Collectable collectable)
         }
     }
 
-     private void UpdateUI(string itemType, int change)
+    private void UpdateUI(string itemType, int change)
     {
         if (collectableTexts.ContainsKey(itemType))
         {
             collectableTexts[itemType].text = (int.Parse(collectableTexts[itemType].text) + change).ToString();
         }
-        else{
+        else
+        {
             Debug.LogError("Text object not found for: " + itemType);
         }
     }
 
-     public void RespawnPlayer(GameObject player)
+    public void RespawnPlayer(GameObject player)
     {
         ResetCollectables();
         player.GetComponent<PlayerMovement>().ResetSpeed();
@@ -253,10 +250,9 @@ public void CollectItem(Collectable collectable)
         Debug.Log("Time's up! Game over or level fail.");
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
-        
     }
 
-   private void InstantiateTimer()
+    private void InstantiateTimer()
     {
         if (timerInstance != null)
         {
@@ -271,5 +267,29 @@ public void CollectItem(Collectable collectable)
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
     }
-}
 
+    bool AllItemsCollected()
+    {
+        foreach (var itemList in collectables.Values)
+        {
+            foreach (var item in itemList)
+            {
+                if (!item.collectedAfterCheckpoint) return false;
+            }
+        }
+        return true;
+    }
+
+    int CountCollectedItems()
+    {
+        int count = 0;
+        foreach (var itemList in collectables.Values)
+        {
+            foreach (var item in itemList)
+            {
+                if (item.collectedAfterCheckpoint) count++;
+            }
+        }
+        return count;
+    }
+}
