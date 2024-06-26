@@ -24,10 +24,10 @@ public class  GameManager : MonoBehaviour
     private Vector3 lastCheckpointPosition;
     CinemachineVirtualCamera vcam;
 
+    private int reachedDeliveries = 2;
     private Timer timerInstance;
 
     [SerializeField] private GameObject timerPrefab; 
-
 
 
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level

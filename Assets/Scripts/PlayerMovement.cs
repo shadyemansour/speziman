@@ -17,7 +17,13 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private float boostJumpForce = 500f;
     [SerializeField] private float boostAnimationSpeed = 1.5f;
     [SerializeField] private float reducedAnimationSpeed = .5f;
+    [SerializeField] private float waterDensity = 3f; // Change this value to tweak buoyancy
+    [SerializeField] private float objectVolume = 1f; // Approximate volume of the player
+    [SerializeField] private float gravity = 9.81f; // Acceleration due to gravity
     private Action disableBoostCallback;
+    private Rigidbody2D rb;
+
+    public bool inWater = false;
 
 
 
@@ -25,7 +31,8 @@ public class PlayerMovement : MonoBehaviour {
 	bool jump = false;
     public Animator anim;    
     void Start() {
-        runSpeed = defaultSpeed;    
+        runSpeed = defaultSpeed;   
+        rb = GetComponent<Rigidbody2D>(); 
     }
 	
 	// Update is called once per frame
@@ -47,6 +54,12 @@ public class PlayerMovement : MonoBehaviour {
 		// Move our character
 		controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
 		jump = false;
+        if (inWater) 
+        {
+            Debug.Log("In water");  
+            float buoyantForce = objectVolume * waterDensity * gravity;
+            rb.AddForce(new Vector2(0, buoyantForce));
+        }
 	}
 
 
