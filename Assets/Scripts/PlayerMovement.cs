@@ -106,4 +106,16 @@ public class PlayerMovement : MonoBehaviour {
         controller.SetJumpForce(defaultJumpForce);
     }
 
+
+    // todo to be called when needed
+    public void IncrementScore(int amount)
+    {
+        GameManager.Instance.score += amount;
+    }
+
+    public void IncrementDeliveries()
+    {
+        GameManager.Instance.UpdateDeliveries();
+    }
+
 }

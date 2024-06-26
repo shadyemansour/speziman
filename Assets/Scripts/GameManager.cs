@@ -24,7 +24,15 @@ public class  GameManager : MonoBehaviour
     private Vector3 lastCheckpointPosition;
     CinemachineVirtualCamera vcam;
 
-    private int reachedDeliveries = 2;
+
+
+    public int score = 0;
+    public int totalDeliveries = 3;
+    public int reachedDeliveries = 0;
+    private float levelStartTime;       
+    [SerializeField] private GameObject levelCompleteScreen;
+
+
     private Timer timerInstance;
 
     [SerializeField] private GameObject timerPrefab; 
@@ -62,6 +70,8 @@ public class  GameManager : MonoBehaviour
 
     //     vcam.Follow = currentPlayer.transform;
     //    Debug.Log("vcam: " + vcam);
+
+        levelStartTime = Time.time;
 
 
     }
@@ -161,13 +171,13 @@ public class  GameManager : MonoBehaviour
         }
     }
 
-public void CollectItem(Collectable collectable)
+    public void CollectItem(Collectable collectable)
     {
-        Debug.Log("collectedAfterCheckpoint: " + collectable.collectedAfterCheckpoint);
         if (!collectable.collectedAfterCheckpoint)
         {
             collectable.collectedAfterCheckpoint = true;
             UpdateUI(collectable.itemType, 1);
+            score += collectable.scoreValue; 
         }
     }
 
@@ -271,5 +281,55 @@ public void CollectItem(Collectable collectable)
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
     }
+  
+    private float CalculateLevelCompletionTime()
+    {
+        float currentTime = Time.time;
+        float elapsedTime = currentTime - levelStartTime;
+
+        int sceneNumber = int.Parse(SceneManager.GetActiveScene().name.Replace("Level", ""));
+        float levelDuration = levelDurations[sceneNumber - 1]; 
+        return Mathf.Max(0, levelDuration - elapsedTime);
+    }
+
+
+    public void UpdateDeliveries()
+    {
+        reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+    }
+
+    public void TriggerLevelComplete()
+    {
+        float completionTime = CalculateLevelCompletionTime();
+        int collectedItems = GetCollectedItemsCount();
+        int totalItems = totalCola + totalOranges;
+
+        levelCompleteScreen.SetActive(true);
+
+        LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
+        if (lcManager != null)
+        {
+            lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+        }
+    }
+
+    private int GetCollectedItemsCount()
+    {
+        int count = 0;
+        foreach (var pair in collectables)
+        {
+            count += pair.Value.Count;
+        }
+        return count;
+    }
+
+
+
+    // todo call method
+    public void IncrementDeliveries()
+    {
+        reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+    }
+    
 }
 
