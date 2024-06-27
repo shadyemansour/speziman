@@ -300,16 +300,30 @@ public class  GameManager : MonoBehaviour
 
     public void TriggerLevelComplete()
     {
+        Debug.Log("TriggerLevelComplete called");
         float completionTime = CalculateLevelCompletionTime();
         int collectedItems = GetCollectedItemsCount();
         int totalItems = totalCola + totalOranges;
 
-        levelCompleteScreen.SetActive(true);
-
-        LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
-        if (lcManager != null)
+        if (levelCompleteScreen != null)
         {
-            lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+            levelCompleteScreen.SetActive(true);
+            Debug.Log("Level complete screen activated");
+
+            LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
+            if (lcManager != null)
+            {
+                lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+                Debug.Log("LevelCompleteManager UpdateUI called");
+            }
+            else
+            {
+                Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+            }
+        }
+        else
+        {
+            Debug.LogError("levelCompleteScreen is null in GameManager");
         }
     }
 

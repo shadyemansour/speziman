@@ -21,6 +21,61 @@ public class LevelCompleteManager : MonoBehaviour
     [SerializeField] private Sprite yellowBarbaraHead;
     [SerializeField] private Sprite pinkBarbaraHead;
 
+    
+
+    private void Awake()
+    {
+        Debug.Log("LevelCompleteManager Awake called");
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("LevelCompleteManager OnEnable called");
+    }
+
+    private void Start()
+    {
+        Debug.Log("LevelCompleteManager Start called");
+        SetupButtonListeners();
+    }
+
+    private void SetupButtonListeners()
+    {
+        if (menuButton != null)
+        {
+            menuButton.onClick.AddListener(GoToMenu);
+            Debug.Log("Menu button listener added");
+        }
+        else
+        {
+            Debug.LogError("Menu button is null");
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.onClick.AddListener(RestartLevel);
+            Debug.Log("Restart button listener added");
+        }
+        else
+        {
+            Debug.LogError("Restart button is null");
+        }
+
+        if (newLevelButton != null)
+        {
+            newLevelButton.onClick.AddListener(LoadNextLevel);
+            Debug.Log("New Level button listener added");
+        }
+        else
+        {
+            Debug.LogError("New Level button is null");
+        }
+    }
+
+    
+
+
+
 
     public void UpdateUI(int score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
     {
