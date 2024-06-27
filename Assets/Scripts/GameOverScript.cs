@@ -1,12 +1,7 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-
-/// <summary>
-/// Start or quit the game
-/// </summary>
 public class GameOverScript : MonoBehaviour
 {
     public static GameOverScript Instance { get; private set; }
@@ -15,11 +10,24 @@ public class GameOverScript : MonoBehaviour
 
     void Awake()
     {
-        // Get the buttons
-        buttons = GetComponentsInChildren<Button>();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        // Disable them
-        HideButtons();
+        // Get the buttons
+        buttons = GetComponentsInChildren<Button>(true); // Include inactive buttons
+    }
+
+    void OnEnable()
+    {
+        // Show buttons when the GameObject is enabled
+        ShowButtons();
     }
 
     public void HideButtons()
@@ -35,7 +43,7 @@ public class GameOverScript : MonoBehaviour
         foreach (var b in buttons)
         {
             b.gameObject.SetActive(true);
-            Debug.Log("Buttons Shown");
+            Debug.Log($"Button '{b.name}' shown");
         }
     }
 
