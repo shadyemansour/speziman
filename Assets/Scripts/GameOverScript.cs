@@ -47,7 +47,16 @@ public class GameOverScript : MonoBehaviour
 
     public void RestartGame()
     {
-        // Reload the level; Needs to be made adaptible
+        // Reload the level; Needs to be made adaptable
         GameManager.Instance.LoadLevel(1);
+        // int currentLevelIndex = SceneManager.GetActiveScene().buildIndex;  -> more adaptable
+        // GameManager.Instance.LoadLevel(currentLevelIndex);
+    }
+
+    public void LoadNextLevel()
+    {
+        GameManager.Instance.LoadLevel(2);
+        // int currentLevelIndex = SceneManager.GetActiveScene().buildIndex;   -> more adaptable
+        // GameManager.Instance.LoadLevel(currentLevelIndex + 1);
     }
 }

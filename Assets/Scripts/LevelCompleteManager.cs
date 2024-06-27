@@ -36,10 +36,10 @@ public class LevelCompleteManager : MonoBehaviour
     private void Start()
     {
         Debug.Log("LevelCompleteManager Start called");
-        SetupButtonListeners();
+        // SetupButtonListeners();
     }
 
-    private void SetupButtonListeners()
+/*     private void SetupButtonListeners()
     {
         if (menuButton != null)
         {
@@ -70,7 +70,7 @@ public class LevelCompleteManager : MonoBehaviour
         {
             Debug.LogError("New Level button is null");
         }
-    }
+    } */
 
     
 
@@ -100,24 +100,5 @@ public class LevelCompleteManager : MonoBehaviour
         int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
         int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
         return string.Format("{0:00}:{1:00}", minutes, seconds);
-    }
-
-    public void GoToMenu()
-    {
-        Debug.Log("GoToMenu clicked");
-        SceneManager.LoadScene("StartScene");
-    }
-
-    public void RestartLevel()
-    {
-        Debug.Log("RestartLevel clicked");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void LoadNextLevel()
-    {
-        Debug.Log("LoadNextLevel clicked");
-        int currentLevelIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentLevelIndex + 1);
     }
 }

@@ -3450,9 +3450,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1881370977}
-        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
-        m_MethodName: RestartLevel
+      - m_Target: {fileID: 1993337940}
+        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
+        m_MethodName: RestartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3616,7 +3616,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1093470710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4174,9 +4174,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1881370977}
-        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
-        m_MethodName: GoToMenu
+      - m_Target: {fileID: 1993337940}
+        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
+        m_MethodName: ExitToMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5620,7 +5620,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1881370976}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 576b779a627b04cb68d0693fcc98db08, type: 3}
   m_Name: 
@@ -5735,8 +5735,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1881370977}
-        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
+      - m_Target: {fileID: 1993337940}
+        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
         m_MethodName: LoadNextLevel
         m_Mode: 1
         m_Arguments:
@@ -5859,6 +5859,8 @@ GameObject:
   - component: {fileID: 1993337935}
   - component: {fileID: 1993337934}
   - component: {fileID: 1993337938}
+  - component: {fileID: 1993337939}
+  - component: {fileID: 1993337940}
   m_Layer: 5
   m_Name: LevelCompleteCanvas
   m_TagString: Untagged
@@ -5960,7 +5962,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1993337933}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 576b779a627b04cb68d0693fcc98db08, type: 3}
   m_Name: 
@@ -5978,6 +5980,30 @@ MonoBehaviour:
   newLevelButton: {fileID: 1942758414}
   yellowBarbaraHead: {fileID: 21300000, guid: 8e8402b4c3e8041ccb980c7cb486a701, type: 3}
   pinkBarbaraHead: {fileID: 21300000, guid: aa8fdd906ea6b4d88a8d4f5f9f8c93e2, type: 3}
+--- !u!225 &1993337939
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993337933}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1993337940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993337933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de225937c491b374e820687d1d0c826f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2009101318
 GameObject:
   m_ObjectHideFlags: 0
