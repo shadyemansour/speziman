@@ -107,7 +107,7 @@ public class  GameManager : MonoBehaviour
 
     
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)         // TODO: fix level restarts (levelcompletescreen not triggered, no dies, ...)
     {
         InitializeCollectables();
         InstantiateTimer();
@@ -285,11 +285,7 @@ public class  GameManager : MonoBehaviour
     private float CalculateLevelCompletionTime()
     {
         float currentTime = Time.time;
-        float elapsedTime = currentTime - levelStartTime;
-
-        int sceneNumber = int.Parse(SceneManager.GetActiveScene().name.Replace("Level", ""));
-        float levelDuration = levelDurations[sceneNumber - 1]; 
-        return Mathf.Max(0, levelDuration - elapsedTime);
+        return currentTime - levelStartTime;
     }
 
 
@@ -303,7 +299,7 @@ public class  GameManager : MonoBehaviour
         Debug.Log("TriggerLevelComplete called");
         float completionTime = CalculateLevelCompletionTime();
         int collectedItems = GetCollectedItemsCount();
-        int totalItems = totalCola + totalOranges;
+        int totalItems = GetTotalItemsCount(); 
 
         if (levelCompleteScreen != null)
         {
@@ -327,7 +323,23 @@ public class  GameManager : MonoBehaviour
         }
     }
 
-    private int GetCollectedItemsCount()
+private int GetCollectedItemsCount()
+{
+    int count = 0;
+    foreach (var pair in collectables)
+    {
+        foreach (var collectable in pair.Value)
+        {
+            if (!collectable.gameObject.activeSelf)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+    private int GetTotalItemsCount()
     {
         int count = 0;
         foreach (var pair in collectables)
