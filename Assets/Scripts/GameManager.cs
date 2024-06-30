@@ -24,7 +24,15 @@ public class  GameManager : MonoBehaviour
     private Vector3 lastCheckpointPosition;
     CinemachineVirtualCamera vcam;
 
-    private int reachedDeliveries = 2;
+
+
+    public int score = 0;
+    public int totalDeliveries = 3;
+    public int reachedDeliveries = 0;
+    private float levelStartTime;       
+    [SerializeField] private GameObject levelCompleteScreen;
+
+
     private Timer timerInstance;
 
     [SerializeField] private GameObject timerPrefab; 
@@ -63,6 +71,8 @@ public class  GameManager : MonoBehaviour
     //     vcam.Follow = currentPlayer.transform;
     //    Debug.Log("vcam: " + vcam);
 
+        levelStartTime = Time.time;
+
 
     }
 
@@ -97,7 +107,7 @@ public class  GameManager : MonoBehaviour
 
     
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)         // TODO: fix level restarts (levelcompletescreen not triggered, no dies, ...)
     {
         InitializeCollectables();
         InstantiateTimer();
@@ -161,13 +171,13 @@ public class  GameManager : MonoBehaviour
         }
     }
 
-public void CollectItem(Collectable collectable)
+    public void CollectItem(Collectable collectable)
     {
-        Debug.Log("collectedAfterCheckpoint: " + collectable.collectedAfterCheckpoint);
         if (!collectable.collectedAfterCheckpoint)
         {
             collectable.collectedAfterCheckpoint = true;
             UpdateUI(collectable.itemType, 1);
+            score += collectable.scoreValue; 
         }
     }
 
@@ -271,5 +281,93 @@ public void CollectItem(Collectable collectable)
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
     }
+  
+    private float CalculateLevelCompletionTime()
+    {
+        float currentTime = Time.time;
+        return currentTime - levelStartTime;
+    }
+
+
+    public void UpdateDeliveries()
+    {
+        reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+    }
+
+    public void TriggerLevelComplete()
+    {
+        Debug.Log("TriggerLevelComplete called");
+        ActivateEndCanvas(true);
+    }
+    public void TriggerGameOver()
+    {
+        Debug.Log("TriggerLevelComplete called");
+        ActivateEndCanvas(false);
+    }
+
+    public void ActivateEndCanvas(bool complete)
+    {
+        float completionTime = CalculateLevelCompletionTime();
+        int collectedItems = GetCollectedItemsCount();
+        int totalItems = GetTotalItemsCount(); 
+
+        if (complete) {
+        if (levelCompleteScreen != null)
+            {
+                levelCompleteScreen.SetActive(true);
+                Debug.Log("Level complete screen activated");
+
+                LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
+                if (lcManager != null)
+                {
+                    lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+                    Debug.Log("LevelCompleteManager UpdateUI called");
+                }
+                else
+                {
+                    Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+                }
+            }
+            else
+            {
+                Debug.LogError("levelCompleteScreen is null in GameManager");
+            }
+        }
+    }
+
+private int GetCollectedItemsCount()
+{
+    int count = 0;
+    foreach (var pair in collectables)
+    {
+        foreach (var collectable in pair.Value)
+        {
+            if (!collectable.gameObject.activeSelf)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+    private int GetTotalItemsCount()
+    {
+        int count = 0;
+        foreach (var pair in collectables)
+        {
+            count += pair.Value.Count;
+        }
+        return count;
+    }
+
+
+
+    // todo call method
+    public void IncrementDeliveries()
+    {
+        reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+    }
+    
 }
 
