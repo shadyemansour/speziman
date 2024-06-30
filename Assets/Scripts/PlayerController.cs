@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-   public void Die()
+    public void Die()
     {
-        SoundManager.Instance.PlaySound("die");
+        SoundManager.Instance.PlayRandomDieSound();
         GameManager.Instance.RespawnPlayer(gameObject);
     }
 }
