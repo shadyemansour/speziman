@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FlyingEnemy : MonoBehaviour
@@ -21,32 +22,36 @@ public class FlyingEnemy : MonoBehaviour
 
 void Start()
     {
-        player = GameObject.FindWithTag("Player").transform; // Find the player by tag
+        player = GameObject.FindWithTag("Player")?.transform; // Find the player by tag
         StartCoroutine(FlyRoutine());
     }
 
     void Update()
     {
-        if (!hasAttacked)
-        {
-            if (!isFlyingErratically)
+        if(player != null){
+            if (!hasAttacked)
             {
-                // Calculate the target position to maintain distance in front of the player
-                Vector3 direction = (player.position - transform.position).normalized;
-                targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
-                targetPosition = new Vector3(
-                    player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
-                    player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
-                    transform.position.z
-                );
+                if (!isFlyingErratically)
+                {
+                    // Calculate the target position to maintain distance in front of the player
+                    Vector3 direction = (player.position - transform.position).normalized;
+                    targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
+                    targetPosition = new Vector3(
+                        player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
+                        player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
+                        transform.position.z
+                    );
 
-                transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);
+                    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);
+                }
+                else
+                {
+                    // Fly erratically
+                    transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized * drunkFlySpeed * Time.deltaTime;
+                }
             }
-            else
-            {
-                // Fly erratically
-                transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized * drunkFlySpeed * Time.deltaTime;
-            }
+        }else{
+            player = GameObject.FindWithTag("Player").transform;
         }
     }
 

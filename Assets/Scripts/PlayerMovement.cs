@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private float boostJumpForce = 500f;
     [SerializeField] private float boostAnimationSpeed = 1.5f;
     [SerializeField] private float reducedAnimationSpeed = .5f;
-    [SerializeField] private float waterDensity = 3f; // Change this value to tweak buoyancy
+    [SerializeField] private float waterDensity = 2f; // Change this value to tweak buoyancy
     [SerializeField] private float objectVolume = 1f; // Approximate volume of the player
     [SerializeField] private float gravity = 9.81f; // Acceleration due to gravity
     private Action disableBoostCallback;
@@ -106,7 +106,7 @@ public class PlayerMovement : MonoBehaviour {
         controller.SetJumpForce(defaultJumpForce);
     }
 
-
+  
     // todo to be called when needed
     public void IncrementScore(int amount)
     {
@@ -117,5 +117,10 @@ public class PlayerMovement : MonoBehaviour {
     {
         GameManager.Instance.UpdateDeliveries();
     }
+
+    public void SetInWater(bool value) {
+        inWater = value;
+        controller.SetInWater(value);
+    }   
 
 }
