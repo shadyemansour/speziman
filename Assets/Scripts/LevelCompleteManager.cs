@@ -20,6 +20,8 @@ public class LevelCompleteManager : MonoBehaviour
     [Header("Barbara Head Sprites")]
     [SerializeField] private Sprite yellowBarbaraHead;
     [SerializeField] private Sprite pinkBarbaraHead;
+    [SerializeField] private Animator uiAnimator;
+    [SerializeField] private Animator backgroundAnimator;
 
     
      public void ExitToMenu()
@@ -59,6 +61,8 @@ public class LevelCompleteManager : MonoBehaviour
         }
 
         UpdateBarbaraHeads(reachedDeliveries, totalDeliveries);
+        backgroundAnimator.Play("BackgroundFadeIn");
+        uiAnimator.Play("ZoomInAndFadeIn");
     }
 
     private void UpdateBarbaraHeads(int reachedDeliveries, int totalDeliveries)
