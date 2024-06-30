@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour {
     private Rigidbody2D rb;
 
     public bool inWater = false;
+    public bool isStopped = false;
 
 
 
@@ -37,6 +38,10 @@ public class PlayerMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (isStopped){
+            horizontalMove = 0;
+            return;
+        }
 
 		horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
         anim.SetFloat("speed", Mathf.Abs(horizontalMove));
@@ -121,6 +126,10 @@ public class PlayerMovement : MonoBehaviour {
     public void SetInWater(bool value) {
         inWater = value;
         controller.SetInWater(value);
+    }   
+    public void SetIsStopped(bool value) {
+        isStopped = value;
+        controller.SetIsStopped(value);
     }   
 
 }

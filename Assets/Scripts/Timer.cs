@@ -40,11 +40,6 @@ public class Timer : MonoBehaviour
                 timerIsRunning = false;
                 UpdateDisplay();
                 onTimerEnd.Invoke();
-                var gameOver = FindObjectOfType<GameOverScript>();
-                if (gameOver != null)
-                {
-                    gameOver.ShowButtons();
-                }
             }
         }
     }

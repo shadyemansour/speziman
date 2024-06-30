@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Cinemachine;
 using TMPro;
+using System.Text;
 
 public class  GameManager : MonoBehaviour
 {
@@ -30,7 +31,9 @@ public class  GameManager : MonoBehaviour
     public int totalDeliveries = 3;
     public int reachedDeliveries = 0;
     private float levelStartTime;       
-    [SerializeField] private GameObject levelCompleteScreen;
+    private GameObject levelCompleteScreen;
+    
+    private int currentLevel =1;
 
 
     private Timer timerInstance;
@@ -91,10 +94,28 @@ public class  GameManager : MonoBehaviour
             }
         }
     }
+    
+    public void LoadNextLevel()
+    {
+        if (currentLevel < 3)
+        {
+            currentLevel++;
+            LoadLevel(currentLevel);
+        }
+        else
+        {
+            LoadIntro();
+        }
+    }
+    public void RestartLevel()
+    {
+        this.LoadLevel(currentLevel);
+    }
 
 
     public void LoadLevel(int sceneNumber)
     {
+        currentLevel = sceneNumber;
         SceneManager.LoadScene("Level"+sceneNumber.ToString());
         SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the sceneLoaded event 
 
@@ -104,29 +125,44 @@ public class  GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Intro");
     }
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 
     
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)         // TODO: fix level restarts (levelcompletescreen not triggered, no dies, ...)
     {
-        InitializeCollectables();
-        InstantiateTimer();
-        InitializeUI();
+        levelCompleteScreen = GameObject.FindGameObjectWithTag("LevelCompleteUI");
+        Debug.Log("Scene loaded: " + scene.name);
+        if (scene.name.ToLower().Contains("level"))
+        {   
+            InitializeCollectables();
+            InstantiateTimer();
+            InitializeUI();
+            // Attempt to load the spawn point for the loaded scene
+            LoadSpawnPoint(scene.name + "SpawnPoint");
+            InitializeBackground();
+            SpawnPlayer();
+            SetupCamera();
+        
+            int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
+            currentLevel = sceneNumber;
+            timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
+        }
+        // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
-
-        // Attempt to load the spawn point for the loaded scene
-        LoadSpawnPoint(scene.name + "SpawnPoint");
-        SpawnPlayer();
+    private void SetupCamera()
+    {
         var vcam = FindObjectOfType<CinemachineVirtualCamera>();
         var confiner = FindObjectOfType<CinemachineConfiner2D>();
-        var gridCollider = GameObject.FindWithTag("Ground")?.GetComponent<PolygonCollider2D>();
+        var gridCollider = GameObject.FindWithTag("Grid")?.GetComponent<PolygonCollider2D>();
         var currentPlayer = GameObject.FindWithTag("Player");
         vcam.Follow = currentPlayer.transform;
         confiner.m_BoundingShape2D = gridCollider;
-        int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
-        timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
-        // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void LoadSpawnPoint(string spawnPointName)
@@ -161,6 +197,7 @@ public class  GameManager : MonoBehaviour
    private void InitializeCollectables()
     {
         Collectable[] allCollectables = FindObjectsOfType<Collectable>();
+        collectables.Clear();
         foreach (Collectable collectable in allCollectables)
         {
             if (!collectables.ContainsKey(collectable.itemType))
@@ -211,6 +248,32 @@ public class  GameManager : MonoBehaviour
         }
     }
 
+    private void InitializeBackground()
+    {
+        
+        GameObject[] background = GameObject.FindGameObjectsWithTag("Background");
+        if (background != null)
+        {
+            foreach (GameObject bg in background)
+            {
+                ParallaxBackground parallaxBackground = bg.GetComponent<ParallaxBackground>();
+                if (parallaxBackground != null)
+                {
+                    parallaxBackground.SetLevelPlayerSpawnPoint(spawnPoint);
+                    parallaxBackground.InitializeBackground();
+                }
+                else
+                {
+                    Debug.LogError("ParallaxBackground component not found on background object");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("Background object not found");
+        }
+    }
+
     private void InitializeUI()
     {
         FindTextObjects();
@@ -220,7 +283,7 @@ public class  GameManager : MonoBehaviour
     private void ResetCollectablesTexts(){
         foreach(var pair in collectableTexts)
         {
-            pair.Value.text = "0";
+            pair.Value.text = "0/"+collectables[pair.Key].Count.ToString();
         }
     }
 
@@ -244,7 +307,11 @@ public class  GameManager : MonoBehaviour
     {
         if (collectableTexts.ContainsKey(itemType))
         {
-            collectableTexts[itemType].text = (int.Parse(collectableTexts[itemType].text) + change).ToString();
+            StringBuilder sb = new StringBuilder();
+            sb.Append((int.Parse(collectableTexts[itemType].text.Split("/")[0]) + change).ToString());
+            sb.Append("/");
+            sb.Append(collectables[itemType].Count.ToString());
+            collectableTexts[itemType].text = sb.ToString();
         }
         else{
             Debug.LogError("Text object not found for: " + itemType);
@@ -263,6 +330,7 @@ public class  GameManager : MonoBehaviour
         Debug.Log("Time's up! Game over or level fail.");
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
+        TriggerGameOver();
         
     }
 
@@ -305,34 +373,41 @@ public class  GameManager : MonoBehaviour
         ActivateEndCanvas(false);
     }
 
+    private void StopLevel()
+    {
+        
+        currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(true);
+        timerInstance.StopTimer();
+
+    }
+
     public void ActivateEndCanvas(bool complete)
     {
+        StopLevel();
         float completionTime = CalculateLevelCompletionTime();
         int collectedItems = GetCollectedItemsCount();
         int totalItems = GetTotalItemsCount(); 
 
-        if (complete) {
-        if (levelCompleteScreen != null)
-            {
-                levelCompleteScreen.SetActive(true);
-                Debug.Log("Level complete screen activated");
-
-                LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
-                if (lcManager != null)
+            if (levelCompleteScreen != null)
                 {
-                    lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
-                    Debug.Log("LevelCompleteManager UpdateUI called");
+                    levelCompleteScreen.GetComponent<CanvasGroup>().alpha = 1;
+                    Debug.Log("Level complete screen activated");
+
+                    LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
+                    if (lcManager != null)
+                    {
+                        lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete);
+                        Debug.Log("LevelCompleteManager UpdateUI called");
+                    }
+                    else
+                    {
+                        Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+                    }
                 }
                 else
                 {
-                    Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+                    Debug.LogError("levelCompleteScreen is null in GameManager");
                 }
-            }
-            else
-            {
-                Debug.LogError("levelCompleteScreen is null in GameManager");
-            }
-        }
     }
 
 private int GetCollectedItemsCount()

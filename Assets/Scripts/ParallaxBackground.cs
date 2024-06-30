@@ -21,7 +21,7 @@ public class ParallaxBackground : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    public void InitializeBackground()
     {
         cameraTransform = Camera.main.transform;
         startPositionX = levelPlayerSpawnPoint.position.x;
@@ -33,17 +33,24 @@ public class ParallaxBackground : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        if(levelPlayerSpawnPoint)
+        {
+            float relativeDistX = cameraTransform.position.x * parallaxEffectSpeed.x;
+            float relativeDistY = cameraTransform.position.y * parallaxEffectSpeed.y;
+            transform.position = new Vector3(startPositionX + relativeDistX, startPositionY + relativeDistY, transform.position.z);
 
-        float relativeDistX = cameraTransform.position.x * parallaxEffectSpeed.x;
-        float relativeDistY = cameraTransform.position.y * parallaxEffectSpeed.y;
-        transform.position = new Vector3(startPositionX + relativeDistX, startPositionY + relativeDistY, transform.position.z);
+            float relativeCameraDist = cameraTransform.position.x * (1 - parallaxEffectSpeed.x);
+            if (relativeCameraDist > startPositionX + spriteSizeX) {
+                startPositionX += spriteSizeX;
+            }
+            else if (relativeCameraDist < startPositionX - spriteSizeX) {
+                startPositionX -= spriteSizeX;
+        }
+        }
+    }
 
-        float relativeCameraDist = cameraTransform.position.x * (1 - parallaxEffectSpeed.x);
-        if (relativeCameraDist > startPositionX + spriteSizeX) {
-            startPositionX += spriteSizeX;
-        }
-        else if (relativeCameraDist < startPositionX - spriteSizeX) {
-            startPositionX -= spriteSizeX;
-        }
+    public void SetLevelPlayerSpawnPoint(Transform levelPlayerSpawnPoint)
+    {
+        this.levelPlayerSpawnPoint = levelPlayerSpawnPoint;
     }
 }

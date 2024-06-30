@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class LevelCompleteManager : MonoBehaviour
 {
     [Header("UI References")]
+    [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI itemsText;
@@ -13,76 +14,49 @@ public class LevelCompleteManager : MonoBehaviour
     [SerializeField] private Image[] barbaraHeads;
 
     [Header("Buttons")]
-    [SerializeField] private Button menuButton;
-    [SerializeField] private Button restartButton;
-    [SerializeField] private Button newLevelButton;
+    [SerializeField] private GameObject levelCompleteButtons;
+    [SerializeField] private GameObject gameOverButtons;
 
     [Header("Barbara Head Sprites")]
     [SerializeField] private Sprite yellowBarbaraHead;
     [SerializeField] private Sprite pinkBarbaraHead;
 
     
-
-    private void Awake()
+     public void ExitToMenu()
     {
-        Debug.Log("LevelCompleteManager Awake called");
+         GameManager.Instance.LoadMenu();
     }
 
-    private void OnEnable()
+    public void RestartLevel()
     {
-        Debug.Log("LevelCompleteManager OnEnable called");
+        GameManager.Instance.RestartLevel();
+
     }
 
-    private void Start()
+    public void LoadNextLevel()
     {
-        Debug.Log("LevelCompleteManager Start called");
-        // SetupButtonListeners();
+        GameManager.Instance.LoadNextLevel();
+
     }
-
-/*     private void SetupButtonListeners()
-    {
-        if (menuButton != null)
-        {
-            menuButton.onClick.AddListener(GoToMenu);
-            Debug.Log("Menu button listener added");
-        }
-        else
-        {
-            Debug.LogError("Menu button is null");
-        }
-
-        if (restartButton != null)
-        {
-            restartButton.onClick.AddListener(RestartLevel);
-            Debug.Log("Restart button listener added");
-        }
-        else
-        {
-            Debug.LogError("Restart button is null");
-        }
-
-        if (newLevelButton != null)
-        {
-            newLevelButton.onClick.AddListener(LoadNextLevel);
-            Debug.Log("New Level button listener added");
-        }
-        else
-        {
-            Debug.LogError("New Level button is null");
-        }
-    } */
-
-    
-
-
-
-
-    public void UpdateUI(int score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
+    public void UpdateUI(int score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, bool complete)
     {
         scoreText.text = $"Score: {score}";
         timeText.text = $"Time: {FormatTime(completionTime)}";
         itemsText.text = $"Collected items: {collectedItems}/{totalItems}";
         deliveriesText.text = $"Deliveries: {reachedDeliveries}/{totalDeliveries}";
+        if (complete)
+        {
+
+            titleText.text = $"Level Complete!";
+            levelCompleteButtons.gameObject.SetActive(true);
+            gameOverButtons.gameObject.SetActive(false);
+        }
+        else
+        {
+            titleText.text = $"Game Over :(";
+            levelCompleteButtons.gameObject.SetActive(false);
+            gameOverButtons.gameObject.SetActive(true);
+        }
 
         UpdateBarbaraHeads(reachedDeliveries, totalDeliveries);
     }
@@ -101,4 +75,6 @@ public class LevelCompleteManager : MonoBehaviour
         int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
+
+   
 }

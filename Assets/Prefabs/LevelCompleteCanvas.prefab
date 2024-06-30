@@ -120,9 +120,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 82962781710882329}
-        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
-        m_MethodName: RestartGame
+      - m_Target: {fileID: 6007195430482331198}
+        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -537,8 +537,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 82962781710882329}
-        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
+      - m_Target: {fileID: 6007195430482331198}
+        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
         m_MethodName: ExitToMenu
         m_Mode: 1
         m_Arguments:
@@ -1199,8 +1199,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 82962781710882329}
-        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
+      - m_Target: {fileID: 6007195430482331198}
+        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
         m_MethodName: LoadNextLevel
         m_Mode: 1
         m_Arguments:
@@ -1263,10 +1263,9 @@ GameObject:
   - component: {fileID: 7267101131337868587}
   - component: {fileID: 6007195430482331198}
   - component: {fileID: 658160673481928535}
-  - component: {fileID: 82962781710882329}
   m_Layer: 5
   m_Name: LevelCompleteCanvas
-  m_TagString: Untagged
+  m_TagString: LevelCompleteUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1373,6 +1372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576b779a627b04cb68d0693fcc98db08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleText: {fileID: 4601640622698282793}
   scoreText: {fileID: 5509284519050864359}
   timeText: {fileID: 2580251928955851136}
   itemsText: {fileID: 6951010440323503697}
@@ -1381,9 +1381,8 @@ MonoBehaviour:
   - {fileID: 7423983137389256217}
   - {fileID: 8229892695437973277}
   - {fileID: 8026107863375949615}
-  menuButton: {fileID: 5844117254310613571}
-  restartButton: {fileID: 5807398883110364037}
-  newLevelButton: {fileID: 8250260118999055223}
+  levelCompleteButtons: {fileID: 4722060589857353646}
+  gameOverButtons: {fileID: 6299746177244964155}
   yellowBarbaraHead: {fileID: 21300000, guid: 8e8402b4c3e8041ccb980c7cb486a701, type: 3}
   pinkBarbaraHead: {fileID: 21300000, guid: aa8fdd906ea6b4d88a8d4f5f9f8c93e2, type: 3}
 --- !u!225 &658160673481928535
@@ -1398,18 +1397,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &82962781710882329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6116003283872320920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de225937c491b374e820687d1d0c826f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6173604710257194242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,8 +1518,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 82962781710882329}
-        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
+      - m_Target: {fileID: 6007195430482331198}
+        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
         m_MethodName: ExitToMenu
         m_Mode: 1
         m_Arguments:
@@ -1715,9 +1702,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 82962781710882329}
-        m_TargetAssemblyTypeName: GameOverScript, Assembly-CSharp
-        m_MethodName: RestartGame
+      - m_Target: {fileID: 6007195430482331198}
+        m_TargetAssemblyTypeName: LevelCompleteManager, Assembly-CSharp
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

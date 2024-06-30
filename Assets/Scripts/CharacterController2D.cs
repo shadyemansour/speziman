@@ -20,6 +20,7 @@ public class CharacterController2D : MonoBehaviour
 	private Vector3 m_Velocity = Vector3.zero;
 	private float jumpCooldown = 0.1f; // Cooldown duration in seconds
     private float jumpCooldownTimer;
+	private bool m_IsStopped = false;
 
 	[Header("Events")]
 	[Space]
@@ -40,27 +41,30 @@ public class CharacterController2D : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		bool wasGrounded = m_Grounded;
-		m_Grounded = false;
-
- 		if (jumpCooldownTimer > 0)
-        {
-            jumpCooldownTimer -= Time.fixedDeltaTime;
-        }
-        else
-        {
-		// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-		// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-		Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-		for (int i = 0; i < colliders.Length; i++)
+		if (!m_IsStopped)
 		{
-			if (colliders[i].gameObject != gameObject)
+			bool wasGrounded = m_Grounded;
+			m_Grounded = false;
+
+			if (jumpCooldownTimer > 0)
 			{
-				m_Grounded = true;
-				if (!wasGrounded)
-					OnLandEvent.Invoke();
+				jumpCooldownTimer -= Time.fixedDeltaTime;
 			}
-		}
+			else
+			{
+			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
+			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
+			Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				if (colliders[i].gameObject != gameObject)
+				{
+					m_Grounded = true;
+					if (!wasGrounded)
+						OnLandEvent.Invoke();
+				}
+			}
+			}
 		}
 	}
 
@@ -124,6 +128,9 @@ public class CharacterController2D : MonoBehaviour
 	}
 	public void SetInWater(bool inWater) {
 		m_InWater = inWater;
+	}
+	public void SetIsStopped(bool isStopped) {
+		m_IsStopped = isStopped;
 	}
 
 }

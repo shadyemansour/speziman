@@ -14,6 +14,9 @@ TagManager:
   - OrangeSlider
   - ColaSlider
   - BoostUI
+  - Background
+  - Grid
+  - LevelCompleteUI
   layers:
   - Default
   - TransparentFX
