@@ -297,29 +297,41 @@ public class  GameManager : MonoBehaviour
     public void TriggerLevelComplete()
     {
         Debug.Log("TriggerLevelComplete called");
+        ActivateEndCanvas(true);
+    }
+    public void TriggerGameOver()
+    {
+        Debug.Log("TriggerLevelComplete called");
+        ActivateEndCanvas(false);
+    }
+
+    public void ActivateEndCanvas(bool complete)
+    {
         float completionTime = CalculateLevelCompletionTime();
         int collectedItems = GetCollectedItemsCount();
         int totalItems = GetTotalItemsCount(); 
 
+        if (complete) {
         if (levelCompleteScreen != null)
-        {
-            levelCompleteScreen.SetActive(true);
-            Debug.Log("Level complete screen activated");
-
-            LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
-            if (lcManager != null)
             {
-                lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
-                Debug.Log("LevelCompleteManager UpdateUI called");
+                levelCompleteScreen.SetActive(true);
+                Debug.Log("Level complete screen activated");
+
+                LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
+                if (lcManager != null)
+                {
+                    lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+                    Debug.Log("LevelCompleteManager UpdateUI called");
+                }
+                else
+                {
+                    Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+                }
             }
             else
             {
-                Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+                Debug.LogError("levelCompleteScreen is null in GameManager");
             }
-        }
-        else
-        {
-            Debug.LogError("levelCompleteScreen is null in GameManager");
         }
     }
 
