@@ -2,9 +2,8 @@
 using System;
 using UnityEngine;
 
-public class Float : MonoBehaviour
+public class Mud : MonoBehaviour
 {
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -12,7 +11,7 @@ public class Float : MonoBehaviour
             PlayerMovement playerMovement = other.GetComponent<PlayerMovement>();
             if (playerMovement != null)
             {
-                    playerMovement.inWater = true;
+                playerMovement.ReduceSpeed(true);
             }
         }
     }
@@ -24,9 +23,9 @@ public class Float : MonoBehaviour
             PlayerMovement playerMovement = other.GetComponent<PlayerMovement>();
             if (playerMovement != null)
             {
-                
-                    playerMovement.inWater = false;
+                playerMovement.ResetSpeed();
             }
         }
     }
+
 }
