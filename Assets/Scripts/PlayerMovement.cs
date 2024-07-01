@@ -96,6 +96,7 @@ public class PlayerMovement : MonoBehaviour {
             runSpeed = swimSpeed;
             controller.SetJumpForce(waterJumpForce);
         }
+        anim.speed = reducedAnimationSpeed;
 
     }
 
