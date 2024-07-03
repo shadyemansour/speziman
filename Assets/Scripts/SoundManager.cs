@@ -80,7 +80,7 @@ public class SoundManager : MonoBehaviour
     }
 
 
-public void FadeOutBackgroundSound(float fadeOutTime=2f)
+    public void FadeOutBackgroundSound(float fadeOutTime=2f)
     {
         StartCoroutine(FadeOut(musicSource, fadeOutTime));
     }

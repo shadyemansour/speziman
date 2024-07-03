@@ -9,4 +9,5 @@ public class PlayerController : MonoBehaviour
         SoundManager.Instance.PlayRandomDieSound();
         GameManager.Instance.RespawnPlayer(gameObject);
     }
+
 }

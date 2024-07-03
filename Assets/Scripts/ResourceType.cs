@@ -1,1 +1,1 @@
-	public enum ResourceType {Cola, Orange};
+	public enum ResourceType {Cola, Orange, Spezi};

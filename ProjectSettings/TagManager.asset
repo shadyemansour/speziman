@@ -17,6 +17,11 @@ TagManager:
   - Background
   - Grid
   - LevelCompleteUI
+  - Spring
+  - StatsCanvas
+  - Spezi_Tag
+  - Spezi_Text
+  - Orange
   layers:
   - Default
   - TransparentFX

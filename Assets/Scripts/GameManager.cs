@@ -7,6 +7,10 @@ using UnityEngine.UI;
 using Cinemachine;
 using TMPro;
 using System.Text;
+using Unity.VisualScripting;
+using System.Linq;
+using System.Collections;
+using Unity.Collections;
 
 public class  GameManager : MonoBehaviour
 {
@@ -44,6 +48,7 @@ public class  GameManager : MonoBehaviour
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
     private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
     private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
+    [SerializeField] private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
 
     void Awake()
     {
@@ -139,6 +144,7 @@ public class  GameManager : MonoBehaviour
         if (scene.name.ToLower().Contains("level"))
         {   
             InitializeCollectables();
+            // InitializeCollectablesUI();
             InstantiateTimer();
             InitializeUI();
             // Attempt to load the spawn point for the loaded scene
@@ -205,6 +211,78 @@ public class  GameManager : MonoBehaviour
                 collectables[collectable.itemType] = new List<Collectable>();
             }
             collectables[collectable.itemType].Add(collectable);
+        }
+        LoadCollectablesPrefabs();
+    }
+
+    //  private void InitializeCollectablesUI()
+    // {
+    //     GameObject parent = GameObject.FindGameObjectWithTag("StatsCanvas");
+    //     Vector3 nextPosition = new Vector3(-344, 186, 0); // Starting position for the first item
+    //     float xSpacing = 32.0f; // Horizontal spacing between UI and text
+    //     float ySpacing = 6.0f; // Vertical spacing between lines
+
+    //     foreach (var pair in collectables)
+    //     {
+    //         Debug.Log($"{pair.Key}:" );
+    //         Debug.Log("currentPosition: " + nextPosition);
+    //         // Load and instantiate the UI prefab
+    //         Transform uiPrefab = Resources.Load<Transform>($"UI/{pair.Key}");
+    //         if (uiPrefab == null) {
+    //             Debug.LogError($"Prefab for {pair.Key} not found in Resources/UI/");
+    //             continue;
+    //         }
+    //         Transform uiInstance = Instantiate(uiPrefab, parent.transform);
+    //         uiInstance.localPosition = nextPosition;
+
+    //         // Assuming the prefab has a RectTransform component
+    //         RectTransform uiRect = uiInstance.GetComponent<RectTransform>();
+    //         if (uiRect == null) {
+    //             Debug.LogError("No RectTransform found on UI prefab: " + pair.Key);
+    //             continue;
+    //         }
+    //         Debug.Log("uiInstance position: " + uiInstance.transform.localPosition);
+    //         // uiRect.anchoredPosition = nextPosition;
+
+    //         // Calculate the next position for the text, aligning it next to the UI
+    //         Vector3 textPosition = new Vector3(nextPosition.x + xSpacing, nextPosition.y, 0);
+    //         Debug.Log("text position: " +textPosition);
+
+    //         // Load and instantiate the text prefab
+    //         Transform textPrefab = Resources.Load<Transform>($"UI/{pair.Key}_Text");
+    //         if (textPrefab == null) {
+    //             Debug.LogError($"Text prefab for {pair.Key} not found in Resources/UI/");
+    //             continue;
+    //         }
+    //         Transform textInstance = Instantiate(textPrefab, parent.transform);
+    //         // RectTransform textRect = textInstance.GetComponent<RectTransform>();
+    //         textInstance.localPosition = new Vector2(nextPosition.x + xSpacing, nextPosition.y);
+
+    //         Debug.Log("textInstance position: " + textInstance.transform.localPosition);
+    //         // Move the next starting position down to the next line after both UI and text are placed
+    //         nextPosition.y -= (uiRect.rect.height/2 + ySpacing);
+    //     }
+    // }
+
+
+    private void LoadCollectablesPrefabs()
+    {
+        collectablePrefabs.Clear();
+        foreach (var pair in collectables)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Prefabs/");
+            sb.Append(pair.Key.ToLower());
+            sb.Append("Anim");
+            GameObject prefab = Resources.Load<GameObject>(sb.ToString());
+            if (prefab != null)
+            {
+                collectablePrefabs[pair.Key] = prefab;
+            }
+            else
+            {
+                Debug.LogError("Prefab not found for: " + pair.Key);
+            }
         }
     }
 
@@ -396,6 +474,7 @@ public class  GameManager : MonoBehaviour
                     LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
                     if (lcManager != null)
                     {
+                        Debug.Log(reachedDeliveries);
                         lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete);
                         Debug.Log("LevelCompleteManager UpdateUI called");
                     }
@@ -443,6 +522,54 @@ private int GetCollectedItemsCount()
     {
         reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
     }
+
+    public void SendCollectables(GameObject player, Vector3 barbaraPosition )
+    {
+            StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
+    }
+
+    private IEnumerator SendCollectablesCoroutine(GameObject player, Vector3 barbaraPosition, float delayBetweenItems)
+    {   
+        player.GetComponent<PlayerMovement>().SetIsStopped(true);
+
+        foreach (var pair in collectableTexts)
+        {
+
+            int value = int.Parse(collectableTexts[pair.Key].text.Split("/")[0]);
+            if(value > 0 ){
+                for (int i = 0; i < value; i++)
+                {
+                    GameObject instance = Instantiate(collectablePrefabs[pair.Key], player.transform.position, Quaternion.identity);
+                    StartCoroutine(MoveCollectableInParabola(instance, barbaraPosition, 1.0f));
+                    yield return new WaitForSeconds(delayBetweenItems); 
+
+                    
+                }
+            }
+            player.GetComponent<PlayerMovement>().SetIsStopped(false);
+        }
+    }
+
+    IEnumerator MoveCollectableInParabola(GameObject collectable, Vector3 targetPos, float duration)
+{
+    float time = 0;
+    Vector3 startPos = collectable.transform.position;
+    float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2; // Height of the parabola; adjust as needed
+
+    while (time < duration)
+    {
+        float t = time / duration; // Normalize time
+        // Interpolate the x and y positions
+        collectable.transform.position = Vector3.Lerp(startPos, targetPos, t) + new Vector3(0, height * Mathf.Sin(Mathf.PI * t), 0);
+        time += Time.deltaTime;
+        yield return null;
+    }
+
+    collectable.transform.position = targetPos; // Ensure it ends exactly at the target
+    Destroy(collectable); // Destroy the object after reaching the target
+}
+
+
     
 }
 
