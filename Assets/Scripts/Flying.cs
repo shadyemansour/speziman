@@ -34,7 +34,7 @@ void Start()
                         transform.position.z
                     );
 
-                    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);        
+                    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);   
                     GetComponent<Weapon>().Attack(player);  // Ensure Weapon script is attached to the same object
 
             }

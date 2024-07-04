@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 
 public class Helmut : MonoBehaviour
@@ -8,75 +7,72 @@ public class Helmut : MonoBehaviour
     private SpriteRenderer imageRenderer;
     [SerializeField] private GameObject bulb;
     private bool done = false;
-    // Start is called before the first frame update
+    private Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+    private Animator animator;
+
     void Awake()
     {
-        //find the child with the script flying
-      imageRenderer = GetComponent<SpriteRenderer>();
-        
+        imageRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        PreloadSprites();
     }
+
+    private void PreloadSprites()
+    {
+        string[] spriteNames = { "Story 1", "Story 2", "Story 3", "Story 4" };
+        foreach (var name in spriteNames)
+        {
+            spriteCache[name] = Resources.Load<Sprite>($"Sprites/{name}");
+            if (spriteCache[name] == null)
+            {
+                Debug.LogError($"Failed to load sprite: Sprites/{name}");
+            }
+        }
+    }
+
+    private void ChangeSprite(string storyName)
+    {
+        if (spriteCache.TryGetValue(storyName, out Sprite newSprite))
+        {
+            imageRenderer.sprite = newSprite;
+            Debug.Log($"{storyName} Sprite loaded");
+        }
+        else
+        {
+            Debug.LogError($"{storyName} sprite is missing!");
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collider)
     {
-        Debug.Log("Collision");
         if (collider.gameObject.CompareTag("Orange") && !done)
         {
-            
-            Sprite newSprite = Resources.Load<Sprite>("Sprites/Story 3");
-            Debug.Log("Sprite loaded");
-            if(newSprite != null)
-            {
-                imageRenderer.sprite = newSprite;
-            }
-            else
-            {
-                Debug.LogError("sprite is null");
-            }
+            ChangeSprite("Story 3");
             done = true;
-            
         }
-    }  
+    }
 
     public void Drink()
     {
-            Sprite newSprite = Resources.Load<Sprite>("Sprites/Story 2");
-            Debug.Log("Sprite loaded");
-            if(newSprite != null)
-            {
-                imageRenderer.sprite = newSprite;
-            }
-            else
-            {
-                Debug.LogError("ImageRenderer is null");
-            }    
-    }    
+        animator.Play("helmut");
+    }
 
-        public void Idea()
+        public void PauseDrinking()
     {
-            Sprite newSprite = Resources.Load<Sprite>("Sprites/Story 1");
-            Debug.Log("Sprite loaded");
-            if(newSprite != null)
-            {
-                imageRenderer.sprite = newSprite;
-            }
-            else
-            {
-                Debug.LogError("ImageRenderer is null");
-            }  
-            bulb.SetActive(true);  
-    }    
+        animator.enabled = false;
+        ChangeSprite("Story 2");
+    }
 
-      public void WearGlasses()
+
+    public void Idea()
     {
-            bulb.SetActive(false);
-            Sprite newSprite = Resources.Load<Sprite>("Sprites/Story 4");
-            Debug.Log("Sprite loaded");
-            if(newSprite != null)
-            {
-                imageRenderer.sprite = newSprite;
-            }
-            else
-            {
-                Debug.LogError("ImageRenderer is null");
-            }  
-    }    
+        ChangeSprite("Story 1");
+        bulb.SetActive(true);
+    }
+
+    public void WearGlasses()
+    {
+        bulb.SetActive(false);
+        ChangeSprite("Story 4");
+    }
 }

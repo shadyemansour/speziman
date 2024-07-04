@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
                 helmut.Drink();
                 break;
             case 2:
+                helmut.PauseDrinking();
                 specialOrange.StartFall();
                 break;
             case 3:
