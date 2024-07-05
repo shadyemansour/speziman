@@ -10,20 +10,17 @@ public class PlayerMovement : MonoBehaviour {
 
 	[SerializeField] private float runSpeed;
     [SerializeField] private float boostSpeed = 40f;
-    [SerializeField] private float swimSpeed = 40f;
+    [SerializeField] private float swimSpeed = 10f;
     [SerializeField] private float mudSpeed = 3f;
 	[SerializeField] private float defaultSpeed = 30f;
     [SerializeField] private float defaultJumpForce = 400f;
+    [SerializeField] private float mudJumpForce = 100f;
+    [SerializeField] private float waterJumpForce = 250f;
     [SerializeField] private float boostJumpForce = 500f;
     [SerializeField] private float boostAnimationSpeed = 1.5f;
     [SerializeField] private float reducedAnimationSpeed = .5f;
-    [SerializeField] private float waterDensity = 2f; // Change this value to tweak buoyancy
-    [SerializeField] private float objectVolume = 1f; // Approximate volume of the player
-    [SerializeField] private float gravity = 9.81f; // Acceleration due to gravity
     private Action disableBoostCallback;
     private Rigidbody2D rb;
-
-    public bool inWater = false;
     public bool isStopped = false;
 
 
@@ -59,12 +56,6 @@ public class PlayerMovement : MonoBehaviour {
 		// Move our character
 		controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
 		jump = false;
-        if (inWater) 
-        {
-            Debug.Log("In water");  
-            float buoyantForce = objectVolume * waterDensity * gravity;
-            rb.AddForce(new Vector2(0, buoyantForce));
-        }
 	}
 
 
@@ -97,10 +88,15 @@ public class PlayerMovement : MonoBehaviour {
         ResetSpeed();
     }
 
-    public void ReduceSpeed(float speed, float jump) {
-        runSpeed = speed;
-        SetAnimationSpeed(reducedAnimationSpeed);
-        controller.SetJumpForce(jump);
+    public void ReduceSpeed(bool isMud) {
+        if (isMud) {
+            runSpeed = mudSpeed;
+            controller.SetJumpForce(mudJumpForce);
+        } else {
+            runSpeed = swimSpeed;
+            controller.SetJumpForce(waterJumpForce);
+        }
+        anim.speed = reducedAnimationSpeed;
 
     }
 
@@ -123,13 +119,11 @@ public class PlayerMovement : MonoBehaviour {
         GameManager.Instance.UpdateDeliveries();
     }
 
-    public void SetInWater(bool value) {
-        inWater = value;
-        controller.SetInWater(value);
-    }   
     public void SetIsStopped(bool value) {
         isStopped = value;
         controller.SetIsStopped(value);
     }   
+
+    
 
 }

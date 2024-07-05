@@ -11,6 +11,7 @@ public class Timer : MonoBehaviour
     private TextMeshProUGUI timerDisplay; // TextMeshPro component for displaying the timer
     public UnityEvent onTimerEnd; // Event triggered when timer ends
     [SerializeField] private Animator animator; 
+    
 
     void Awake()
     {

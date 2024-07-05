@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour {
-
+public class SoundManager : MonoBehaviour
+{
     public static SoundManager Instance { get; private set; }
     private Dictionary<string, AudioClip> audioClips;
+    private List<AudioClip> dieSounds;
     private AudioSource musicSource;
     private AudioSource sfxSource;
 
@@ -22,14 +23,13 @@ public class SoundManager : MonoBehaviour {
             return;
         }
 
-            AudioSource[] sources = GetComponents<AudioSource>();
-            musicSource = sources[0];
-            sfxSource = sources[1];        
-            audioClips = new Dictionary<string, AudioClip>
+        AudioSource[] sources = GetComponents<AudioSource>();
+        musicSource = sources[0];
+        sfxSource = sources[1];        
+        audioClips = new Dictionary<string, AudioClip>
         {
             { "jump", Resources.Load<AudioClip>("Audio/jump") },
             { "checkpoint", Resources.Load<AudioClip>("Audio/checkpoint") },
-            { "die", Resources.Load<AudioClip>("Audio/die") },
             { "levelComplete", Resources.Load<AudioClip>("Audio/levelComplete") },
             { "collectCola", Resources.Load<AudioClip>("Audio/Collect") },
             { "collectOrange", Resources.Load<AudioClip>("Audio/Collect_2") },
@@ -37,6 +37,21 @@ public class SoundManager : MonoBehaviour {
             { "boost", Resources.Load<AudioClip>("Audio/boost") },
             { "levelFailed", Resources.Load<AudioClip>("Audio/levelFailed") }
         };
+
+        // Load die sounds
+        dieSounds = new List<AudioClip>();
+        for (int i = 1; i <= 12; i++)
+        {
+            AudioClip clip = Resources.Load<AudioClip>($"Audio/Grumpy Bavarian Selection/{i}");
+            if (clip != null)
+            {
+                dieSounds.Add(clip);
+            }
+            else
+            {
+                Debug.LogWarning($"Die sound {i}.mp3 not found");
+            }
+        }
     }
 
     public void PlaySound(string clipKey)
@@ -51,7 +66,21 @@ public class SoundManager : MonoBehaviour {
         }
     }
 
-public void FadeOutBackgroundSound(float fadeOutTime=2f)
+    public void PlayRandomDieSound()
+    {
+        if (dieSounds.Count > 0)
+        {
+            int randomIndex = Random.Range(0, dieSounds.Count);
+            sfxSource.PlayOneShot(dieSounds[randomIndex]);
+        }
+        else
+        {
+            Debug.LogWarning("No die sounds available");
+        }
+    }
+
+
+    public void FadeOutBackgroundSound(float fadeOutTime=2f)
     {
         StartCoroutine(FadeOut(musicSource, fadeOutTime));
     }
