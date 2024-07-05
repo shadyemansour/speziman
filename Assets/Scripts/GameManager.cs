@@ -108,11 +108,14 @@ public class  GameManager : MonoBehaviour
             {
                 LoadLevel(currentLevel, false);
             }
-            LoadLevel(++currentLevel, false);
+            else
+            {
+                LoadLevel(++currentLevel, true);
+            }
         }
         else
         {
-            LoadIntro();
+            LoadLevel(1, true);
         }
     }
     public void RestartLevel()
@@ -131,10 +134,6 @@ public class  GameManager : MonoBehaviour
 
     }
 
-    public void LoadIntro()
-    {
-        SceneManager.LoadScene("Intro");
-    }
     public void LoadMenu()
     {
         SceneManager.LoadScene("StartScene");
