@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6914458324932167156}
   - component: {fileID: 568220619350061090}
   - component: {fileID: 9030362658325990405}
-  - component: {fileID: 4090604881527431405}
   m_Layer: 5
   m_Name: Cola
   m_TagString: Cola_Tag
@@ -76,17 +75,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4090604881527431405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4259979628048398309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f06c7ff3b194a4b5f915ddf6924d5644, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollectType: {fileID: 0}
-  ResourceType: 0
