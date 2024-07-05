@@ -12,7 +12,7 @@ public class ParallaxBackground : MonoBehaviour
     private GameObject spriteObject;
     [SerializeField] 
     private Transform levelPlayerSpawnPoint;
-    
+
     private Transform cameraTransform;
     private float startPositionY;
     private float startPositionX;
@@ -21,13 +21,23 @@ public class ParallaxBackground : MonoBehaviour
 
 
     // Start is called before the first frame update
-    public void InitializeBackground()
+    public void Start()
+    /* public void InitializeBackground() */
     {
         cameraTransform = Camera.main.transform;
         startPositionX = levelPlayerSpawnPoint.position.x;
         startPositionY = transform.position.y;
         transform.position = new Vector3 (startPositionX, transform.position.y, transform.position.z);
         spriteSizeX = spriteObject.GetComponent<SpriteRenderer>().bounds.size.x;
+    }
+
+    public void InitializeBackground()
+    {
+/*         cameraTransform = Camera.main.transform;
+        startPositionX = levelPlayerSpawnPoint.position.x;
+        startPositionY = transform.position.y;
+        transform.position = new Vector3 (startPositionX, transform.position.y, transform.position.z);
+        spriteSizeX = spriteObject.GetComponent<SpriteRenderer>().bounds.size.x; */
     }
 
     // Update is called once per frame
