@@ -17,8 +17,6 @@ public class Barbara : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 0, 0);  
             GameManager.Instance.SendCollectables(other.gameObject, gameObject.transform.position);
             animator.Play("BarbaraWinken");
-
-
         }
     }
 

@@ -6,21 +6,10 @@ public class Shot : MonoBehaviour
 {
      public Transform target;
     public float speed = 5f;
-    // private Vector3 startPosition;
-    // private Vector3 direction;
-    // private float journeyLength;
-    // private float startTime;
-    // private float verticalDrop = 2f;  // How far down it drops before curving
-    // private float curveRadius = 2f;  // Radius of the curve at the bottom of the 'J'
-    // private float stage = 1;  // Current stage of the movement
 
     public void Init(Transform targetTransform)
     {
         target = targetTransform;
-        // startPosition = transform.position;
-        // startTime = Time.time;
-        // direction = (target.position - transform.position).normalized;
-        // journeyLength = Vector3.Distance(transform.position, target.position);
         StartCoroutine(AttackPlayer());
     }
 

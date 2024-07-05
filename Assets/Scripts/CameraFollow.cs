@@ -1,52 +1,36 @@
+using TMPro.Examples;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class CameraFollow : MonoBehaviour
 {
-    public float smoothSpeed = 0.125f;
-    public float verticalOffset = 0;
-
-    private Transform player;
-    private float minX;
-    private float maxX;
-
+    public Transform player;
+    private Camera cam;
+    private float[] zoomSpeeds = {0.45f, 0.6f};
+    private float[] moveSpeeds = {0.8f, 1.5f};
+    public bool isFollowingPlayer;
+    
+    private Vector3[] stops = {new Vector3( 2.7f, -0.55f, -10f), new Vector3( 7.69f, -1.44f, -10f)};
+    private float[] zooms = {3.5f, 2.0f};
+    public int currentStop = 0;
     void Start()
     {
-        SetupCameraLimits();
-    }
+        cam = Camera.main;
+        isFollowingPlayer = false;
 
-    void SetupCameraLimits()
-    {
-        GameObject ground = GameObject.Find("Ground");
-        if (ground)
-        {
-            TilemapCollider2D groundCollider = ground.GetComponent<TilemapCollider2D>();
-            if (groundCollider)
-            {
-                float groundWidth = groundCollider.bounds.size.x;
-                float leftEdge = groundCollider.bounds.min.x;
-                float rightEdge = groundCollider.bounds.max.x;
-
-                float cameraHalfWidth = Camera.main.orthographicSize * Camera.main.aspect;
-                minX = leftEdge + cameraHalfWidth;
-                maxX = rightEdge - cameraHalfWidth;
-            }
-        }
     }
 
     void LateUpdate()
     {
-        if (player == null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        }
+        if (isFollowingPlayer) FollowPlayer(currentStop);    
 
-        if (player != null)
-        {
-            Vector3 desiredPosition = new Vector3(player.position.x, transform.position.y + verticalOffset, transform.position.z);
-            desiredPosition.x = Mathf.Clamp(desiredPosition.x, minX, maxX);
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-            transform.position = smoothedPosition;
-        }
+    }
+
+    void FollowPlayer(int stopNumber)
+    {
+        if (player == null) return;
+        // Calculate the offset to keep the player at the bottom right of the screen
+        cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, zooms[stopNumber], zoomSpeeds[stopNumber] * Time.deltaTime);
+        cam.transform.position = Vector3.MoveTowards(cam.transform.position, stops[stopNumber], moveSpeeds[stopNumber] * Time.deltaTime);
+
     }
 }

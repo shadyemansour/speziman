@@ -9,6 +9,7 @@ public class Helmut : MonoBehaviour
     private bool done = false;
     private Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
     private Animator animator;
+    private System.Action onComplete;
 
     void Awake()
     {
@@ -49,6 +50,7 @@ public class Helmut : MonoBehaviour
         {
             ChangeSprite("Story 3");
             done = true;
+            onComplete?.Invoke();
         }
     }
 
@@ -57,10 +59,12 @@ public class Helmut : MonoBehaviour
         animator.Play("helmut");
     }
 
-        public void PauseDrinking()
+        public void PauseDrinking(System.Action onComplete)
     {
         animator.enabled = false;
         ChangeSprite("Story 2");
+        this.onComplete = onComplete;
+
     }
 
 

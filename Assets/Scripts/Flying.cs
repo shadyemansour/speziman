@@ -8,11 +8,9 @@ public class Flying : MonoBehaviour
     private Transform player; 
     [SerializeField] private float maintainDistanceX = 5f;
     [SerializeField] private float maintainDistanceY = 3f;
-    [SerializeField] private float destroyAfterSeconds = 10f; // Time after starting the attack to destroy the enemy
 
     private Vector3 targetPosition;
 
-    private Vector3 attackTargetPosition;
     private Vector3 velocity = Vector3.zero; // For smooth damp
     public bool isActive = false;
 
@@ -35,7 +33,7 @@ void Start()
                     );
 
                     transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);   
-                    GetComponent<Weapon>().Attack(player);  // Ensure Weapon script is attached to the same object
+                    GetComponent<Weapon>().Attack(player);  
 
             }
         }else{

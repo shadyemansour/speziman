@@ -37,7 +37,7 @@ public class  GameManager : MonoBehaviour
     private float levelStartTime;       
     private GameObject levelCompleteScreen;
     
-    private int currentLevel =1;
+    public int currentLevel =1;
 
 
     private Timer timerInstance;
@@ -100,12 +100,15 @@ public class  GameManager : MonoBehaviour
         }
     }
     
-    public void LoadNextLevel()
+    public void LoadNextLevel(bool wasCutScene=false)
     {
         if (currentLevel < 3)
         {
-            currentLevel++;
-            LoadLevel(currentLevel);
+            if (wasCutScene)
+            {
+                LoadLevel(currentLevel, false);
+            }
+            LoadLevel(++currentLevel, false);
         }
         else
         {
@@ -114,14 +117,16 @@ public class  GameManager : MonoBehaviour
     }
     public void RestartLevel()
     {
-        this.LoadLevel(currentLevel);
+        this.LoadLevel(currentLevel, false);
     }
 
 
-    public void LoadLevel(int sceneNumber)
+    public void LoadLevel(int sceneNumber, bool isCut)
     {
         currentLevel = sceneNumber;
-        SceneManager.LoadScene("Level"+sceneNumber.ToString());
+        string levelName = isCut ? "Cut" : "Level";
+        levelName += sceneNumber.ToString();
+        SceneManager.LoadScene(levelName);
         SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the sceneLoaded event 
 
     }

@@ -11,7 +11,7 @@ public class MenuController : MonoBehaviour
     public GameObject start;
     public GameObject choosePlayer;
     public GameObject details;
-      public Toggle skipIntroToggle;
+    public Toggle skipIntroToggle;
 
     public void ChoosePlayerMenu()
     {
@@ -37,26 +37,15 @@ public class MenuController : MonoBehaviour
 
    public void StartGame()
     {
-        if (skipIntroToggle.isOn)
-        {
-            GameManager.Instance.LoadLevel(1);
-        }
-        else
-        {
-            GameManager.Instance.LoadIntro();
-        }
+
+        GameManager.Instance.LoadLevel(1, true);
+      
     }
 
     public void StartLevel(int levelNum) 
     {
-        if (skipIntroToggle.isOn)
-        {
-            GameManager.Instance.LoadLevel(levelNum);
-        }
-        else
-        {
-            GameManager.Instance.LoadIntro();
-        }
+            GameManager.Instance.LoadLevel(levelNum, true);
+
     }
 
 
