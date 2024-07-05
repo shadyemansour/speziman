@@ -15,74 +15,66 @@ using Unity.Collections;
 public class  GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    
-    // Stats
     [SerializeField] private int totalCola;
     [SerializeField] private  int totalOranges;
-    // [SerializeField] private  Slider colaSlider;
-    // [SerializeField] private  Slider orangeSlider;
-
-     [SerializeField] private  GameObject playerPrefab; 
+    [SerializeField] private  GameObject playerPrefab; 
     [SerializeField] private  Transform spawnPoint;  
+    [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
+    [SerializeField] private GameObject timerPrefab; 
 
     private GameObject currentPlayer; 
+    private GameObject levelCompleteScreen;
     private Vector3 lastCheckpointPosition;
-    CinemachineVirtualCamera vcam;
-
-
-
+    private Timer timerInstance;
+    
     public int score = 0;
-    public int totalDeliveries = 3;
+    private int totalDeliveries = 3;
     public int reachedDeliveries = 0;
     private float levelStartTime;       
-    private GameObject levelCompleteScreen;
-    
     public int currentLevel =1;
     private int maxLevels = 3;
 
 
-    private Timer timerInstance;
-
-    [SerializeField] private GameObject timerPrefab; 
-
-
-    [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
+    //Collectables
     private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
     private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
-    [SerializeField] private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
+
+    //GameStats
+    private static string dataPath; 
+    public GameData gameData;
+    private PlayerData currentPlayerData;
+    public bool ShowLevelSelectOnLoad { get; set; }
+
+
 
     void Awake()
     {
         // Singleton pattern
         if (Instance == null)
         {
+
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            dataPath = Application.persistentDataPath + "/gameData.json";
+            Debug.Log("Data path: " + dataPath);
+            gameData = new GameData();
+            ShowLevelSelectOnLoad = false;
         }
         else
         {
             Destroy(gameObject);
         }
-
-
-        // SpawnPlayer();
     }
 
     void Start()
     {
-        // InitializeCollectables();
+        LoadGameData();
+
         if (spawnPoint != null) lastCheckpointPosition = spawnPoint.position;
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
-    //     vcam = FindObjectOfType<CinemachineVirtualCamera>();
-    //     Debug.Log("vcam: " + vcam);
-    //     if (currentPlayer == null) currentPlayer = GameObject.FindWithTag("Player");
-
-    //     vcam.Follow = currentPlayer.transform;
-    //    Debug.Log("vcam: " + vcam);
 
         levelStartTime = Time.time;
-
-
     }
 
     void FindTextObjects()
@@ -132,18 +124,23 @@ public class  GameManager : MonoBehaviour
         string levelName = isCut ? "Cut" : "Level";
         levelName += sceneNumber.ToString();
         SceneManager.LoadScene(levelName);
-        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the sceneLoaded event 
+        SceneManager.sceneLoaded += OnSceneLoaded; 
 
     }
 
-    public void LoadMenu()
+public void LoadMenu()
+{
+    if (currentPlayerData != null)
     {
-        SceneManager.LoadScene("StartScene");
+        ShowLevelSelectOnLoad = true;
     }
+    SceneManager.LoadScene("StartScene");
+}
+
 
     
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)         // TODO: fix level restarts (levelcompletescreen not triggered, no dies, ...)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         levelCompleteScreen = GameObject.FindGameObjectWithTag("LevelCompleteUI");
         Debug.Log("Scene loaded: " + scene.name);
@@ -153,7 +150,6 @@ public class  GameManager : MonoBehaviour
             // InitializeCollectablesUI();
             InstantiateTimer();
             InitializeUI();
-            // Attempt to load the spawn point for the loaded scene
             LoadSpawnPoint(scene.name + "SpawnPoint");
             InitializeBackground();
             SpawnPlayer();
@@ -163,7 +159,6 @@ public class  GameManager : MonoBehaviour
             currentLevel = sceneNumber;
             timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
         }
-        // Unsubscribe to prevent this from being called if another scene is loaded elsewhere
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
@@ -193,7 +188,7 @@ public class  GameManager : MonoBehaviour
 
     void SpawnPlayer()
     {
-        if (currentPlayer != null) Destroy(currentPlayer); // Destroy existing player instance if any
+        if (currentPlayer != null) Destroy(currentPlayer); 
 
         if (playerPrefab != null && spawnPoint != null)
         {
@@ -220,56 +215,6 @@ public class  GameManager : MonoBehaviour
         }
         LoadCollectablesPrefabs();
     }
-
-    //  private void InitializeCollectablesUI()
-    // {
-    //     GameObject parent = GameObject.FindGameObjectWithTag("StatsCanvas");
-    //     Vector3 nextPosition = new Vector3(-344, 186, 0); // Starting position for the first item
-    //     float xSpacing = 32.0f; // Horizontal spacing between UI and text
-    //     float ySpacing = 6.0f; // Vertical spacing between lines
-
-    //     foreach (var pair in collectables)
-    //     {
-    //         Debug.Log($"{pair.Key}:" );
-    //         Debug.Log("currentPosition: " + nextPosition);
-    //         // Load and instantiate the UI prefab
-    //         Transform uiPrefab = Resources.Load<Transform>($"UI/{pair.Key}");
-    //         if (uiPrefab == null) {
-    //             Debug.LogError($"Prefab for {pair.Key} not found in Resources/UI/");
-    //             continue;
-    //         }
-    //         Transform uiInstance = Instantiate(uiPrefab, parent.transform);
-    //         uiInstance.localPosition = nextPosition;
-
-    //         // Assuming the prefab has a RectTransform component
-    //         RectTransform uiRect = uiInstance.GetComponent<RectTransform>();
-    //         if (uiRect == null) {
-    //             Debug.LogError("No RectTransform found on UI prefab: " + pair.Key);
-    //             continue;
-    //         }
-    //         Debug.Log("uiInstance position: " + uiInstance.transform.localPosition);
-    //         // uiRect.anchoredPosition = nextPosition;
-
-    //         // Calculate the next position for the text, aligning it next to the UI
-    //         Vector3 textPosition = new Vector3(nextPosition.x + xSpacing, nextPosition.y, 0);
-    //         Debug.Log("text position: " +textPosition);
-
-    //         // Load and instantiate the text prefab
-    //         Transform textPrefab = Resources.Load<Transform>($"UI/{pair.Key}_Text");
-    //         if (textPrefab == null) {
-    //             Debug.LogError($"Text prefab for {pair.Key} not found in Resources/UI/");
-    //             continue;
-    //         }
-    //         Transform textInstance = Instantiate(textPrefab, parent.transform);
-    //         // RectTransform textRect = textInstance.GetComponent<RectTransform>();
-    //         textInstance.localPosition = new Vector2(nextPosition.x + xSpacing, nextPosition.y);
-
-    //         Debug.Log("textInstance position: " + textInstance.transform.localPosition);
-    //         // Move the next starting position down to the next line after both UI and text are placed
-    //         nextPosition.y -= (uiRect.rect.height/2 + ySpacing);
-    //     }
-    // }
-
 
     private void LoadCollectablesPrefabs()
     {
@@ -460,7 +405,9 @@ public class  GameManager : MonoBehaviour
     public void TriggerLevelComplete()
     {
         Debug.Log("TriggerLevelComplete called");
+        UnlockLevel(currentLevel + 1);
         ActivateEndCanvas(true);
+
     }
     public void TriggerGameOver()
     {
@@ -506,21 +453,21 @@ public class  GameManager : MonoBehaviour
                 }
     }
 
-private int GetCollectedItemsCount()
-{
-    int count = 0;
-    foreach (var pair in collectables)
+    private int GetCollectedItemsCount()
     {
-        foreach (var collectable in pair.Value)
+        int count = 0;
+        foreach (var pair in collectables)
         {
-            if (!collectable.gameObject.activeSelf)
+            foreach (var collectable in pair.Value)
             {
-                count++;
+                if (!collectable.gameObject.activeSelf)
+                {
+                    count++;
+                }
             }
         }
+        return count;
     }
-    return count;
-}
 
     private int GetTotalItemsCount()
     {
@@ -532,12 +479,12 @@ private int GetCollectedItemsCount()
         return count;
     }
 
-
-
-    // todo call method
     public void IncrementDeliveries()
     {
+
+        Debug.Log("IncrementDeliveries called " + reachedDeliveries + "/" + totalDeliveries);
         reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+        Debug.Log("reachedDeliveries: " + reachedDeliveries);
     }
 
     public void SendCollectables(GameObject player, Vector3 barbaraPosition )
@@ -568,23 +515,201 @@ private int GetCollectedItemsCount()
     }
 
     IEnumerator MoveCollectableInParabola(GameObject collectable, Vector3 targetPos, float duration)
-{
-    float time = 0;
-    Vector3 startPos = collectable.transform.position;
-    float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2; // Height of the parabola; adjust as needed
-
-    while (time < duration)
     {
-        float t = time / duration; // Normalize time
-        // Interpolate the x and y positions
-        collectable.transform.position = Vector3.Lerp(startPos, targetPos, t) + new Vector3(0, height * Mathf.Sin(Mathf.PI * t), 0);
-        time += Time.deltaTime;
-        yield return null;
+        float time = 0;
+        Vector3 startPos = collectable.transform.position;
+        float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2; 
+
+        while (time < duration)
+        {
+            float t = time / duration; // Normalize time
+            // Interpolate the x and y positions
+            collectable.transform.position = Vector3.Lerp(startPos, targetPos, t) + new Vector3(0, height * Mathf.Sin(Mathf.PI * t), 0);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        collectable.transform.position = targetPos; 
+        Destroy(collectable); 
     }
 
-    collectable.transform.position = targetPos; // Ensure it ends exactly at the target
-    Destroy(collectable); // Destroy the object after reaching the target
-}
+    /////    GameData    /////
+    public bool RegisterNewPlayer(string playerName)
+    {
+        // Check if the username already exists
+        if (gameData.players.Any(p => p.playerName == playerName))
+        {
+            Debug.Log("Username already exists. Choose a different username.");
+            return false;
+        }
+        else
+        {
+            // Create new player data
+            PlayerData newPlayer = new PlayerData()
+            {
+                playerName = playerName,
+                score = 0,
+                currentLevel = 1,
+                unlockedLevels = new List<int>() { 1 }  
+            };
+
+            gameData.players.Add(newPlayer);
+            SaveGameData();
+            currentPlayerData = newPlayer;
+
+            Debug.Log("New player registered: " + playerName);
+
+
+            return true;
+        }
+    }
+
+        public bool LoginExistingPlayer(string playerName)
+    {
+        // Check if the username exists
+        if (gameData.players.Any(p => p.playerName == playerName))
+        {
+            Debug.Log("Player found: " + playerName);
+            currentPlayerData = gameData.players.Find(p => p.playerName == playerName);
+            currentLevel = currentPlayerData.currentLevel;
+            return true;
+        }
+        else
+        {
+            Debug.Log("Player not found: " + playerName);
+            return false;
+        }
+    }
+
+    public int GetPlayerMaxLevel()
+    {
+        if (currentPlayerData != null)
+        {
+            return currentPlayerData.unlockedLevels.Max();
+        }
+        else
+        {
+            Debug.LogWarning("No player data found.");
+            return 1;
+        }
+    }
+
+    public void SaveGameData()
+    {
+        if (currentPlayerData != null)
+    {
+        PlayerData existingPlayer = gameData.players.Find(p => p.playerName == currentPlayerData.playerName);
+        if (existingPlayer != null)
+        {
+            int index = gameData.players.IndexOf(existingPlayer);
+            gameData.players[index] = currentPlayerData;
+        }
+        else
+        {
+            gameData.players.Add(currentPlayerData);
+        }
+    }
+        string json = JsonUtility.ToJson(gameData, true);
+        System.IO.File.WriteAllText(dataPath, json);
+        Debug.Log("Game data saved to " + dataPath);
+    }
+
+    public void LoadGameData()
+    {
+        if (System.IO.File.Exists(dataPath))
+        {
+            string json = System.IO.File.ReadAllText(dataPath);
+            gameData = JsonUtility.FromJson<GameData>(json);
+            Debug.Log("Game data loaded from " + dataPath);
+        }
+        else
+        {
+            Debug.LogWarning("No save data found at " + dataPath);
+        }
+    }
+
+    public void UpdatePlayerScore(int newScore)
+    {
+        if (currentPlayerData != null)
+        {
+            currentPlayerData.score = newScore;
+        }
+        else
+        {
+            Debug.LogWarning("Player not found");
+        }
+    }
+
+
+
+    public void UnlockLevel(int level)
+    {
+        Debug.Log("Unlocking level " + level);
+        if (currentPlayerData != null && !currentPlayerData.unlockedLevels.Contains(level))
+        {
+            currentPlayerData.currentLevel = level; 
+            currentPlayerData.unlockedLevels.Add(level);
+            SaveGameData();
+            Debug.Log("Unlocked level");
+
+        }
+    }
+
+
+    public void EndGame(int score)
+    {
+        UpdatePlayerScore(score);
+        SaveGameData();
+    }
+
+ //  private void InitializeCollectablesUI()
+    // {
+    //     GameObject parent = GameObject.FindGameObjectWithTag("StatsCanvas");
+    //     Vector3 nextPosition = new Vector3(-344, 186, 0); // Starting position for the first item
+    //     float xSpacing = 32.0f; // Horizontal spacing between UI and text
+    //     float ySpacing = 6.0f; // Vertical spacing between lines
+
+    //     foreach (var pair in collectables)
+    //     {
+    //         Debug.Log($"{pair.Key}:" );
+    //         Debug.Log("currentPosition: " + nextPosition);
+    //         // Load and instantiate the UI prefab
+    //         Transform uiPrefab = Resources.Load<Transform>($"UI/{pair.Key}");
+    //         if (uiPrefab == null) {
+    //             Debug.LogError($"Prefab for {pair.Key} not found in Resources/UI/");
+    //             continue;
+    //         }
+    //         Transform uiInstance = Instantiate(uiPrefab, parent.transform);
+    //         uiInstance.localPosition = nextPosition;
+
+    //         // Assuming the prefab has a RectTransform component
+    //         RectTransform uiRect = uiInstance.GetComponent<RectTransform>();
+    //         if (uiRect == null) {
+    //             Debug.LogError("No RectTransform found on UI prefab: " + pair.Key);
+    //             continue;
+    //         }
+    //         Debug.Log("uiInstance position: " + uiInstance.transform.localPosition);
+    //         // uiRect.anchoredPosition = nextPosition;
+
+    //         // Calculate the next position for the text, aligning it next to the UI
+    //         Vector3 textPosition = new Vector3(nextPosition.x + xSpacing, nextPosition.y, 0);
+    //         Debug.Log("text position: " +textPosition);
+
+    //         // Load and instantiate the text prefab
+    //         Transform textPrefab = Resources.Load<Transform>($"UI/{pair.Key}_Text");
+    //         if (textPrefab == null) {
+    //             Debug.LogError($"Text prefab for {pair.Key} not found in Resources/UI/");
+    //             continue;
+    //         }
+    //         Transform textInstance = Instantiate(textPrefab, parent.transform);
+    //         // RectTransform textRect = textInstance.GetComponent<RectTransform>();
+    //         textInstance.localPosition = new Vector2(nextPosition.x + xSpacing, nextPosition.y);
+
+    //         Debug.Log("textInstance position: " + textInstance.transform.localPosition);
+    //         // Move the next starting position down to the next line after both UI and text are placed
+    //         nextPosition.y -= (uiRect.rect.height/2 + ySpacing);
+    //     }
+    // }
 
 
     

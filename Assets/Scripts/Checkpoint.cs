@@ -17,6 +17,7 @@ public class Checkpoint : MonoBehaviour
             if (isFinalCheckpoint)
             {
                 GameManager.Instance.TriggerLevelComplete();
+                
             }
         }
     }

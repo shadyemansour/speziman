@@ -23,6 +23,10 @@ TagManager:
   - Spezi_Text
   - Orange
   - Fax
+  - ExistingPlayerMenu
+  - NewPlayerMenu
+  - UsernameInputField
+  - LevelButton
   layers:
   - Default
   - TransparentFX
