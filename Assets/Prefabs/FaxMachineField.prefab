@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8651203973478669866}
   - component: {fileID: 2667621303306999812}
   - component: {fileID: 1219627078427157988}
+  - component: {fileID: 5108422486610091148}
   m_Layer: 0
   m_Name: FaxMachine
   m_TagString: Untagged
@@ -51,7 +52,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maintainDistanceX: 5
   maintainDistanceY: 3
-  destroyAfterSeconds: 10
   isActive: 0
 --- !u!114 &8651203973478669866
 MonoBehaviour:
@@ -125,6 +125,33 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.4096603, y: 1.3966651}
   m_EdgeRadius: 0
+--- !u!50 &5108422486610091148
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2244441019184735427}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &2255522281903620430
 GameObject:
   m_ObjectHideFlags: 0

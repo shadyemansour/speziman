@@ -20,6 +20,7 @@ public class FaxField : MonoBehaviour
             flying.isActive = true;
         
         }
+
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -28,5 +29,6 @@ public class FaxField : MonoBehaviour
         {
             flying.isActive = false;
         }
+
     }
 }

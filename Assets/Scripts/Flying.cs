@@ -13,34 +13,49 @@ public class Flying : MonoBehaviour
 
     private Vector3 velocity = Vector3.zero; // For smooth damp
     public bool isActive = false;
+    private Weapon weapon;
 
-void Start()
+    void Start()
     {
-        player = GameObject.FindWithTag("Player")?.transform; // Find the player by tag
+        player = GameObject.FindWithTag("Player")?.transform; 
+        weapon = GetComponent<Weapon>();
     }
 
     void Update()
     {
-        if(player != null){
+        if (player != null)
+        {
             if (isActive)
             {
-                    Vector3 direction = (player.position - transform.position).normalized;
-                    targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
-                    targetPosition = new Vector3(
-                        player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
-                        player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
-                        transform.position.z
-                    );
-
-                    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);   
-                    GetComponent<Weapon>().Attack(player);  
-
+                MoveTowardsPlayer();
+                if (IsVisibleToCamera()) weapon.Attack(player);
             }
-        }else{
+        }
+        else
+        {
+            // If the player was lost (e.g., respawn), find again
             player = GameObject.FindWithTag("Player")?.transform;
         }
     }
 
+    private bool IsVisibleToCamera()
+    {
+        var camera = Camera.main; // Make sure the main camera is set correctly in tag
+        Vector3 viewportPosition = camera.WorldToViewportPoint(transform.position);
+        bool isVisible = viewportPosition.z > 0 && viewportPosition.x > 0 && viewportPosition.x < 1 && viewportPosition.y > 0 && viewportPosition.y < 1;
+        return isVisible;
+    }
 
-   
+    private void MoveTowardsPlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
+        targetPosition = new Vector3(
+            player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
+            player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
+            transform.position.z
+        );
+
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);
+    }
 }

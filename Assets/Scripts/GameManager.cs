@@ -402,9 +402,20 @@ public class  GameManager : MonoBehaviour
 
      public void RespawnPlayer(GameObject player)
     {
+        DestroyShots();
         ResetCollectables();
         player.GetComponent<PlayerMovement>().ResetSpeed();
+
         player.transform.position = lastCheckpointPosition;
+    }
+
+    private void DestroyShots()
+    {
+        Shot[] shots = GameObject.FindObjectsOfType<Shot>();
+        foreach (Shot shot in shots)
+        {
+            Destroy(shot.gameObject);
+        }
     }
 
     public void HandleTimerEnd()
