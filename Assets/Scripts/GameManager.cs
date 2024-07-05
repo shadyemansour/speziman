@@ -38,6 +38,7 @@ public class  GameManager : MonoBehaviour
     private GameObject levelCompleteScreen;
     
     public int currentLevel =1;
+    private int maxLevels = 3;
 
 
     private Timer timerInstance;
@@ -86,6 +87,7 @@ public class  GameManager : MonoBehaviour
 
     void FindTextObjects()
     {
+        collectableTexts.Clear();
         foreach (var pair in collectables)
         {
             TextMeshProUGUI text = GameObject.FindGameObjectWithTag(pair.Key + "_Text").GetComponent<TextMeshProUGUI>();
@@ -102,20 +104,20 @@ public class  GameManager : MonoBehaviour
     
     public void LoadNextLevel(bool wasCutScene=false)
     {
-        if (currentLevel < 3)
+        if (currentLevel >= maxLevels)
         {
-            if (wasCutScene)
-            {
-                LoadLevel(currentLevel, false);
-            }
-            else
-            {
-                LoadLevel(++currentLevel, true);
-            }
+            LoadMenu(); 
+        }
+        else if (wasCutScene)
+        {
+            LoadLevel(currentLevel++, !wasCutScene); 
+        }else if(currentLevel < maxLevels - 1)
+        {
+            LoadLevel(++currentLevel, !wasCutScene);
         }
         else
         {
-            LoadLevel(1, true);
+            LoadMenu(); 
         }
     }
     public void RestartLevel()
