@@ -11,6 +11,7 @@ using Unity.VisualScripting;
 using System.Linq;
 using System.Collections;
 using Unity.Collections;
+using UnityEditor.ShaderGraph.Internal;
 
 public class  GameManager : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class  GameManager : MonoBehaviour
     public int reachedDeliveries = 0;
     private float levelStartTime;       
     public int currentLevel =1;
+    private int deliverablesCount = 3;
     private int maxLevels = 3;
 
 
@@ -488,9 +490,19 @@ public void LoadMenu()
         Debug.Log("reachedDeliveries: " + reachedDeliveries);
     }
 
-    public void SendCollectables(GameObject player, Vector3 barbaraPosition )
+    public bool SendCollectables(GameObject player, Vector3 barbaraPosition )
     {
-            StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
+            int value = int.Parse(collectableTexts.First().Value.text.Split("/")[0]);
+            if(value > 0)
+            {
+                StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
     }
 
     private IEnumerator SendCollectablesCoroutine(GameObject player, Vector3 barbaraPosition, float delayBetweenItems)
@@ -501,6 +513,7 @@ public void LoadMenu()
         {
 
             int value = int.Parse(collectableTexts[pair.Key].text.Split("/")[0]);
+            value = Mathf.Min(value, deliverablesCount);
             if(value > 0 ){
                 for (int i = 0; i < value; i++)
                 {

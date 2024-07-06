@@ -11,12 +11,14 @@ public class Barbara : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.tag == "Player" && !isreached) {
-            GameManager.Instance.IncrementDeliveries();
-            isreached = true; 
-            SoundManager.Instance.PlaySound("checkpoint");
-            transform.rotation = Quaternion.Euler(0, 0, 0);  
-            GameManager.Instance.SendCollectables(other.gameObject, gameObject.transform.position);
-            animator.Play("BarbaraWinken");
+            bool canDeliver = GameManager.Instance.SendCollectables(other.gameObject, gameObject.transform.position);
+            if (canDeliver) {   
+                GameManager.Instance.IncrementDeliveries();
+                isreached = true; 
+                SoundManager.Instance.PlaySound("checkpoint");
+                transform.rotation = Quaternion.Euler(0, 0, 0);  
+                animator.Play("BarbaraWinken");
+            }
         }
     }
 
