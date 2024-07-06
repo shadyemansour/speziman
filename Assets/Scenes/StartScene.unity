@@ -5259,8 +5259,16 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6010028699676750472, guid: e68deaa6eac7244788d7fc17a5f1904b, type: 3}
+      propertyPath: levelDurations.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010028699676750472, guid: e68deaa6eac7244788d7fc17a5f1904b, type: 3}
       propertyPath: levelDurations.Array.data[0]
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010028699676750472, guid: e68deaa6eac7244788d7fc17a5f1904b, type: 3}
+      propertyPath: levelDurations.Array.data[3]
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 7309230345857792359, guid: e68deaa6eac7244788d7fc17a5f1904b, type: 3}
       propertyPath: m_Name

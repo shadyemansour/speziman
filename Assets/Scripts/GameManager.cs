@@ -19,7 +19,7 @@ public class  GameManager : MonoBehaviour
     [SerializeField] private  int totalOranges;
     [SerializeField] private  GameObject playerPrefab; 
     [SerializeField] private  Transform spawnPoint;  
-    [SerializeField] private float[] levelDurations = {90f, 450f, 600f}; // Durations in seconds for each level
+    [SerializeField] private float[] levelDurations = {90f, 450f, 600f,700f}; // Durations in seconds for each level
     [SerializeField] private GameObject timerPrefab; 
 
     private GameObject currentPlayer; 
@@ -156,6 +156,7 @@ public void LoadMenu()
             SetupCamera();
         
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
+            Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
             timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
         }
