@@ -1,5 +1,4 @@
 
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ public class Water : MonoBehaviour
                 playercontroller.SetInWater(true);
                 coolOff = true;
                 StartCoroutine(WaitXSeconds(0.2f));
-            
+
             }
         }
     }
@@ -37,8 +36,6 @@ public class Water : MonoBehaviour
                 playercontroller.SetInWater(false);
                 coolOff = true;
                 StartCoroutine(WaitXSeconds(0.2f));
-
-            
             }
         }
     }

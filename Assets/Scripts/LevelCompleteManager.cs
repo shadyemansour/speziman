@@ -23,10 +23,10 @@ public class LevelCompleteManager : MonoBehaviour
     [SerializeField] private Animator uiAnimator;
     [SerializeField] private Animator backgroundAnimator;
 
-    
-     public void ExitToMenu()
+
+    public void ExitToMenu()
     {
-         GameManager.Instance.LoadMenu();
+        GameManager.Instance.LoadMenu();
     }
 
     public void RestartLevel()
@@ -80,5 +80,5 @@ public class LevelCompleteManager : MonoBehaviour
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-   
+
 }

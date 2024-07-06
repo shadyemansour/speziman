@@ -28,12 +28,12 @@ public class MenuController : MonoBehaviour
         usernameInputField = GameObject.FindGameObjectWithTag("UsernameInputField").GetComponent<TMP_InputField>();
         errorText = GameObject.Find("errorText").GetComponent<TMP_Text>();
         enterName.SetActive(false);
-        
+
         levelSelect.SetActive(true);
         levelButtons = new List<Button>();
         InitializeLevelButtons();
         levelSelect.SetActive(false);
-        
+
         start.SetActive(true);
     }
 
@@ -70,9 +70,9 @@ public class MenuController : MonoBehaviour
     }
 
 
-     public void OnNewUserButtonClicked()
+    public void OnNewUserButtonClicked()
     {
-        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f); 
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
         string username = usernameInputField.text;
         if (!string.IsNullOrEmpty(username))
         {
@@ -128,10 +128,9 @@ public class MenuController : MonoBehaviour
     public void UpdateLevelAccess()
     {
         int playerMaxLevel = GameManager.Instance.GetPlayerMaxLevel();
-        
+
         for (int i = 0; i < levelButtons.Count; i++)
         {
-            // Enable buttons up to the player's current max level
             levelButtons[i].interactable = i < playerMaxLevel;
         }
     }
@@ -139,7 +138,7 @@ public class MenuController : MonoBehaviour
     void DisplayErrorMessages(string message)
     {
         errorText.text = message;
-        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 1f); 
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 1f);
     }
 
 
@@ -165,6 +164,8 @@ public class MenuController : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        usernameInputField.text = "";
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
         SetMenuState(true, false, false, false, false);
     }
 

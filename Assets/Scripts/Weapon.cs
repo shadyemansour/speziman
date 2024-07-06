@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -24,22 +22,22 @@ public class Weapon : MonoBehaviour
     }
   }
 
-public void Attack(Transform target)
-{
+  public void Attack(Transform target)
+  {
     if (CanAttack)
     {
-        shootCooldown = shootingRate;
+      shootCooldown = shootingRate;
 
-        // Create a new shot
-        Transform shotTransform = Instantiate(shotPrefab, transform.position, Quaternion.identity);
+      // Create a new shot
+      Transform shotTransform = Instantiate(shotPrefab, transform.position, Quaternion.identity);
 
-        // Initialize the shot's target
-        if (shotTransform.TryGetComponent(out Shot shot))
-        {
-            shot.Init(target);
-        }
+      // Initialize the shot's target
+      if (shotTransform.TryGetComponent(out Shot shot))
+      {
+        shot.Init(target);
+      }
     }
-}
+  }
 
 
 

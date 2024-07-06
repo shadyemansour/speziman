@@ -1,9 +1,10 @@
-﻿using System.Diagnostics.Tracing;
+﻿/* adapted from: https://unitycodemonkey.com/video.php?v=ZVh4nH8Mayg */
+
 using CodeMonkey.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -29,13 +30,13 @@ public class UIManager : MonoBehaviour
         }
 
         button.ClickFunc = HandleButtonClick;
-        levelData  = FindComponentImplementingIActions();
+        levelData = FindComponentImplementingIActions();
         levelData.SetCallbacks(new System.Action[] { EnableButton, NextButton });
         buttonNext.transform.parent.gameObject.GetComponent<Button>().onClick.AddListener(() => GameManager.Instance.LoadNextLevel(true));
-
+        SoundManager.Instance.StopBackground();
     }
 
-    
+
     private IActions FindComponentImplementingIActions()
     {
         foreach (var component in FindObjectsOfType<MonoBehaviour>())
@@ -51,7 +52,7 @@ public class UIManager : MonoBehaviour
 
     private void HandleButtonClick()
     {
-        if(buttonEnabled)
+        if (buttonEnabled)
         {
             buttonEnabled = false;
             if (textWriterSingle != null && textWriterSingle.IsActive())
@@ -61,7 +62,7 @@ public class UIManager : MonoBehaviour
             else
             {
                 if (count == 0) background.color = Color.white;
-                animator.enabled=false;
+                animator.enabled = false;
                 DisplayNextMessage();
             }
         }
@@ -74,22 +75,23 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        
+
 
         string message = levelData.Messages[count++];
         levelData.Actions(count);
-        StartTalkingSound();
-        textWriterSingle = TextWriter.AddWriter_Static(messageText, message, 0.02f, true, true, StopTalkingSound);
+        float timePerChar = StartTalkingSound(message);
+        textWriterSingle = TextWriter.AddWriter_Static(messageText, message, timePerChar, true, true, StopTalkingSound);
     }
 
-    private void StartTalkingSound()
+    private float StartTalkingSound(string message)
     {
-        talkingAudioSource.Play();
+        float audioLength = SoundManager.Instance.PlaySound(SceneManager.GetActiveScene().name.ToLower() + count.ToString());
+        return audioLength / message.Length;
     }
 
     private void StopTalkingSound()
     {
-        talkingAudioSource.Stop();
+        SoundManager.Instance.StopSFX();
     }
 
     public void EnableButton()

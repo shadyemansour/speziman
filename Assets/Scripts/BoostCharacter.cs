@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 
 public class BoostCharacter : MonoBehaviour
@@ -28,14 +25,14 @@ public class BoostCharacter : MonoBehaviour
                 var uiAnimator = uiImage.GetComponent<Animator>();
                 uiAnimator.SetTrigger("Collect");
                 SoundManager.Instance.PlaySound("boost");
-                // Here you might want to do additional checks or apply effects
-                player.Boost(boostLength, DisableImage);  // Call the die method
-                Destroy(gameObject); 
+
+                player.Boost(boostLength, DisableImage);
+                Destroy(gameObject);
 
             }
         }
     }
-    
+
 
 
 
