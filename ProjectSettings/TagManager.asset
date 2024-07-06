@@ -27,6 +27,8 @@ TagManager:
   - NewPlayerMenu
   - UsernameInputField
   - LevelButton
+  - Helicopter
+  - FinishLine
   layers:
   - Default
   - TransparentFX

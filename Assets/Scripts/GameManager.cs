@@ -22,6 +22,8 @@ public class  GameManager : MonoBehaviour
     [SerializeField] private  Transform spawnPoint;  
     [SerializeField] private float[] levelDurations = {90f, 450f, 600f,700f}; // Durations in seconds for each level
     [SerializeField] private GameObject timerPrefab; 
+    
+    private GameObject kickBottlePrefab;
 
     private GameObject currentPlayer; 
     private GameObject levelCompleteScreen;
@@ -41,6 +43,7 @@ public class  GameManager : MonoBehaviour
     private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
     private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
     private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
+    private List<(Vector3 position, Quaternion rotation)> kickBottles;
 
     //GameStats
     private static string dataPath; 
@@ -62,6 +65,8 @@ public class  GameManager : MonoBehaviour
             Debug.Log("Data path: " + dataPath);
             gameData = new GameData();
             ShowLevelSelectOnLoad = false;
+            kickBottles = new List<(Vector3,Quaternion)>();
+            kickBottlePrefab = Resources.Load<GameObject>("Prefabs/KickBottle");
         }
         else
         {
@@ -156,6 +161,7 @@ public void LoadMenu()
             InitializeBackground();
             SpawnPlayer();
             SetupCamera();
+            FindKickBottles();
         
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
@@ -204,6 +210,36 @@ public void LoadMenu()
             Debug.LogError("Player prefab or spawn point not set.");
         }
     }
+
+    private void FindKickBottles()
+    {
+        BottleKick[] allBottles = FindObjectsOfType<BottleKick>();
+        kickBottles = new List<(Vector3,Quaternion)>();  // Use a list for dynamic additions
+
+        foreach (BottleKick bottle in allBottles)
+        {
+            Vector3 pos = bottle.transform.position;  // Simplified position copying
+            Quaternion rot = bottle.transform.rotation;
+            kickBottles.Add((pos, rot));
+        }
+    }
+
+    private void SpawnKickBottles()
+    {
+        BottleKick[] allBottles = FindObjectsOfType<BottleKick>();
+        foreach (BottleKick bottle in allBottles)
+        {
+            Destroy(bottle.gameObject);
+        }
+
+        foreach (var bottleInfo in kickBottles)
+        {
+            Instantiate(kickBottlePrefab, bottleInfo.position, bottleInfo.rotation);
+        }
+    }
+
+
+
    private void InitializeCollectables()
     {
         Collectable[] allCollectables = FindObjectsOfType<Collectable>();
@@ -354,6 +390,7 @@ public void LoadMenu()
     {
         DestroyShots();
         ResetCollectables();
+        SpawnKickBottles();
         player.GetComponent<PlayerMovement>().ResetSpeed();
 
         player.transform.position = lastCheckpointPosition;
@@ -391,6 +428,10 @@ public void LoadMenu()
         {
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
+    }
+    public float GetTimeLeft()
+    {
+        return timerInstance.GetTimeRemaining();
     }
   
     private float CalculateLevelCompletionTime()

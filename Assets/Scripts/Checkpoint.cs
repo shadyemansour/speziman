@@ -19,6 +19,9 @@ public class Checkpoint : MonoBehaviour
                 GameManager.Instance.TriggerLevelComplete();
                 
             }
+        }else if (!isreached && other.gameObject.tag == "Helicopter")
+        {
+            GameManager.Instance.TriggerGameOver();
         }
     }
 }
