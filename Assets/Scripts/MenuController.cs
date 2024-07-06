@@ -20,6 +20,10 @@ public class MenuController : MonoBehaviour
 
     private List<Button> levelButtons;
 
+
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private GameObject settingsCanvas;
+
     private void Awake()
     {
         enterName.SetActive(true);  // Temporarily active to ensure it can be found if inactive at design time.
@@ -45,6 +49,25 @@ public class MenuController : MonoBehaviour
             UpdateLevelAccess();
             GameManager.Instance.ShowLevelSelectOnLoad = false;
 
+        }
+
+        
+        if (settingsButton != null)
+        {
+            settingsButton.onClick.AddListener(OpenSettingsMenu);
+        }
+        else
+        {
+            Debug.LogError("Settings button is not assigned in the MenuController!");
+        }
+
+        if (settingsCanvas != null)
+        {
+            settingsCanvas.SetActive(false);
+        }
+        else
+        {
+            Debug.LogError("Settings canvas is not assigned in the MenuController!");
         }
     }
 
@@ -150,27 +173,27 @@ public class MenuController : MonoBehaviour
     //Navigation
     public void NewUserMenu()
     {
-        SetMenuState(false, true, false, true, false);
+        SetMenuState(false, true, false, true, false, false);
     }
 
     public void ExistingUserMenu()
     {
-        SetMenuState(false, true, false, false, true);
+        SetMenuState(false, true, false, false, true, false);
     }
 
     public void LevelSelectMenu()
     {
-        SetMenuState(false, false, true, false, false);
+        SetMenuState(false, false, true, false, false, false);
     }
 
     public void BackToMainMenu()
     {
-        SetMenuState(true, false, false, false, false);
+        SetMenuState(true, false, false, false, false, false);
     }
 
     public void ShowDetails()
     {
-        SetMenuState(false, false, false, false, false);
+        SetMenuState(false, false, false, false, false, false);
     }
 
     public void StartGame()
@@ -183,12 +206,27 @@ public class MenuController : MonoBehaviour
         GameManager.Instance.LoadLevel(levelNum, true);
     }
 
-    private void SetMenuState(bool showStart, bool showEnterName, bool showLevelSelect, bool showNewPlayerObjects, bool showOldPlayerObjects)
+    private void SetMenuState(bool showStart, bool showEnterName, bool showLevelSelect, bool showNewPlayerObjects, bool showOldPlayerObjects, bool showSettings)
     {
         start.SetActive(showStart);
         enterName.SetActive(showEnterName);
         levelSelect.SetActive(showLevelSelect);
         newPlayerObjects.SetActive(showNewPlayerObjects);
         oldPlayerObjects.SetActive(showOldPlayerObjects);
+        settingsCanvas.SetActive(showSettings);
+    }
+
+    private void OpenSettingsMenu()     // alternatively with setMenuState
+    {
+        start.SetActive(false);
+        enterName.SetActive(false);
+        levelSelect.SetActive(false);
+        settingsCanvas.SetActive(true);
+    }
+
+    public void CloseSettingsMenu()    // alternatively with setMenuState
+    {
+        settingsCanvas.SetActive(false);    
+        start.SetActive(true);
     }
 }

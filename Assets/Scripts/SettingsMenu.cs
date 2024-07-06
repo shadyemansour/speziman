@@ -7,6 +7,7 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Slider soundEffectsSlider;
     [SerializeField] private Slider backgroundMusicSlider;
     [SerializeField] private Button backButton;
+    private MenuController menuController;
 
     private void Start()
     {
@@ -18,12 +19,18 @@ public class SettingsMenu : MonoBehaviour
         }
 
         // Initialize slider values
-        soundEffectsSlider.value = SoundManager.Instance.GetSoundEffectsVolume();
-        backgroundMusicSlider.value = SoundManager.Instance.GetBackgroundMusicVolume();
+        soundEffectsSlider.value = SettingsManager.Instance.GetSoundEffectsVolume();
+        backgroundMusicSlider.value = SettingsManager.Instance.GetBackgroundMusicVolume();
 
         // Add listeners to sliders
         soundEffectsSlider.onValueChanged.AddListener(OnSoundEffectsVolumeChanged);
         backgroundMusicSlider.onValueChanged.AddListener(OnBackgroundMusicVolumeChanged);
+
+        menuController = FindObjectOfType<MenuController>();
+        if (menuController == null)
+        {
+            Debug.LogError("MenuController not found in the scene!");
+        }
 
         // Add listener to back button
         backButton.onClick.AddListener(OnBackButtonClicked);
@@ -31,16 +38,23 @@ public class SettingsMenu : MonoBehaviour
 
     private void OnSoundEffectsVolumeChanged(float volume)
     {
-        SoundManager.Instance.SetSoundEffectsVolume(volume);
+        SettingsManager.Instance.SetSoundEffectsVolume(volume);
     }
 
     private void OnBackgroundMusicVolumeChanged(float volume)
     {
-        SoundManager.Instance.SetBackgroundMusicVolume(volume);
+        SettingsManager.Instance.SetBackgroundMusicVolume(volume);
     }
 
     private void OnBackButtonClicked()
     {
-        Debug.Log("Back button clicked");
+        if (menuController != null)
+        {
+            menuController.CloseSettingsMenu();
+        }
+        else
+        {
+            Debug.LogError("MenuController is null in SettingsMenu!");
+        }
     }
 }

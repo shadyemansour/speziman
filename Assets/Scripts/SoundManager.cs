@@ -78,8 +78,6 @@ public class SoundManager : MonoBehaviour
             }
         }
 
-        LoadSettings();
-
 
         // Subscribe to SettingsManager events
         SettingsManager.Instance.OnSoundEffectsVolumeChanged += SetSoundEffectsVolume;
