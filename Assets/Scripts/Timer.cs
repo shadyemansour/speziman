@@ -4,14 +4,14 @@ using UnityEngine.Events;
 
 public class Timer : MonoBehaviour
 {
-    [SerializeField] private float initialTime = 900; // Example start time in seconds (15 minutes)
+    [SerializeField] private float initialTime = 900;
     [SerializeField] private float timeRemaining;
     [SerializeField] private bool timerIsRunning = true;
-    [SerializeField] private string timerDisplayName = "TimerText"; // Name of the GameObject with the TextMeshPro component
-    private TextMeshProUGUI timerDisplay; // TextMeshPro component for displaying the timer
-    public UnityEvent onTimerEnd; // Event triggered when timer ends
-    [SerializeField] private Animator animator; 
-    
+    [SerializeField] private string timerDisplayName = "TimerText";
+    private TextMeshProUGUI timerDisplay;
+    public UnityEvent onTimerEnd;
+    [SerializeField] private Animator animator;
+
 
     void Awake()
     {

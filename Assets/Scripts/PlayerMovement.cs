@@ -1,18 +1,17 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour
+{
 
-	public CharacterController2D controller;
+    public CharacterController2D controller;
 
-	[SerializeField] private float runSpeed;
+    [SerializeField] private float runSpeed;
     [SerializeField] private float boostSpeed = 40f;
     [SerializeField] private float swimSpeed = 10f;
     [SerializeField] private float mudSpeed = 3f;
-	[SerializeField] private float defaultSpeed = 30f;
+    [SerializeField] private float defaultSpeed = 30f;
     [SerializeField] private float defaultJumpForce = 400f;
     [SerializeField] private float mudJumpForce = 100f;
     [SerializeField] private float waterJumpForce = 250f;
@@ -25,41 +24,45 @@ public class PlayerMovement : MonoBehaviour {
 
 
 
-	float horizontalMove = 0f;
-	bool jump = false;
-    public Animator anim;    
-    void Start() {
-        runSpeed = defaultSpeed;   
-        rb = GetComponent<Rigidbody2D>(); 
+    float horizontalMove = 0f;
+    bool jump = false;
+    public Animator anim;
+    void Start()
+    {
+        runSpeed = defaultSpeed;
+        rb = GetComponent<Rigidbody2D>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (isStopped){
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (isStopped)
+        {
             horizontalMove = 0;
             return;
         }
 
-		horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
         anim.SetFloat("speed", Mathf.Abs(horizontalMove));
 
-		if (Input.GetButtonDown("Jump"))
-		{
-			jump = true;
+        if (Input.GetButtonDown("Jump"))
+        {
+            jump = true;
             anim.SetBool("isJumping", true);
         }
 
-	}
+    }
 
-    void FixedUpdate ()
-	{
-		// Move our character
-		controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
-		jump = false;
-	}
+    void FixedUpdate()
+    {
+        // Move our character
+        controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
+        jump = false;
+    }
 
 
-    public void onLanding() {
+    public void onLanding()
+    {
         anim.SetBool("isJumping", false);
     }
 
@@ -69,11 +72,13 @@ public class PlayerMovement : MonoBehaviour {
     }
 
 
-    public void Boost(float length, Action onComplete) {
+    public void Boost(float length, Action onComplete)
+    {
         StartCoroutine(BoostDuration(length, onComplete));
     }
 
-     private IEnumerator BoostDuration(float length, Action onComplete) {
+    private IEnumerator BoostDuration(float length, Action onComplete)
+    {
         // Set boosted parameters
         runSpeed = boostSpeed;
         controller.SetJumpForce(boostJumpForce);
@@ -88,11 +93,15 @@ public class PlayerMovement : MonoBehaviour {
         ResetSpeed();
     }
 
-    public void ReduceSpeed(bool isMud) {
-        if (isMud) {
+    public void ReduceSpeed(bool isMud)
+    {
+        if (isMud)
+        {
             runSpeed = mudSpeed;
             controller.SetJumpForce(mudJumpForce);
-        } else {
+        }
+        else
+        {
             runSpeed = swimSpeed;
             controller.SetJumpForce(waterJumpForce);
         }
@@ -100,14 +109,15 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
-    public void ResetSpeed() {
-        if (disableBoostCallback!=null) disableBoostCallback?.Invoke();
+    public void ResetSpeed()
+    {
+        if (disableBoostCallback != null) disableBoostCallback?.Invoke();
         runSpeed = defaultSpeed;
         SetAnimationSpeed(1);
         controller.SetJumpForce(defaultJumpForce);
     }
 
-  
+
     // todo to be called when needed
     public void IncrementScore(int amount)
     {
@@ -119,11 +129,12 @@ public class PlayerMovement : MonoBehaviour {
         GameManager.Instance.UpdateDeliveries();
     }
 
-    public void SetIsStopped(bool value) {
+    public void SetIsStopped(bool value)
+    {
         isStopped = value;
         controller.SetIsStopped(value);
-    }   
+    }
 
-    
+
 
 }

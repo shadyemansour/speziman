@@ -11,7 +11,7 @@ public class HelicopterController : MonoBehaviour
     private float moveSpeed = 5f;
     private bool readyToMove = false;
     private bool readyToRotate = false;
-    private bool readyToDescend = false;    float timeToArrive = 0f;
+    private bool readyToDescend = false; float timeToArrive = 0f;
     private float originalY;
 
     void Start()
@@ -20,8 +20,8 @@ public class HelicopterController : MonoBehaviour
         GameObject finishLineObject = GameObject.FindGameObjectWithTag("FinishLine");
         if (finishLineObject != null)
         {
-            finishLine = new Vector3(finishLineObject.transform.position.x+1.5f, riseToY, finishLineObject.transform.position.z);
-            originalY = transform.position.y;  
+            finishLine = new Vector3(finishLineObject.transform.position.x + 1.5f, riseToY, finishLineObject.transform.position.z);
+            originalY = transform.position.y;
 
         }
         else
@@ -88,12 +88,13 @@ public class HelicopterController : MonoBehaviour
             float targetZ = 0;
             float newZ = Mathf.MoveTowardsAngle(NormalizeAngle(transform.eulerAngles.z), targetZ, rotationSpeed * Time.deltaTime);
             transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, newZ);
-        }else
+        }
+        else
         {
             float targetY = 180;
-            float newY = Mathf.MoveTowardsAngle(NormalizeAngle(transform.eulerAngles.y), targetY, rotationSpeed*3 * Time.deltaTime);
+            float newY = Mathf.MoveTowardsAngle(NormalizeAngle(transform.eulerAngles.y), targetY, rotationSpeed * 3 * Time.deltaTime);
             transform.rotation = Quaternion.Euler(transform.eulerAngles.x, newY, 0);
- 
+
             if (Mathf.Approximately(NormalizeAngle(transform.eulerAngles.y), targetY))
             {
                 readyToDescend = true;
@@ -113,7 +114,7 @@ public class HelicopterController : MonoBehaviour
         {
             animator.enabled = false;
             Debug.Log("Mission Completed: Landed and Ready.");
-            this.enabled = false;  
+            this.enabled = false;
         }
     }
 

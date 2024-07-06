@@ -1,8 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
-using UnityEditor;
 using UnityEngine;
 
 
@@ -16,7 +12,7 @@ public class Fall : MonoBehaviour
     private Vector3 originalPosition;
     private int counter = 0;
 
-  void Start()
+    void Start()
     {
         originalPosition = transform.position;
     }
@@ -24,25 +20,26 @@ public class Fall : MonoBehaviour
     void FixedUpdate()
     {
 
-        if (isShaking )
+        if (isShaking)
         {
             if (counter % 5 == 0)
             {
                 Shake();
             }
-            counter++;}
+            counter++;
+        }
     }
     public void StartFall()
     {
         StartCoroutine(StartFallCo());
-        
+
 
     }
 
-    
+
     IEnumerator StartFallCo()
     {
-        
+
         isShaking = true;
         yield return new WaitForSeconds(shakeDuration);
 

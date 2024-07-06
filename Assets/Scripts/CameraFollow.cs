@@ -1,16 +1,15 @@
-using TMPro.Examples;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
     public Transform player;
     private Camera cam;
-    private float[] zoomSpeeds = {0.45f, 0.6f};
-    private float[] moveSpeeds = {0.8f, 1.5f};
+    private float[] zoomSpeeds = { 0.45f, 0.6f };
+    private float[] moveSpeeds = { 0.8f, 1.5f };
     public bool isFollowingPlayer;
-    
-    private Vector3[] stops = {new Vector3( 2.7f, -0.55f, -10f), new Vector3( 7.69f, -1.44f, -10f)};
-    private float[] zooms = {3.5f, 2.0f};
+
+    private Vector3[] stops = { new Vector3(2.7f, -0.55f, -10f), new Vector3(7.69f, -1.44f, -10f) };
+    private float[] zooms = { 3.5f, 2.0f };
     public int currentStop = 0;
     void Start()
     {
@@ -21,7 +20,7 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        if (isFollowingPlayer) FollowPlayer(currentStop);    
+        if (isFollowingPlayer) FollowPlayer(currentStop);
 
     }
 

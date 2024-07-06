@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BarbaraController : MonoBehaviour
@@ -11,29 +10,35 @@ public class BarbaraController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        
+
     }
 
-  void Update() {
-        if (sayingBye) {
+    void Update()
+    {
+        if (sayingBye)
+        {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
-           Quaternion targetRotation;
-            if(player.transform.position.x < transform.position.x) {
+            Quaternion targetRotation;
+            if (player.transform.position.x < transform.position.x)
+            {
                 targetRotation = Quaternion.Euler(0, 180, 0);
-            } else {
+            }
+            else
+            {
                 targetRotation = Quaternion.Euler(0, 0, 0);
             }
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5); 
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5);
         }
-    }   
+    }
 
-    public void Wave(){
+    public void Wave()
+    {
         sayingBye = true;
         animator.SetTrigger("Wave");
     }
 
-     public void WaveAndMove(System.Action callback)
+    public void WaveAndMove(System.Action callback)
     {
         Debug.Log("WaveAndMove called");
         OnAnimationFinished = callback;

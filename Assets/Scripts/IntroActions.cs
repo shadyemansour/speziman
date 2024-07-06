@@ -7,7 +7,7 @@ public class IntroActions : MonoBehaviour, IActions
     private Fall specialOrange;
     private Helmut helmut;
     public System.Action[] Callbacks => _callbacks;
-    public System.Action[] _callbacks = new System.Action[]{};
+    public System.Action[] _callbacks = new System.Action[] { };
 
     public string[] Messages => _messages;
 
@@ -28,7 +28,7 @@ public class IntroActions : MonoBehaviour, IActions
         helmut = FindObjectOfType<Helmut>();
     }
 
-        public void NextLevel()
+    public void NextLevel()
     {
         GameManager.Instance.LoadNextLevel(true);
     }
