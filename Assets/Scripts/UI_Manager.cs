@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -32,7 +33,7 @@ public class UIManager : MonoBehaviour
         levelData  = FindComponentImplementingIActions();
         levelData.SetCallbacks(new System.Action[] { EnableButton, NextButton });
         buttonNext.transform.parent.gameObject.GetComponent<Button>().onClick.AddListener(() => GameManager.Instance.LoadNextLevel(true));
-
+        SoundManager.Instance.StopBackground();
     }
 
     
@@ -78,18 +79,19 @@ public class UIManager : MonoBehaviour
 
         string message = levelData.Messages[count++];
         levelData.Actions(count);
-        StartTalkingSound();
-        textWriterSingle = TextWriter.AddWriter_Static(messageText, message, 0.02f, true, true, StopTalkingSound);
+        float timePerChar =  StartTalkingSound(message);
+        textWriterSingle = TextWriter.AddWriter_Static(messageText, message, timePerChar, true, true, StopTalkingSound);
     }
 
-    private void StartTalkingSound()
+    private float StartTalkingSound(string message)
     {
-        talkingAudioSource.Play();
+        float audioLength = SoundManager.Instance.PlaySound(SceneManager.GetActiveScene().name.ToLower()+count.ToString());
+        return audioLength / message.Length;
     }
 
     private void StopTalkingSound()
     {
-        talkingAudioSource.Stop();
+        SoundManager.Instance.StopSFX();
     }
 
     public void EnableButton()
