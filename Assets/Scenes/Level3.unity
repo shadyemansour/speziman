@@ -9870,6 +9870,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4147923577736521959, guid: 864c387d9aa3e4def955912460f321e2, type: 3}
+      propertyPath: m_margin.z
+      value: -48.6655
+      objectReference: {fileID: 0}
     - target: {fileID: 8225919346825847938, guid: 864c387d9aa3e4def955912460f321e2, type: 3}
       propertyPath: m_Name
       value: Spezi_Text
