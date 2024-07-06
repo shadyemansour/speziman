@@ -10,6 +10,10 @@ public class SoundManager : MonoBehaviour
     private AudioSource musicSource;
     private AudioSource sfxSource;
 
+
+    private float soundEffectsVolume = 1f;
+    private float backgroundMusicVolume = 1f;
+
     void Awake()
     {
         if (Instance == null)
@@ -25,7 +29,12 @@ public class SoundManager : MonoBehaviour
 
         AudioSource[] sources = GetComponents<AudioSource>();
         musicSource = sources[0];
-        sfxSource = sources[1];        
+        sfxSource = sources[1];
+
+        // Initialize volumes
+        SetSoundEffectsVolume(1f);
+        SetBackgroundMusicVolume(1f);
+
         audioClips = new Dictionary<string, AudioClip>
         {
             { "jump", Resources.Load<AudioClip>("Audio/jump") },
@@ -68,6 +77,27 @@ public class SoundManager : MonoBehaviour
                 Debug.LogWarning($"Die sound {i}.mp3 not found");
             }
         }
+
+        LoadSettings();
+
+
+        // Subscribe to SettingsManager events
+        SettingsManager.Instance.OnSoundEffectsVolumeChanged += SetSoundEffectsVolume;
+        SettingsManager.Instance.OnBackgroundMusicVolumeChanged += SetBackgroundMusicVolume;
+
+        // Initialize volumes
+        SetSoundEffectsVolume(SettingsManager.Instance.GetSoundEffectsVolume());
+        SetBackgroundMusicVolume(SettingsManager.Instance.GetBackgroundMusicVolume());
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from SettingsManager events
+        if (SettingsManager.Instance != null)
+        {
+            SettingsManager.Instance.OnSoundEffectsVolumeChanged -= SetSoundEffectsVolume;
+            SettingsManager.Instance.OnBackgroundMusicVolumeChanged -= SetBackgroundMusicVolume;
+        }
     }
 
     public float PlaySound(string clipKey)
@@ -76,7 +106,7 @@ public class SoundManager : MonoBehaviour
         if (audioClips.TryGetValue(clipKey, out AudioClip clip))
         {
             audioLength = clip.length;
-            sfxSource.PlayOneShot(clip);
+            sfxSource.PlayOneShot(clip, soundEffectsVolume);
         }
         else
         {
@@ -111,14 +141,14 @@ public class SoundManager : MonoBehaviour
     }
 
 
-    public void FadeOutBackgroundSound(float fadeOutTime=2f)
+    public void FadeOutBackgroundSound(float fadeOutTime = 2f)
     {
         StartCoroutine(FadeOut(musicSource, fadeOutTime));
     }
 
     private IEnumerator FadeOut(AudioSource audioSource, float fadeOutTime)
     {
-        float startVolume = audioSource.volume;
+        float startVolume = backgroundMusicVolume;
 
         while (audioSource.volume > 0)
         {
@@ -127,6 +157,44 @@ public class SoundManager : MonoBehaviour
         }
 
         audioSource.Stop();
-        audioSource.volume = startVolume;  // Optionally reset the volume to its original level if you'll play it again
+        audioSource.volume = startVolume;
     }
-}
+
+
+    public float GetSoundEffectsVolume()
+    {
+        return soundEffectsVolume;
+    }
+
+    public float GetBackgroundMusicVolume()
+    {
+        return backgroundMusicVolume;
+    }
+
+    public void SetSoundEffectsVolume(float volume)
+    {
+        soundEffectsVolume = volume;
+        sfxSource.volume = soundEffectsVolume;
+    }
+
+    public void SetBackgroundMusicVolume(float volume)
+    {
+        backgroundMusicVolume = volume;
+        musicSource.volume = backgroundMusicVolume;
+    }
+
+
+    public void PlayBackgroundMusic(AudioClip musicClip)
+    {
+        musicSource.clip = musicClip;
+        musicSource.volume = backgroundMusicVolume;
+        musicSource.loop = true;
+        musicSource.Play();
+    }
+
+    public void StopAllSounds()
+    {
+        sfxSource.Stop();
+        musicSource.Stop();
+    }
+    }
