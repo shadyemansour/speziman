@@ -58,6 +58,7 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat(BACKGROUND_MUSIC_VOLUME_KEY, _backgroundMusicVolume);
         PlayerPrefs.Save();
         OnBackgroundMusicVolumeChanged?.Invoke(_backgroundMusicVolume);
+        Debug.Log($"SettingsManager: Background Music Volume set to {_backgroundMusicVolume}");
     }
 
     // Load all settings

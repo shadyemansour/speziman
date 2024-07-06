@@ -24,6 +24,8 @@ public class MenuController : MonoBehaviour
     [SerializeField] private Button settingsButton;
     [SerializeField] private GameObject settingsCanvas;
 
+    [SerializeField] private AudioClip menuBackgroundMusic; // for testing volume settings
+
     private void Awake()
     {
         enterName.SetActive(true);  // Temporarily active to ensure it can be found if inactive at design time.
@@ -68,6 +70,15 @@ public class MenuController : MonoBehaviour
         else
         {
             Debug.LogError("Settings canvas is not assigned in the MenuController!");
+        }
+
+        if (menuBackgroundMusic != null)
+        {
+            SoundManager.Instance.PlayBackgroundMusic(menuBackgroundMusic);
+        }
+        else
+        {
+            Debug.LogWarning("Menu background music is not assigned in MenuController!");
         }
     }
 
@@ -228,5 +239,18 @@ public class MenuController : MonoBehaviour
     {
         settingsCanvas.SetActive(false);    
         start.SetActive(true);
+    }
+
+    private void PlayMenuBackgroundMusic()
+    {
+        if (menuBackgroundMusic != null)
+        {
+            SoundManager.Instance.PlayBackgroundMusic(menuBackgroundMusic);
+            Debug.Log("Menu background music started playing");
+        }
+        else
+        {
+            Debug.LogWarning("Menu background music is not assigned in MenuController!");
+        }
     }
 }

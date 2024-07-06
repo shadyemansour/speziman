@@ -13,6 +13,7 @@ public class SoundManager : MonoBehaviour
 
     private float soundEffectsVolume = 1f;
     private float backgroundMusicVolume = 1f;
+    [SerializeField] private AudioClip testSoundEffect;
 
     void Awake()
     {
@@ -78,6 +79,16 @@ public class SoundManager : MonoBehaviour
             }
         }
 
+
+        // Add test sound to the dictionary
+        if (testSoundEffect != null)
+        {
+            audioClips["testSound"] = testSoundEffect;
+        }
+        else
+        {
+            Debug.LogWarning("Test sound effect is not assigned in SoundManager!");
+        }
 
         // Subscribe to SettingsManager events
         SettingsManager.Instance.OnSoundEffectsVolumeChanged += SetSoundEffectsVolume;
@@ -178,16 +189,28 @@ public class SoundManager : MonoBehaviour
     public void SetBackgroundMusicVolume(float volume)
     {
         backgroundMusicVolume = volume;
-        musicSource.volume = backgroundMusicVolume;
+        if (musicSource != null && musicSource.clip != null)
+        {
+            musicSource.volume = backgroundMusicVolume;
+        }
+        Debug.Log($"Background Music Volume set to: {volume}");
     }
 
 
     public void PlayBackgroundMusic(AudioClip musicClip)
     {
-        musicSource.clip = musicClip;
-        musicSource.volume = backgroundMusicVolume;
-        musicSource.loop = true;
-        musicSource.Play();
+        if (musicSource != null && musicClip != null)
+        {
+            musicSource.clip = musicClip;
+            musicSource.volume = backgroundMusicVolume;
+            musicSource.loop = true;
+            musicSource.Play();
+            Debug.Log($"Playing background music at volume: {backgroundMusicVolume}");
+        }
+        else
+        {
+            Debug.LogWarning("Cannot play background music. Music source or clip is null.");
+        }
     }
 
     public void StopAllSounds()
@@ -195,4 +218,16 @@ public class SoundManager : MonoBehaviour
         sfxSource.Stop();
         musicSource.Stop();
     }
+
+    public void PlayTestSound()
+    {
+        if (testSoundEffect != null)
+        {
+            sfxSource.PlayOneShot(testSoundEffect, soundEffectsVolume);
+        }
+        else
+        {
+            Debug.LogWarning("Test sound effect is not assigned in SoundManager!");
+        }
     }
+}
