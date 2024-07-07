@@ -13,26 +13,26 @@ using System.Collections;
 using Unity.Collections;
 using UnityEditor.ShaderGraph.Internal;
 
-public class  GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     [SerializeField] private int totalCola;
-    [SerializeField] private  int totalOranges;
-    [SerializeField] private  GameObject playerPrefab; 
-    [SerializeField] private  Transform spawnPoint;  
-    [SerializeField] private float[] levelDurations = {90f, 450f, 600f,700f}; // Durations in seconds for each level
-    [SerializeField] private GameObject timerPrefab; 
+    [SerializeField] private int totalOranges;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private float[] levelDurations = { 90f, 450f, 600f, 700f }; // Durations in seconds for each level
+    [SerializeField] private GameObject timerPrefab;
 
-    private GameObject currentPlayer; 
+    private GameObject currentPlayer;
     private GameObject levelCompleteScreen;
     private Vector3 lastCheckpointPosition;
     private Timer timerInstance;
-    
+
     public int score = 0;
     private int totalDeliveries = 3;
     public int reachedDeliveries = 0;
-    private float levelStartTime;       
-    public int currentLevel =1;
+    private float levelStartTime;
+    public int currentLevel = 1;
     private int deliverablesCount = 3;
     private int maxLevels = 3;
 
@@ -43,7 +43,7 @@ public class  GameManager : MonoBehaviour
     private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
 
     //GameStats
-    private static string dataPath; 
+    private static string dataPath;
     public GameData gameData;
     private PlayerData currentPlayerData;
     public bool ShowLevelSelectOnLoad { get; set; }
@@ -95,23 +95,24 @@ public class  GameManager : MonoBehaviour
             }
         }
     }
-    
-    public void LoadNextLevel(bool wasCutScene=false)
+
+    public void LoadNextLevel(bool wasCutScene = false)
     {
         if (currentLevel >= maxLevels)
         {
-            LoadMenu(); 
+            LoadMenu();
         }
         else if (wasCutScene)
         {
-            LoadLevel(currentLevel++, !wasCutScene); 
-        }else if(currentLevel < maxLevels - 1)
+            LoadLevel(currentLevel++, !wasCutScene);
+        }
+        else if (currentLevel < maxLevels - 1)
         {
             LoadLevel(++currentLevel, !wasCutScene);
         }
         else
         {
-            LoadMenu(); 
+            LoadMenu();
         }
     }
     public void RestartLevel()
@@ -126,28 +127,29 @@ public class  GameManager : MonoBehaviour
         string levelName = isCut ? "Cut" : "Level";
         levelName += sceneNumber.ToString();
         SceneManager.LoadScene(levelName);
-        SceneManager.sceneLoaded += OnSceneLoaded; 
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
     }
 
-public void LoadMenu()
-{
-    if (currentPlayerData != null)
+    public void LoadMenu()
     {
-        ShowLevelSelectOnLoad = true;
+        if (currentPlayerData != null)
+        {
+            ShowLevelSelectOnLoad = true;
+        }
+        SceneManager.LoadScene("StartScene");
     }
-    SceneManager.LoadScene("StartScene");
-}
 
 
-    
+
+
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         levelCompleteScreen = GameObject.FindGameObjectWithTag("LevelCompleteUI");
         Debug.Log("Scene loaded: " + scene.name);
         if (scene.name.ToLower().Contains("level"))
-        {   
+        {
             InitializeCollectables();
             // InitializeCollectablesUI();
             InstantiateTimer();
@@ -156,7 +158,8 @@ public void LoadMenu()
             InitializeBackground();
             SpawnPlayer();
             SetupCamera();
-        
+
+
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
@@ -191,12 +194,12 @@ public void LoadMenu()
 
     void SpawnPlayer()
     {
-        if (currentPlayer != null) Destroy(currentPlayer); 
+        if (currentPlayer != null) Destroy(currentPlayer);
 
         if (playerPrefab != null && spawnPoint != null)
         {
             currentPlayer = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-            
+
             lastCheckpointPosition = spawnPoint.position;
         }
         else
@@ -204,7 +207,7 @@ public void LoadMenu()
             Debug.LogError("Player prefab or spawn point not set.");
         }
     }
-   private void InitializeCollectables()
+    private void InitializeCollectables()
     {
         Collectable[] allCollectables = FindObjectsOfType<Collectable>();
         collectables.Clear();
@@ -246,7 +249,7 @@ public void LoadMenu()
         {
             collectable.collectedAfterCheckpoint = true;
             UpdateUI(collectable.itemType, 1);
-            score += collectable.scoreValue; 
+            score += collectable.scoreValue;
         }
     }
 
@@ -262,7 +265,7 @@ public void LoadMenu()
                 }
             }
         }
-        ResetUI();  
+        ResetUI();
     }
 
     public void UpdateLastCheckpoint(Vector3 newCheckpointPosition)
@@ -282,7 +285,7 @@ public void LoadMenu()
 
     private void InitializeBackground()
     {
-        
+
         GameObject[] background = GameObject.FindGameObjectsWithTag("Background");
         if (background != null)
         {
@@ -312,10 +315,11 @@ public void LoadMenu()
         ResetCollectablesTexts();
     }
 
-    private void ResetCollectablesTexts(){
-        foreach(var pair in collectableTexts)
+    private void ResetCollectablesTexts()
+    {
+        foreach (var pair in collectableTexts)
         {
-            pair.Value.text = "0/"+collectables[pair.Key].Count.ToString();
+            pair.Value.text = "0/" + collectables[pair.Key].Count.ToString();
         }
     }
 
@@ -335,7 +339,7 @@ public void LoadMenu()
         }
     }
 
-     private void UpdateUI(string itemType, int change)
+    private void UpdateUI(string itemType, int change)
     {
         if (collectableTexts.ContainsKey(itemType))
         {
@@ -345,12 +349,13 @@ public void LoadMenu()
             sb.Append(collectables[itemType].Count.ToString());
             collectableTexts[itemType].text = sb.ToString();
         }
-        else{
+        else
+        {
             Debug.LogError("Text object not found for: " + itemType);
         }
     }
 
-     public void RespawnPlayer(GameObject player)
+    public void RespawnPlayer(GameObject player)
     {
         DestroyShots();
         ResetCollectables();
@@ -374,10 +379,16 @@ public void LoadMenu()
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
         TriggerGameOver();
-        
+
     }
 
-   private void InstantiateTimer()
+    public void ToggleTimer()
+    {
+
+        currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(timerInstance.TogglePause());
+    }
+
+    private void InstantiateTimer()
     {
         if (timerInstance != null)
         {
@@ -392,7 +403,7 @@ public void LoadMenu()
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
     }
-  
+
     private float CalculateLevelCompletionTime()
     {
         float currentTime = Time.time;
@@ -420,7 +431,7 @@ public void LoadMenu()
 
     private void StopLevel()
     {
-        
+
         currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(true);
         timerInstance.StopTimer();
 
@@ -431,29 +442,29 @@ public void LoadMenu()
         StopLevel();
         float completionTime = CalculateLevelCompletionTime();
         int collectedItems = GetCollectedItemsCount();
-        int totalItems = GetTotalItemsCount(); 
+        int totalItems = GetTotalItemsCount();
 
-            if (levelCompleteScreen != null)
-                {
-                    levelCompleteScreen.GetComponent<CanvasGroup>().alpha = 1;
-                    Debug.Log("Level complete screen activated");
+        if (levelCompleteScreen != null)
+        {
+            levelCompleteScreen.GetComponent<CanvasGroup>().alpha = 1;
+            Debug.Log("Level complete screen activated");
 
-                    LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
-                    if (lcManager != null)
-                    {
-                        Debug.Log(reachedDeliveries);
-                        lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete);
-                        Debug.Log("LevelCompleteManager UpdateUI called");
-                    }
-                    else
-                    {
-                        Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("levelCompleteScreen is null in GameManager");
-                }
+            LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
+            if (lcManager != null)
+            {
+                Debug.Log(reachedDeliveries);
+                lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete);
+                Debug.Log("LevelCompleteManager UpdateUI called");
+            }
+            else
+            {
+                Debug.LogError("LevelCompleteManager component not found on levelCompleteScreen");
+            }
+        }
+        else
+        {
+            Debug.LogError("levelCompleteScreen is null in GameManager");
+        }
     }
 
     private int GetCollectedItemsCount()
@@ -490,23 +501,23 @@ public void LoadMenu()
         Debug.Log("reachedDeliveries: " + reachedDeliveries);
     }
 
-    public bool SendCollectables(GameObject player, Vector3 barbaraPosition )
+    public bool SendCollectables(GameObject player, Vector3 barbaraPosition)
     {
-            int value = int.Parse(collectableTexts.First().Value.text.Split("/")[0]);
-            if(value > 0)
-            {
-                StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-            
+        int value = int.Parse(collectableTexts.First().Value.text.Split("/")[0]);
+        if (value > 0)
+        {
+            StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
     }
 
     private IEnumerator SendCollectablesCoroutine(GameObject player, Vector3 barbaraPosition, float delayBetweenItems)
-    {   
+    {
         player.GetComponent<PlayerMovement>().SetIsStopped(true);
 
         foreach (var pair in collectableTexts)
@@ -514,14 +525,15 @@ public void LoadMenu()
 
             int value = int.Parse(collectableTexts[pair.Key].text.Split("/")[0]);
             value = Mathf.Min(value, deliverablesCount);
-            if(value > 0 ){
+            if (value > 0)
+            {
                 for (int i = 0; i < value; i++)
                 {
                     GameObject instance = Instantiate(collectablePrefabs[pair.Key], player.transform.position, Quaternion.identity);
                     StartCoroutine(MoveCollectableInParabola(instance, barbaraPosition, 1.0f));
-                    yield return new WaitForSeconds(delayBetweenItems); 
+                    yield return new WaitForSeconds(delayBetweenItems);
 
-                    
+
                 }
             }
             player.GetComponent<PlayerMovement>().SetIsStopped(false);
@@ -532,7 +544,7 @@ public void LoadMenu()
     {
         float time = 0;
         Vector3 startPos = collectable.transform.position;
-        float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2; 
+        float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2;
 
         while (time < duration)
         {
@@ -543,8 +555,8 @@ public void LoadMenu()
             yield return null;
         }
 
-        collectable.transform.position = targetPos; 
-        Destroy(collectable); 
+        collectable.transform.position = targetPos;
+        Destroy(collectable);
     }
 
     /////    GameData    /////
@@ -564,7 +576,7 @@ public void LoadMenu()
                 playerName = playerName,
                 score = 0,
                 currentLevel = 1,
-                unlockedLevels = new List<int>() { 1 }  
+                unlockedLevels = new List<int>() { 1 }
             };
 
             gameData.players.Add(newPlayer);
@@ -578,7 +590,7 @@ public void LoadMenu()
         }
     }
 
-        public bool LoginExistingPlayer(string playerName)
+    public bool LoginExistingPlayer(string playerName)
     {
         // Check if the username exists
         if (gameData.players.Any(p => p.playerName == playerName))
@@ -611,18 +623,18 @@ public void LoadMenu()
     public void SaveGameData()
     {
         if (currentPlayerData != null)
-    {
-        PlayerData existingPlayer = gameData.players.Find(p => p.playerName == currentPlayerData.playerName);
-        if (existingPlayer != null)
         {
-            int index = gameData.players.IndexOf(existingPlayer);
-            gameData.players[index] = currentPlayerData;
+            PlayerData existingPlayer = gameData.players.Find(p => p.playerName == currentPlayerData.playerName);
+            if (existingPlayer != null)
+            {
+                int index = gameData.players.IndexOf(existingPlayer);
+                gameData.players[index] = currentPlayerData;
+            }
+            else
+            {
+                gameData.players.Add(currentPlayerData);
+            }
         }
-        else
-        {
-            gameData.players.Add(currentPlayerData);
-        }
-    }
         string json = JsonUtility.ToJson(gameData, true);
         System.IO.File.WriteAllText(dataPath, json);
         Debug.Log("Game data saved to " + dataPath);
@@ -661,7 +673,7 @@ public void LoadMenu()
         Debug.Log("Unlocking level " + level);
         if (currentPlayerData != null && !currentPlayerData.unlockedLevels.Contains(level))
         {
-            currentPlayerData.currentLevel = level; 
+            currentPlayerData.currentLevel = level;
             currentPlayerData.unlockedLevels.Add(level);
             SaveGameData();
             Debug.Log("Unlocked level");
@@ -676,7 +688,7 @@ public void LoadMenu()
         SaveGameData();
     }
 
- //  private void InitializeCollectablesUI()
+    //  private void InitializeCollectablesUI()
     // {
     //     GameObject parent = GameObject.FindGameObjectWithTag("StatsCanvas");
     //     Vector3 nextPosition = new Vector3(-344, 186, 0); // Starting position for the first item
@@ -726,6 +738,6 @@ public void LoadMenu()
     // }
 
 
-    
+
 }
 

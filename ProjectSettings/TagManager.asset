@@ -27,6 +27,8 @@ TagManager:
   - NewPlayerMenu
   - UsernameInputField
   - LevelButton
+  - SFXSlider
+  - MusicSlider
   layers:
   - Default
   - TransparentFX

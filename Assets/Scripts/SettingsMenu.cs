@@ -20,44 +20,44 @@ public class SettingsMenu : MonoBehaviour
         }
 
         // Initialize slider values
-        soundEffectsSlider.value = SettingsManager.Instance.GetSoundEffectsVolume();
-        backgroundMusicSlider.value = SettingsManager.Instance.GetBackgroundMusicVolume();
+        // soundEffectsSlider.value = SettingsManager.Instance.GetSoundEffectsVolume();
+        // backgroundMusicSlider.value = SettingsManager.Instance.GetBackgroundMusicVolume();
 
         // Add listeners to sliders
-        soundEffectsSlider.onValueChanged.AddListener(OnSoundEffectsVolumeChanged);
-        backgroundMusicSlider.onValueChanged.AddListener(OnBackgroundMusicVolumeChanged);
+        // soundEffectsSlider.onValueChanged.AddListener(OnSoundEffectsVolumeChanged);
+        // backgroundMusicSlider.onValueChanged.AddListener(OnBackgroundMusicVolumeChanged);
 
         // Add listener to back button
         backButton.onClick.AddListener(OnBackButtonClicked);
 
         // Subscribe to SettingsManager events
-        SettingsManager.Instance.OnSoundEffectsVolumeChanged += UpdateSoundEffectsSlider;
-        SettingsManager.Instance.OnBackgroundMusicVolumeChanged += UpdateBackgroundMusicSlider;
+        // SettingsManager.Instance.OnSoundEffectsVolumeChanged += UpdateSoundEffectsSlider;
+        // SettingsManager.Instance.OnBackgroundMusicVolumeChanged += UpdateBackgroundMusicSlider;
     }
 
     private void OnDestroy()
     {
         // Unsubscribe from SettingsManager events
-        if (SettingsManager.Instance != null)
-        {
-            SettingsManager.Instance.OnSoundEffectsVolumeChanged -= UpdateSoundEffectsSlider;
-            SettingsManager.Instance.OnBackgroundMusicVolumeChanged -= UpdateBackgroundMusicSlider;
-        }
+        // if (SettingsManager.Instance != null)
+        // {
+        //     // SettingsManager.Instance.OnSoundEffectsVolumeChanged -= UpdateSoundEffectsSlider;
+        //     // SettingsManager.Instance.OnBackgroundMusicVolumeChanged -= UpdateBackgroundMusicSlider;
+        // }
     }
 
     private void OnSoundEffectsVolumeChanged(float volume)
     {
         Debug.Log($"Sound Effects Volume Changed: {volume}");
-        SettingsManager.Instance.SetSoundEffectsVolume(volume);
+        // SettingsManager.Instance.SetSoundEffectsVolume(volume);
         SoundManager.Instance.PlaySound("testSound");
     }
 
     private void OnBackgroundMusicVolumeChanged(float volume)
     {
         Debug.Log($"Background Music Volume Changed: {volume}");
-        SettingsManager.Instance.SetBackgroundMusicVolume(volume);
+        // SettingsManager.Instance.SetBackgroundMusicVolume(volume);
         // Directly update SoundManager to ensure immediate effect
-        SoundManager.Instance.SetBackgroundMusicVolume(volume);
+        // SoundManager.Instance.SetBackgroundMusicVolume(volume);
     }
 
     private void UpdateSoundEffectsSlider(float volume)
@@ -74,7 +74,7 @@ public class SettingsMenu : MonoBehaviour
     {
         if (menuController != null)
         {
-            menuController.CloseSettingsMenu();
+            // menuController.CloseSettingsMenu();
         }
         else
         {

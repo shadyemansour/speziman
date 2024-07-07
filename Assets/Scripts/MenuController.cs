@@ -20,10 +20,6 @@ public class MenuController : MonoBehaviour
 
     private List<Button> levelButtons;
 
-
-    [SerializeField] private Button settingsButton;
-    [SerializeField] private GameObject settingsCanvas;
-
     [SerializeField] private AudioClip menuBackgroundMusic; // for testing volume settings
 
     private void Awake()
@@ -34,12 +30,12 @@ public class MenuController : MonoBehaviour
         usernameInputField = GameObject.FindGameObjectWithTag("UsernameInputField").GetComponent<TMP_InputField>();
         errorText = GameObject.Find("errorText").GetComponent<TMP_Text>();
         enterName.SetActive(false);
-        
+
         levelSelect.SetActive(true);
         levelButtons = new List<Button>();
         InitializeLevelButtons();
         levelSelect.SetActive(false);
-        
+
         start.SetActive(true);
     }
 
@@ -51,34 +47,6 @@ public class MenuController : MonoBehaviour
             UpdateLevelAccess();
             GameManager.Instance.ShowLevelSelectOnLoad = false;
 
-        }
-
-        
-        if (settingsButton != null)
-        {
-            settingsButton.onClick.AddListener(OpenSettingsMenu);
-        }
-        else
-        {
-            Debug.LogError("Settings button is not assigned in the MenuController!");
-        }
-
-        if (settingsCanvas != null)
-        {
-            settingsCanvas.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("Settings canvas is not assigned in the MenuController!");
-        }
-
-        if (menuBackgroundMusic != null)
-        {
-            SoundManager.Instance.PlayBackgroundMusic(menuBackgroundMusic);
-        }
-        else
-        {
-            Debug.LogWarning("Menu background music is not assigned in MenuController!");
         }
     }
 
@@ -104,9 +72,9 @@ public class MenuController : MonoBehaviour
     }
 
 
-     public void OnNewUserButtonClicked()
+    public void OnNewUserButtonClicked()
     {
-        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f); 
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
         string username = usernameInputField.text;
         if (!string.IsNullOrEmpty(username))
         {
@@ -162,7 +130,7 @@ public class MenuController : MonoBehaviour
     public void UpdateLevelAccess()
     {
         int playerMaxLevel = GameManager.Instance.GetPlayerMaxLevel();
-        
+
         for (int i = 0; i < levelButtons.Count; i++)
         {
             // Enable buttons up to the player's current max level
@@ -173,7 +141,7 @@ public class MenuController : MonoBehaviour
     void DisplayErrorMessages(string message)
     {
         errorText.text = message;
-        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 1f); 
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 1f);
     }
 
 
@@ -224,33 +192,5 @@ public class MenuController : MonoBehaviour
         levelSelect.SetActive(showLevelSelect);
         newPlayerObjects.SetActive(showNewPlayerObjects);
         oldPlayerObjects.SetActive(showOldPlayerObjects);
-        settingsCanvas.SetActive(showSettings);
-    }
-
-    private void OpenSettingsMenu()     // alternatively with setMenuState
-    {
-        start.SetActive(false);
-        enterName.SetActive(false);
-        levelSelect.SetActive(false);
-        settingsCanvas.SetActive(true);
-    }
-
-    public void CloseSettingsMenu()    // alternatively with setMenuState
-    {
-        settingsCanvas.SetActive(false);    
-        start.SetActive(true);
-    }
-
-    private void PlayMenuBackgroundMusic()
-    {
-        if (menuBackgroundMusic != null)
-        {
-            SoundManager.Instance.PlayBackgroundMusic(menuBackgroundMusic);
-            Debug.Log("Menu background music started playing");
-        }
-        else
-        {
-            Debug.LogWarning("Menu background music is not assigned in MenuController!");
-        }
     }
 }
