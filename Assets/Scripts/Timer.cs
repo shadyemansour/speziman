@@ -20,7 +20,7 @@ public class Timer : MonoBehaviour
         if (displayObject != null)
         {
             timerDisplay = displayObject.GetComponent<TextMeshProUGUI>();
-            animator = timerDisplay.GetComponent<Animator>();
+            animator = timerDisplay.GetComponentInParent<Animator>();
         }
 
         // ResetTimer();
