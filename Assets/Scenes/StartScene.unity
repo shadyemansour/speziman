@@ -1918,6 +1918,10 @@ PrefabInstance:
       propertyPath: testSoundEffect
       value: 
       objectReference: {fileID: 8300000, guid: 7dd62c2754b01433c9a5ea4d81bcb285, type: 3}
+    - target: {fileID: 7599162643464423939, guid: 2346c312d3cb343498e171c70b8dd0f7, type: 3}
+      propertyPath: backgroundMusicClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5b6ebf60ad145497cb139a592295d6ca, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
