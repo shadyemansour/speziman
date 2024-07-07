@@ -57,6 +57,7 @@ public class BarbaraSceneActions : MonoBehaviour, IActions
 
     public void NextLevel()
     {
+        SoundManager.Instance.FadeOutSfxSound();
         GameManager.Instance.LoadNextLevel(true);
     }
 

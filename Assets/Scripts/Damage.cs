@@ -15,7 +15,6 @@ public class Damage : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("OnTriggerEnter2D");
         if (collider.CompareTag("Player"))
         {
             KillPlayer(collider.gameObject);

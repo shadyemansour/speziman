@@ -132,6 +132,15 @@ public class GameManager : MonoBehaviour
     {
         currentLevel = sceneNumber;
         string levelName = isCut ? "Cut" : "Level";
+        if (isCut)
+        {
+            SoundManager.Instance.FadeOutBackgroundSound();
+        }
+        else
+        {
+            SoundManager.Instance.FadeInBackgroundSound();
+        }
+
         levelName += sceneNumber.ToString();
         if (SceneExists(levelName))
         {
@@ -179,6 +188,7 @@ public class GameManager : MonoBehaviour
         {
             ShowLevelSelectOnLoad = true;
         }
+        SoundManager.Instance.FadeOutBackgroundSound();
         SceneManager.LoadScene("StartScene");
     }
 
@@ -330,7 +340,6 @@ public class GameManager : MonoBehaviour
                 collectables[collectable.itemType] = new List<Collectable>();
             }
             collectables[collectable.itemType].Add(collectable);
-            Debug.Log(collectable.itemType);
         }
         LoadCollectablesPrefabs();
     }

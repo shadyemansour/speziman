@@ -25,6 +25,8 @@ public class FaxActions : MonoBehaviour, IActions
 
     public void NextLevel()
     {
+        Debug.Log("Next Level");
+        SoundManager.Instance.FadeOutSfxSound();
         GameManager.Instance.LoadNextLevel(true);
     }
 

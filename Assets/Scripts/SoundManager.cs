@@ -11,26 +11,17 @@ public class SoundManager : MonoBehaviour
     private AudioSource musicSource;
     private AudioSource sfxSource;
 
-    private Slider sfxVolumeSlider;
-    private Slider musicVolumeSlider;
-
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        AudioSource[] sources = GetComponents<AudioSource>();
-        musicSource = sources[0];
-        sfxSource = sources[1];
-        audioClips = new Dictionary<string, AudioClip>
+            AudioSource[] sources = GetComponents<AudioSource>();
+            musicSource = sources[0];
+            musicSource.Stop();
+            sfxSource = sources[1];
+            audioClips = new Dictionary<string, AudioClip>
         {
             { "jump", Resources.Load<AudioClip>("Audio/jump") },
             { "checkpoint", Resources.Load<AudioClip>("Audio/checkpoint") },
@@ -58,20 +49,28 @@ public class SoundManager : MonoBehaviour
 
         };
 
-        // Load die sounds
-        dieSounds = new List<AudioClip>();
-        for (int i = 1; i <= 12; i++)
-        {
-            AudioClip clip = Resources.Load<AudioClip>($"Audio/Grumpy Bavarian Selection/{i}");
-            if (clip != null)
+            // Load die sounds
+            dieSounds = new List<AudioClip>();
+            for (int i = 1; i <= 12; i++)
             {
-                dieSounds.Add(clip);
-            }
-            else
-            {
-                Debug.LogWarning($"Die sound {i}.mp3 not found");
+                AudioClip clip = Resources.Load<AudioClip>($"Audio/Grumpy Bavarian Selection/{i}");
+                if (clip != null)
+                {
+                    dieSounds.Add(clip);
+                }
+                else
+                {
+                    Debug.LogWarning($"Die sound {i}.mp3 not found");
+                }
             }
         }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+
     }
 
     public float PlaySound(string clipKey)
@@ -120,8 +119,14 @@ public class SoundManager : MonoBehaviour
         StartCoroutine(FadeOut(musicSource, fadeOutTime));
     }
 
+    public void FadeOutSfxSound(float fadeOutTime = 0.5f)
+    {
+        StartCoroutine(FadeOut(sfxSource, fadeOutTime));
+    }
+
     private IEnumerator FadeOut(AudioSource audioSource, float fadeOutTime)
     {
+        Debug.Log("FadeOut");
         float startVolume = audioSource.volume;
 
         while (audioSource.volume > 0)
@@ -133,6 +138,30 @@ public class SoundManager : MonoBehaviour
         audioSource.Stop();
         audioSource.volume = startVolume;
     }
+
+    public void FadeInBackgroundSound(float fadeOutTime = 2f)
+    {
+        StartCoroutine(FadeIn(musicSource, fadeOutTime));
+    }
+
+    private IEnumerator FadeIn(AudioSource audioSource, float fadeOutTime)
+    {
+        float startVolume = audioSource.volume;
+        audioSource.volume = 0;
+
+
+        audioSource.Play();
+
+        while (audioSource.volume < startVolume)
+        {
+            audioSource.volume += startVolume * Time.deltaTime / fadeOutTime;
+            yield return null;
+        }
+
+        audioSource.volume = startVolume;
+    }
+
+
 
     public float GetSFXVolume()
     {

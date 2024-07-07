@@ -32,8 +32,7 @@ public class UIManager : MonoBehaviour
         button.ClickFunc = HandleButtonClick;
         levelData = FindComponentImplementingIActions();
         levelData.SetCallbacks(new System.Action[] { EnableButton, NextButton });
-        buttonNext.transform.parent.gameObject.GetComponent<Button>().onClick.AddListener(() => GameManager.Instance.LoadNextLevel(true));
-        SoundManager.Instance.StopBackground();
+        buttonNext.transform.parent.gameObject.GetComponent<Button>().onClick.AddListener(() => levelData.NextLevel());
     }
 
 
