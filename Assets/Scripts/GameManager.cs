@@ -184,7 +184,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         levelCompleteScreen = GameObject.FindGameObjectWithTag("LevelCompleteUI");
@@ -201,6 +200,7 @@ public class GameManager : MonoBehaviour
             SetupCamera();
             FindGameObjects();
             FindBarbaras();
+
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
@@ -315,7 +315,6 @@ public class GameManager : MonoBehaviour
             Destroy(obj.gameObject);
         }
     }
-
 
 
 
@@ -499,7 +498,11 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
         TriggerGameOver();
+    }
 
+    public void ToggleTimer()
+    {
+        currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(timerInstance.TogglePause());
     }
 
     private void InstantiateTimer()
@@ -517,6 +520,7 @@ public class GameManager : MonoBehaviour
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
     }
+
     public float GetTimeLeft()
     {
         return timerInstance.GetTimeRemaining();

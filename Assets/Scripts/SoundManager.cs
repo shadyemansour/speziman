@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class SoundManager : MonoBehaviour
     private List<AudioClip> dieSounds;
     private AudioSource musicSource;
     private AudioSource sfxSource;
+
+    private Slider sfxVolumeSlider;
+    private Slider musicVolumeSlider;
 
     void Awake()
     {
@@ -128,5 +132,25 @@ public class SoundManager : MonoBehaviour
 
         audioSource.Stop();
         audioSource.volume = startVolume;
+    }
+
+    public float GetSFXVolume()
+    {
+        return sfxSource.volume;
+    }
+
+    public float GetMusicVolume()
+    {
+        return musicSource.volume;
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxSource.volume = volume;
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        musicSource.volume = volume;
     }
 }
