@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     private List<(Vector3 position, Quaternion rotation)> kickBottles;
     private List<(Vector3 position, Quaternion rotation)> boosts;
     private List<(Vector3 position, Quaternion rotation)> faxMachines;
+    public List<Barbara> barbaras;
 
     //GameStats
     private static string dataPath;
@@ -198,6 +199,7 @@ public class GameManager : MonoBehaviour
             SpawnPlayer();
             SetupCamera();
             FindGameObjects();
+            FindBarbaras();
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
@@ -247,6 +249,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void FindBarbaras()
+    {
+        Barbara[] barbarasScene = FindObjectsOfType<Barbara>();
+        barbaras = new List<Barbara>(barbarasScene);
+    }
+
 
     private void FindGameObjects()
     {
@@ -264,6 +272,19 @@ public class GameManager : MonoBehaviour
         DestroyAll<FaxField>();
         SpawnObjects(faxPrefab, faxMachines);
 
+    }
+
+    private void ResetBarbaras()
+    {
+        foreach (Barbara barbara in barbaras)
+        {
+            if (barbara.reachedAfterCheckpoint)
+            {
+                Debug.Log("Resetting barbara");
+                barbara.Reset();
+            }
+
+        }
     }
 
     private List<(Vector3, Quaternion)> FindObjects<T>() where T : MonoBehaviour
@@ -372,6 +393,10 @@ public class GameManager : MonoBehaviour
                 collectable.collectedAfterCheckpoint = false;
             }
         }
+        foreach (Barbara barbara in barbaras)
+        {
+            barbara.reachedAfterCheckpoint = false;
+        }
     }
 
     private void InitializeBackground()
@@ -451,6 +476,7 @@ public class GameManager : MonoBehaviour
         DestroyShots();
         ResetCollectables();
         RespawnGameObjects();
+        ResetBarbaras();
         player.GetComponent<PlayerMovement>().ResetSpeed();
 
         player.transform.position = lastCheckpointPosition;
@@ -585,6 +611,11 @@ public class GameManager : MonoBehaviour
     public void IncrementDeliveries()
     {
         reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+    }
+
+    public void DecrementDeliveries()
+    {
+        reachedDeliveries = Mathf.Max(reachedDeliveries - 1, 0);
     }
 
     public bool SendCollectables(GameObject player, Vector3 barbaraPosition)
