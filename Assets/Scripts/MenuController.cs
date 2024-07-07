@@ -20,6 +20,8 @@ public class MenuController : MonoBehaviour
 
     private List<Button> levelButtons;
 
+    [SerializeField] private AudioClip menuBackgroundMusic; // for testing volume settings
+
     private void Awake()
     {
         enterName.SetActive(true);  // Temporarily active to ensure it can be found if inactive at design time.
@@ -131,6 +133,7 @@ public class MenuController : MonoBehaviour
 
         for (int i = 0; i < levelButtons.Count; i++)
         {
+            // Enable buttons up to the player's current max level
             levelButtons[i].interactable = i < playerMaxLevel;
         }
     }
@@ -149,29 +152,27 @@ public class MenuController : MonoBehaviour
     //Navigation
     public void NewUserMenu()
     {
-        SetMenuState(false, true, false, true, false);
+        SetMenuState(false, true, false, true, false, false);
     }
 
     public void ExistingUserMenu()
     {
-        SetMenuState(false, true, false, false, true);
+        SetMenuState(false, true, false, false, true, false);
     }
 
     public void LevelSelectMenu()
     {
-        SetMenuState(false, false, true, false, false);
+        SetMenuState(false, false, true, false, false, false);
     }
 
     public void BackToMainMenu()
     {
-        usernameInputField.text = "";
-        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
-        SetMenuState(true, false, false, false, false);
+        SetMenuState(true, false, false, false, false, false);
     }
 
     public void ShowDetails()
     {
-        SetMenuState(false, false, false, false, false);
+        SetMenuState(false, false, false, false, false, false);
     }
 
     public void StartGame()
@@ -184,7 +185,7 @@ public class MenuController : MonoBehaviour
         GameManager.Instance.LoadLevel(levelNum, true);
     }
 
-    private void SetMenuState(bool showStart, bool showEnterName, bool showLevelSelect, bool showNewPlayerObjects, bool showOldPlayerObjects)
+    private void SetMenuState(bool showStart, bool showEnterName, bool showLevelSelect, bool showNewPlayerObjects, bool showOldPlayerObjects, bool showSettings)
     {
         start.SetActive(showStart);
         enterName.SetActive(showEnterName);

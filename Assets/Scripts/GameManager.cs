@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     private List<(Vector3 position, Quaternion rotation)> kickBottles;
     private List<(Vector3 position, Quaternion rotation)> boosts;
     private List<(Vector3 position, Quaternion rotation)> faxMachines;
+    public List<Barbara> barbaras;
 
     //GameStats
     private static string dataPath;
@@ -87,6 +88,7 @@ public class GameManager : MonoBehaviour
     void FindTextObjects()
     {
         collectableTexts.Clear();
+        Debug.Log("Finding text objects");
         foreach (var pair in collectables)
         {
             TextMeshProUGUI text = GameObject.FindGameObjectWithTag(pair.Key + "_Text").GetComponent<TextMeshProUGUI>();
@@ -182,7 +184,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         levelCompleteScreen = GameObject.FindGameObjectWithTag("LevelCompleteUI");
@@ -198,6 +199,8 @@ public class GameManager : MonoBehaviour
             SpawnPlayer();
             SetupCamera();
             FindGameObjects();
+            FindBarbaras();
+
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
@@ -247,23 +250,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void FindBarbaras()
+    {
+        Barbara[] barbarasScene = FindObjectsOfType<Barbara>();
+        barbaras = new List<Barbara>(barbarasScene);
+    }
+
 
     private void FindGameObjects()
     {
-        kickBottles = FindObjects<BottleKick>();
+        // kickBottles = FindObjects<BottleKick>();
         boosts = FindObjects<BoostCharacter>();
         faxMachines = FindObjects<FaxField>();
     }
     private void RespawnGameObjects()
     {
 
-        DestroyAll<BottleKick>();
-        SpawnObjects(kickBottlePrefab, kickBottles);
+        // DestroyAll<BottleKick>();
+        // SpawnObjects(kickBottlePrefab, kickBottles);
         DestroyAll<BoostCharacter>();
         SpawnObjects(boostPrefab, boosts);
         DestroyAll<FaxField>();
         SpawnObjects(faxPrefab, faxMachines);
 
+    }
+
+    private void ResetBarbaras()
+    {
+        foreach (Barbara barbara in barbaras)
+        {
+            if (barbara.reachedAfterCheckpoint)
+            {
+                Debug.Log("Resetting barbara");
+                barbara.Reset();
+            }
+
+        }
     }
 
     private List<(Vector3, Quaternion)> FindObjects<T>() where T : MonoBehaviour
@@ -297,7 +319,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
     private void InitializeCollectables()
     {
         Collectable[] allCollectables = FindObjectsOfType<Collectable>();
@@ -309,6 +330,7 @@ public class GameManager : MonoBehaviour
                 collectables[collectable.itemType] = new List<Collectable>();
             }
             collectables[collectable.itemType].Add(collectable);
+            Debug.Log(collectable.itemType);
         }
         LoadCollectablesPrefabs();
     }
@@ -371,6 +393,10 @@ public class GameManager : MonoBehaviour
             {
                 collectable.collectedAfterCheckpoint = false;
             }
+        }
+        foreach (Barbara barbara in barbaras)
+        {
+            barbara.reachedAfterCheckpoint = false;
         }
     }
 
@@ -451,6 +477,7 @@ public class GameManager : MonoBehaviour
         DestroyShots();
         ResetCollectables();
         RespawnGameObjects();
+        ResetBarbaras();
         player.GetComponent<PlayerMovement>().ResetSpeed();
 
         player.transform.position = lastCheckpointPosition;
@@ -471,7 +498,11 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
         TriggerGameOver();
+    }
 
+    public void ToggleTimer()
+    {
+        currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(timerInstance.TogglePause());
     }
 
     private void InstantiateTimer()
@@ -489,6 +520,7 @@ public class GameManager : MonoBehaviour
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
     }
+
     public float GetTimeLeft()
     {
         return timerInstance.GetTimeRemaining();
@@ -585,6 +617,11 @@ public class GameManager : MonoBehaviour
     public void IncrementDeliveries()
     {
         reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
+    }
+
+    public void DecrementDeliveries()
+    {
+        reachedDeliveries = Mathf.Max(reachedDeliveries - 1, 0);
     }
 
     public bool SendCollectables(GameObject player, Vector3 barbaraPosition)

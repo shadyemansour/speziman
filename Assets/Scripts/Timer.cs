@@ -59,6 +59,12 @@ public class Timer : MonoBehaviour
         timerIsRunning = false;
     }
 
+    public bool TogglePause()
+    {
+        timerIsRunning = !timerIsRunning;
+        return timerIsRunning;
+    }
+
     public void ResetTimer()
     {
         StartTimer(initialTime);
