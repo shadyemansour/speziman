@@ -5,6 +5,15 @@ public class BottleKick : MonoBehaviour
 {
     public float kickForceMagnitude = 500f;
     public float upwardKickRatio = 0.2f;
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
+
+    void Awake()
+    {
+        originalPosition = transform.position;
+        originalRotation = transform.rotation;
+
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -20,12 +29,19 @@ public class BottleKick : MonoBehaviour
             {
                 rb.AddForce(kickDirection * kickForceMagnitude);
                 StartCoroutine(DestroyAfterDelay());
+                Collectable collectable = GetComponent<Collectable>();
+                if (collectable != null)
+                {
+                    collectable.Collect(collision.collider);
+                }
             }
 
             IEnumerator DestroyAfterDelay()
             {
                 yield return new WaitForSeconds(1f);
-                Destroy(gameObject);
+                gameObject.SetActive(false);
+                transform.position = originalPosition;
+                transform.rotation = originalRotation;
             }
         }
     }

@@ -15,19 +15,23 @@ public class Collectable : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && !itemType.ToLower().Contains("paulaner"))
         {
-            SoundManager.Instance.PlaySound("collect" + itemType);
-            GameManager.Instance.CollectItem(this);
-            collectedAfterCheckpoint = true;
-
-            PlayerMovement player = collision.GetComponent<PlayerMovement>();
-            if (player != null)
-            {
-                player.IncrementScore(scoreValue);
-            }
-
+            Collect(collision);
             gameObject.SetActive(false);
+        }
+    }
+
+    public void Collect(Collider2D collision)
+    {
+        SoundManager.Instance.PlaySound("collect" + itemType);
+        GameManager.Instance.CollectItem(this);
+        collectedAfterCheckpoint = true;
+
+        PlayerMovement player = collision.GetComponent<PlayerMovement>();
+        if (player != null)
+        {
+            player.IncrementScore(scoreValue);
         }
     }
 

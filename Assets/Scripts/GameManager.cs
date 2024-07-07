@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
     void FindTextObjects()
     {
         collectableTexts.Clear();
+        Debug.Log("Finding text objects");
         foreach (var pair in collectables)
         {
             TextMeshProUGUI text = GameObject.FindGameObjectWithTag(pair.Key + "_Text").GetComponent<TextMeshProUGUI>();
@@ -258,15 +259,15 @@ public class GameManager : MonoBehaviour
 
     private void FindGameObjects()
     {
-        kickBottles = FindObjects<BottleKick>();
+        // kickBottles = FindObjects<BottleKick>();
         boosts = FindObjects<BoostCharacter>();
         faxMachines = FindObjects<FaxField>();
     }
     private void RespawnGameObjects()
     {
 
-        DestroyAll<BottleKick>();
-        SpawnObjects(kickBottlePrefab, kickBottles);
+        // DestroyAll<BottleKick>();
+        // SpawnObjects(kickBottlePrefab, kickBottles);
         DestroyAll<BoostCharacter>();
         SpawnObjects(boostPrefab, boosts);
         DestroyAll<FaxField>();
@@ -330,6 +331,7 @@ public class GameManager : MonoBehaviour
                 collectables[collectable.itemType] = new List<Collectable>();
             }
             collectables[collectable.itemType].Add(collectable);
+            Debug.Log(collectable.itemType);
         }
         LoadCollectablesPrefabs();
     }
