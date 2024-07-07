@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject timerPrefab;
 
     private GameObject kickBottlePrefab;
+    private GameObject faxPrefab;
+    private GameObject boostPrefab;
 
     private GameObject currentPlayer;
     private GameObject levelCompleteScreen;
@@ -38,6 +40,8 @@ public class GameManager : MonoBehaviour
     private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
     private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
     private List<(Vector3 position, Quaternion rotation)> kickBottles;
+    private List<(Vector3 position, Quaternion rotation)> boosts;
+    private List<(Vector3 position, Quaternion rotation)> faxMachines;
 
     //GameStats
     private static string dataPath;
@@ -61,6 +65,8 @@ public class GameManager : MonoBehaviour
             ShowLevelSelectOnLoad = false;
             kickBottles = new List<(Vector3, Quaternion)>();
             kickBottlePrefab = Resources.Load<GameObject>("Prefabs/KickBottle");
+            boostPrefab = Resources.Load<GameObject>("Prefabs/Breze");
+            faxPrefab = Resources.Load<GameObject>("Prefabs/FaxMachineField");
         }
         else
         {
@@ -191,8 +197,7 @@ public class GameManager : MonoBehaviour
             InitializeBackground();
             SpawnPlayer();
             SetupCamera();
-            FindKickBottles();
-
+            FindGameObjects();
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
@@ -200,6 +205,7 @@ public class GameManager : MonoBehaviour
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
+
 
     private void SetupCamera()
     {
@@ -241,32 +247,54 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void FindKickBottles()
-    {
-        BottleKick[] allBottles = FindObjectsOfType<BottleKick>();
-        kickBottles = new List<(Vector3, Quaternion)>();  // Use a list for dynamic additions
 
-        foreach (BottleKick bottle in allBottles)
+    private void FindGameObjects()
+    {
+        kickBottles = FindObjects<BottleKick>();
+        boosts = FindObjects<BoostCharacter>();
+        faxMachines = FindObjects<FaxField>();
+    }
+    private void RespawnGameObjects()
+    {
+
+        DestroyAll<BottleKick>();
+        SpawnObjects(kickBottlePrefab, kickBottles);
+        DestroyAll<BoostCharacter>();
+        SpawnObjects(boostPrefab, boosts);
+        DestroyAll<FaxField>();
+        SpawnObjects(faxPrefab, faxMachines);
+
+    }
+
+    private List<(Vector3, Quaternion)> FindObjects<T>() where T : MonoBehaviour
+    {
+        T[] objects = FindObjectsOfType<T>();
+        List<(Vector3, Quaternion)> objectInfos = new List<(Vector3, Quaternion)>();
+        foreach (T obj in objects)
         {
-            Vector3 pos = bottle.transform.position;  // Simplified position copying
-            Quaternion rot = bottle.transform.rotation;
-            kickBottles.Add((pos, rot));
+            objectInfos.Add((obj.transform.position, obj.transform.rotation));
+        }
+        return objectInfos;
+    }
+
+    // Generic method to spawn objects from a list of positions and rotations
+    private void SpawnObjects(GameObject prefab, List<(Vector3, Quaternion)> objectInfos)
+    {
+        foreach (var (position, rotation) in objectInfos)
+        {
+            Instantiate(prefab, position, rotation);
         }
     }
 
-    private void SpawnKickBottles()
+    private void DestroyAll<T>() where T : MonoBehaviour
     {
-        BottleKick[] allBottles = FindObjectsOfType<BottleKick>();
-        foreach (BottleKick bottle in allBottles)
+        foreach (T obj in FindObjectsOfType<T>())
         {
-            Destroy(bottle.gameObject);
-        }
-
-        foreach (var bottleInfo in kickBottles)
-        {
-            Instantiate(kickBottlePrefab, bottleInfo.position, bottleInfo.rotation);
+            Destroy(obj.gameObject);
         }
     }
+
+
 
 
 
@@ -422,7 +450,7 @@ public class GameManager : MonoBehaviour
     {
         DestroyShots();
         ResetCollectables();
-        SpawnKickBottles();
+        RespawnGameObjects();
         player.GetComponent<PlayerMovement>().ResetSpeed();
 
         player.transform.position = lastCheckpointPosition;
