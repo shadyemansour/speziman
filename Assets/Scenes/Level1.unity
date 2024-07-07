@@ -2364,8 +2364,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f06c7ff3b194a4b5f915ddf6924d5644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CollectType: {fileID: 0}
-  ResourceType: 0
 --- !u!1 &658251994
 GameObject:
   m_ObjectHideFlags: 0
@@ -4481,6 +4479,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoundManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7599162643464423939, guid: 2346c312d3cb343498e171c70b8dd0f7, type: 3}
+      propertyPath: testSoundEffect
+      value: 
+      objectReference: {fileID: 8300000, guid: 7dd62c2754b01433c9a5ea4d81bcb285, type: 3}
+    - target: {fileID: 7599162643464423939, guid: 2346c312d3cb343498e171c70b8dd0f7, type: 3}
+      propertyPath: backgroundMusicClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5b6ebf60ad145497cb139a592295d6ca, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

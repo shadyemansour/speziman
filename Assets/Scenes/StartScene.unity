@@ -1910,6 +1910,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoundManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7535976716770404454, guid: 2346c312d3cb343498e171c70b8dd0f7, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7599162643464423939, guid: 2346c312d3cb343498e171c70b8dd0f7, type: 3}
       propertyPath: testSoundEffect
       value: 

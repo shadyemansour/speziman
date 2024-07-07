@@ -67,9 +67,15 @@ public class SettingsManager : MonoBehaviour
         _soundEffectsVolume = PlayerPrefs.GetFloat(SOUND_EFFECTS_VOLUME_KEY, 1f);
         _backgroundMusicVolume = PlayerPrefs.GetFloat(BACKGROUND_MUSIC_VOLUME_KEY, 1f);
 
-        // Invoke events to notify listeners of initial values
+        // Apply loaded settings
+        ApplyAllSettings();
+    }
+
+    public void ApplyAllSettings()
+    {
         OnSoundEffectsVolumeChanged?.Invoke(_soundEffectsVolume);
         OnBackgroundMusicVolumeChanged?.Invoke(_backgroundMusicVolume);
+        Debug.Log($"Applied settings - SFX: {_soundEffectsVolume}, BGM: {_backgroundMusicVolume}");
     }
 
     // Reset all settings to default values

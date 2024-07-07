@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
@@ -14,6 +15,15 @@ public class SoundManager : MonoBehaviour
     private float soundEffectsVolume = 1f;
     private float backgroundMusicVolume = 1f;
     [SerializeField] private AudioClip testSoundEffect;
+    [SerializeField] private AudioClip backgroundMusicClip;
+
+    private void Start()
+    {
+        // Initialize volumes
+        SetSoundEffectsVolume(SettingsManager.Instance.GetSoundEffectsVolume());
+        SetBackgroundMusicVolume(SettingsManager.Instance.GetBackgroundMusicVolume());
+    }
+
 
     void Awake()
     {
@@ -21,21 +31,51 @@ public class SoundManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            InitializeSoundManager();
         }
         else
         {
             Destroy(gameObject);
             return;
         }
+    }
 
+    private void InitializeSoundManager()
+    {
         AudioSource[] sources = GetComponents<AudioSource>();
         musicSource = sources[0];
         sfxSource = sources[1];
 
         // Initialize volumes
-        SetSoundEffectsVolume(1f);
-        SetBackgroundMusicVolume(1f);
+        SetSoundEffectsVolume(SettingsManager.Instance.GetSoundEffectsVolume());
+        SetBackgroundMusicVolume(SettingsManager.Instance.GetBackgroundMusicVolume());
 
+        // Initialize audio clips dictionary and die sounds list
+        InitializeAudioClips();
+
+        // Subscribe to SettingsManager events
+        SettingsManager.Instance.OnSoundEffectsVolumeChanged += SetSoundEffectsVolume;
+        SettingsManager.Instance.OnBackgroundMusicVolumeChanged += SetBackgroundMusicVolume;
+
+        // Start playing background music
+        PlayBackgroundMusic(backgroundMusicClip);
+
+        // Subscribe to scene loading event
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Ensure background music is playing when a new scene is loaded
+        if (!musicSource.isPlaying)
+        {
+            PlayBackgroundMusic(backgroundMusicClip);
+        }
+    }
+
+    private void InitializeAudioClips()
+    {
+        
         audioClips = new Dictionary<string, AudioClip>
         {
             { "jump", Resources.Load<AudioClip>("Audio/jump") },
@@ -60,8 +100,6 @@ public class SoundManager : MonoBehaviour
             { "cut25", Resources.Load<AudioClip>("Audio/Narration/Cut2/5") },
             { "cut26", Resources.Load<AudioClip>("Audio/Narration/Cut2/6") },
             { "cut27", Resources.Load<AudioClip>("Audio/Narration/Cut2/7") },
-
-
         };
 
         // Load die sounds
@@ -79,7 +117,6 @@ public class SoundManager : MonoBehaviour
             }
         }
 
-
         // Add test sound to the dictionary
         if (testSoundEffect != null)
         {
@@ -89,15 +126,19 @@ public class SoundManager : MonoBehaviour
         {
             Debug.LogWarning("Test sound effect is not assigned in SoundManager!");
         }
-
-        // Subscribe to SettingsManager events
-        SettingsManager.Instance.OnSoundEffectsVolumeChanged += SetSoundEffectsVolume;
-        SettingsManager.Instance.OnBackgroundMusicVolumeChanged += SetBackgroundMusicVolume;
-
-        // Initialize volumes
-        SetSoundEffectsVolume(SettingsManager.Instance.GetSoundEffectsVolume());
-        SetBackgroundMusicVolume(SettingsManager.Instance.GetBackgroundMusicVolume());
     }
+
+        
+        // AudioSource[] sources = GetComponents<AudioSource>();
+        // musicSource = sources[0];
+        // sfxSource = sources[1];
+
+
+
+        
+
+
+    
 
     private void OnDestroy()
     {
@@ -107,6 +148,10 @@ public class SoundManager : MonoBehaviour
             SettingsManager.Instance.OnSoundEffectsVolumeChanged -= SetSoundEffectsVolume;
             SettingsManager.Instance.OnBackgroundMusicVolumeChanged -= SetBackgroundMusicVolume;
         }
+
+
+        // Unsubscribe from scene loading event
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public float PlaySound(string clipKey)
@@ -197,15 +242,18 @@ public class SoundManager : MonoBehaviour
     }
 
 
-    public void PlayBackgroundMusic(AudioClip musicClip)
+public void PlayBackgroundMusic(AudioClip musicClip)
     {
         if (musicSource != null && musicClip != null)
         {
-            musicSource.clip = musicClip;
-            musicSource.volume = backgroundMusicVolume;
-            musicSource.loop = true;
-            musicSource.Play();
-            Debug.Log($"Playing background music at volume: {backgroundMusicVolume}");
+            if (musicSource.clip != musicClip || !musicSource.isPlaying)
+            {
+                musicSource.clip = musicClip;
+                musicSource.volume = backgroundMusicVolume;
+                musicSource.loop = true;
+                musicSource.Play();
+                Debug.Log($"Playing background music at volume: {backgroundMusicVolume}");
+            }
         }
         else
         {
