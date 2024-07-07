@@ -1,17 +1,11 @@
-using System;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using Cinemachine;
 using TMPro;
 using System.Text;
-using Unity.VisualScripting;
 using System.Linq;
 using System.Collections;
-using Unity.Collections;
-using UnityEditor.ShaderGraph.Internal;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,7 +16,23 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float[] levelDurations = { 90f, 450f, 600f, 700f }; // Durations in seconds for each level
     [SerializeField] private GameObject timerPrefab;
+    [SerializeField] private int totalOranges;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private float[] levelDurations = { 90f, 450f, 600f, 700f }; // Durations in seconds for each level
+    [SerializeField] private GameObject timerPrefab;
 
+    private GameObject kickBottlePrefab;
+    private GameObject faxPrefab;
+    private GameObject boostPrefab;
+
+<<<<<<< HEAD
+=======
+    private GameObject kickBottlePrefab;
+    private GameObject faxPrefab;
+    private GameObject boostPrefab;
+
+>>>>>>> origin/main
     private GameObject currentPlayer;
     private GameObject levelCompleteScreen;
     private Vector3 lastCheckpointPosition;
@@ -34,13 +44,17 @@ public class GameManager : MonoBehaviour
     private float levelStartTime;
     public int currentLevel = 1;
     private int deliverablesCount = 3;
-    private int maxLevels = 3;
+    private int maxLevels = 4;
 
 
     //Collectables
     private Dictionary<string, List<Collectable>> collectables = new Dictionary<string, List<Collectable>>();
     private Dictionary<string, TextMeshProUGUI> collectableTexts = new Dictionary<string, TextMeshProUGUI>();
     private Dictionary<string, GameObject> collectablePrefabs = new Dictionary<string, GameObject>();
+    private List<(Vector3 position, Quaternion rotation)> kickBottles;
+    private List<(Vector3 position, Quaternion rotation)> boosts;
+    private List<(Vector3 position, Quaternion rotation)> faxMachines;
+    public List<Barbara> barbaras;
 
     //GameStats
     private static string dataPath;
@@ -62,6 +76,10 @@ public class GameManager : MonoBehaviour
             Debug.Log("Data path: " + dataPath);
             gameData = new GameData();
             ShowLevelSelectOnLoad = false;
+            kickBottles = new List<(Vector3, Quaternion)>();
+            kickBottlePrefab = Resources.Load<GameObject>("Prefabs/KickBottle");
+            boostPrefab = Resources.Load<GameObject>("Prefabs/Breze");
+            faxPrefab = Resources.Load<GameObject>("Prefabs/FaxMachineField");
         }
         else
         {
@@ -82,6 +100,7 @@ public class GameManager : MonoBehaviour
     void FindTextObjects()
     {
         collectableTexts.Clear();
+        Debug.Log("Finding text objects");
         foreach (var pair in collectables)
         {
             TextMeshProUGUI text = GameObject.FindGameObjectWithTag(pair.Key + "_Text").GetComponent<TextMeshProUGUI>();
@@ -98,7 +117,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel(bool wasCutScene = false)
     {
-        if (currentLevel >= maxLevels)
+        if (currentLevel > maxLevels)
         {
             LoadMenu();
         }
@@ -106,7 +125,7 @@ public class GameManager : MonoBehaviour
         {
             LoadLevel(currentLevel++, !wasCutScene);
         }
-        else if (currentLevel < maxLevels - 1)
+        else if (currentLevel < maxLevels)
         {
             LoadLevel(++currentLevel, !wasCutScene);
         }
@@ -133,14 +152,55 @@ public class GameManager : MonoBehaviour
 
     public void LoadMenu()
     {
+=======
+        if (SceneExists(levelName))
+        {
+            SceneManager.LoadScene(levelName);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else if (isCut) // If it was supposed to load a cutscene and it's not available, load the level instead
+        {
+            levelName = "Level" + sceneNumber.ToString();
+            Debug.Log(levelName);
+            if (SceneExists(levelName))
+            {
+                SceneManager.LoadScene(levelName);
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+            else
+            {
+                Debug.LogError("Neither cutscene nor level scene exists for scene number: " + sceneNumber);
+                LoadMenu();
+            }
+        }
+        else
+        {
+            Debug.LogError("Level scene does not exist: " + levelName);
+            LoadMenu();
+        }
+
+    }
+
+    private bool SceneExists(string sceneName)
+    {
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneInBuild = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+            if (sceneInBuild == sceneName)
+                return true;
+        }
+        return false;
+    }
+
+    public void LoadMenu()
+    {
         if (currentPlayerData != null)
         {
             ShowLevelSelectOnLoad = true;
         }
         SceneManager.LoadScene("StartScene");
     }
-
-
 
 
 
@@ -158,7 +218,8 @@ public class GameManager : MonoBehaviour
             InitializeBackground();
             SpawnPlayer();
             SetupCamera();
-
+            FindGameObjects();
+            FindBarbaras();
 
             int sceneNumber = int.Parse(scene.name.Replace("Level", ""));
             Debug.Log("Scene number: " + sceneNumber);
@@ -167,6 +228,7 @@ public class GameManager : MonoBehaviour
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
+
 
     private void SetupCamera()
     {
@@ -207,6 +269,76 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Player prefab or spawn point not set.");
         }
     }
+
+    private void FindBarbaras()
+    {
+        Barbara[] barbarasScene = FindObjectsOfType<Barbara>();
+        barbaras = new List<Barbara>(barbarasScene);
+    }
+
+
+    private void FindGameObjects()
+    {
+        // kickBottles = FindObjects<BottleKick>();
+        boosts = FindObjects<BoostCharacter>();
+        faxMachines = FindObjects<FaxField>();
+    }
+    private void RespawnGameObjects()
+    {
+
+        // DestroyAll<BottleKick>();
+        // SpawnObjects(kickBottlePrefab, kickBottles);
+        DestroyAll<BoostCharacter>();
+        SpawnObjects(boostPrefab, boosts);
+        DestroyAll<FaxField>();
+        SpawnObjects(faxPrefab, faxMachines);
+
+    }
+
+    private void ResetBarbaras()
+    {
+        foreach (Barbara barbara in barbaras)
+        {
+            if (barbara.reachedAfterCheckpoint)
+            {
+                Debug.Log("Resetting barbara");
+                barbara.Reset();
+            }
+
+        }
+    }
+
+    private List<(Vector3, Quaternion)> FindObjects<T>() where T : MonoBehaviour
+    {
+        T[] objects = FindObjectsOfType<T>();
+        List<(Vector3, Quaternion)> objectInfos = new List<(Vector3, Quaternion)>();
+        foreach (T obj in objects)
+        {
+            objectInfos.Add((obj.transform.position, obj.transform.rotation));
+        }
+        return objectInfos;
+    }
+
+    // Generic method to spawn objects from a list of positions and rotations
+    private void SpawnObjects(GameObject prefab, List<(Vector3, Quaternion)> objectInfos)
+    {
+        foreach (var (position, rotation) in objectInfos)
+        {
+            Instantiate(prefab, position, rotation);
+        }
+    }
+
+    private void DestroyAll<T>() where T : MonoBehaviour
+    {
+        foreach (T obj in FindObjectsOfType<T>())
+        {
+            Destroy(obj.gameObject);
+        }
+    }
+
+
+
+
     private void InitializeCollectables()
     {
         Collectable[] allCollectables = FindObjectsOfType<Collectable>();
@@ -218,6 +350,7 @@ public class GameManager : MonoBehaviour
                 collectables[collectable.itemType] = new List<Collectable>();
             }
             collectables[collectable.itemType].Add(collectable);
+            Debug.Log(collectable.itemType);
         }
         LoadCollectablesPrefabs();
     }
@@ -280,6 +413,10 @@ public class GameManager : MonoBehaviour
             {
                 collectable.collectedAfterCheckpoint = false;
             }
+        }
+        foreach (Barbara barbara in barbaras)
+        {
+            barbara.reachedAfterCheckpoint = false;
         }
     }
 
@@ -359,6 +496,8 @@ public class GameManager : MonoBehaviour
     {
         DestroyShots();
         ResetCollectables();
+        RespawnGameObjects();
+        ResetBarbaras();
         player.GetComponent<PlayerMovement>().ResetSpeed();
 
         player.transform.position = lastCheckpointPosition;
@@ -379,12 +518,10 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.FadeOutBackgroundSound();
         SoundManager.Instance.PlaySound("levelFailed");
         TriggerGameOver();
-
     }
 
     public void ToggleTimer()
     {
-
         currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(timerInstance.TogglePause());
     }
 
@@ -402,6 +539,11 @@ public class GameManager : MonoBehaviour
         {
             timerInstance.onTimerEnd.AddListener(HandleTimerEnd);
         }
+    }
+
+    public float GetTimeLeft()
+    {
+        return timerInstance.GetTimeRemaining();
     }
 
     private float CalculateLevelCompletionTime()
@@ -431,7 +573,7 @@ public class GameManager : MonoBehaviour
 
     private void StopLevel()
     {
-
+        
         currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(true);
         timerInstance.StopTimer();
 
@@ -452,7 +594,6 @@ public class GameManager : MonoBehaviour
             LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
             if (lcManager != null)
             {
-                Debug.Log(reachedDeliveries);
                 lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete);
                 Debug.Log("LevelCompleteManager UpdateUI called");
             }
@@ -495,14 +636,17 @@ public class GameManager : MonoBehaviour
 
     public void IncrementDeliveries()
     {
-
-        Debug.Log("IncrementDeliveries called " + reachedDeliveries + "/" + totalDeliveries);
         reachedDeliveries = Mathf.Min(reachedDeliveries + 1, totalDeliveries);
-        Debug.Log("reachedDeliveries: " + reachedDeliveries);
+    }
+
+    public void DecrementDeliveries()
+    {
+        reachedDeliveries = Mathf.Max(reachedDeliveries - 1, 0);
     }
 
     public bool SendCollectables(GameObject player, Vector3 barbaraPosition)
     {
+>>>>>>> origin/main
         int value = int.Parse(collectableTexts.First().Value.text.Split("/")[0]);
         if (value > 0)
         {

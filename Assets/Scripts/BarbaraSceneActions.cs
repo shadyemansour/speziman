@@ -14,9 +14,9 @@ public class BarbaraSceneActions : MonoBehaviour, IActions
 
 
     public System.Action[] Callbacks => _callbacks;
-    public System.Action[] _callbacks = new System.Action[]{};
+    public System.Action[] _callbacks = new System.Action[] { };
     public string[] Messages => _messages;
-    
+
 
     private int numberOfSpeziBottles = 3;
     private GameObject[] speziBottles;
@@ -65,9 +65,9 @@ public class BarbaraSceneActions : MonoBehaviour, IActions
         switch (count)
         {
             case 1:
-            
+
                 helmut.WalkTo(new Vector3(-0.815F, -2.4f, 0), StopCameraFollow);
-                cam.currentStop=0;
+                cam.currentStop = 0;
                 cam.isFollowingPlayer = true;
                 break;
             case 2:
@@ -96,7 +96,7 @@ public class BarbaraSceneActions : MonoBehaviour, IActions
 
         }
 
-        
+
     }
 
     private void UpdateBottles()
@@ -113,89 +113,90 @@ public class BarbaraSceneActions : MonoBehaviour, IActions
         speziBottles[0].SetActive(true);
         _callbacks[0]?.Invoke();
     }
-        public void BarbaraFinishMoving()
-        {
-            speziBottles[0].SetActive(false);
-            bar.StartDrinking(BarbaraFinishDrinking);
-            _callbacks[0]?.Invoke();
-        }
+    public void BarbaraFinishMoving()
+    {
+        speziBottles[0].SetActive(false);
+        bar.StartDrinking(BarbaraFinishDrinking);
+        _callbacks[0]?.Invoke();
+    }
 
     public void SetCallbacks(System.Action[] callbacks)
-    {   
+    {
         _callbacks = callbacks;
     }
 
-    public void StopCameraFollow ()
+    public void StopCameraFollow()
     {
         cam.isFollowingPlayer = false;
         _callbacks[0]?.Invoke();
     }
 
-    public void TriggerSpeziOut ()
+    public void TriggerSpeziOut()
     {
         cam.isFollowingPlayer = false;
         for (int i = 0; i < numberOfSpeziBottles; i++)
         {
             GameObject instance = Instantiate(Resources.Load<GameObject>("Prefabs/unknownAnim"), new Vector3(3.549f, -2.283f, 0), Quaternion.identity);
-            speziBottles[i]=instance;
-            StartCoroutine(MoveCollectable(instance, new Vector3(6.9f-(0.5f*i), -2.4f, 0), 1.0f, InvokeCallback, false));
+            speziBottles[i] = instance;
+            StartCoroutine(MoveCollectable(instance, new Vector3(6.9f - (0.5f * i), -2.4f, 0), 1.0f, InvokeCallback, false));
         }
     }
 
-    private void InvokeCallback(){
+    private void InvokeCallback()
+    {
         coroutinesCounter--;
         Debug.Log(coroutinesCounter);
         if (coroutinesCounter == 0) _callbacks[0]?.Invoke();
     }
 
 
-        public void SendCollectables(GameObject player, Vector3 barbaraPosition )
+    public void SendCollectables(GameObject player, Vector3 barbaraPosition)
     {
-            StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
+        StartCoroutine(SendCollectablesCoroutine(player, barbaraPosition, 0.2f));
     }
 
     private IEnumerator SendCollectablesCoroutine(GameObject player, Vector3 targetPosition, float delayBetweenItems)
-    {   
+    {
 
         foreach (var pair in collectables)
         {
-                for (int i = 0; i < pair.Value; i++)
-                {
-                    string prefabPath = $"Prefabs/{pair.Key.ToLower()}Anim";
+            for (int i = 0; i < pair.Value; i++)
+            {
+                string prefabPath = $"Prefabs/{pair.Key.ToLower()}Anim";
 
-                    GameObject instance = Instantiate(Resources.Load<GameObject>(prefabPath), player.transform.position, Quaternion.identity);
-                    float yoffset = pair.Key.ToLower().Contains("orange") ? 0.231f : 0;
-                    Vector3 newPosition = new Vector3(targetPosition.x,targetPosition.y-yoffset, targetPosition.z);
-                    StartCoroutine(MoveCollectableInParabola(instance, newPosition, 1.0f));
-                    yield return new WaitForSeconds(delayBetweenItems); 
-                }
+                GameObject instance = Instantiate(Resources.Load<GameObject>(prefabPath), player.transform.position, Quaternion.identity);
+                float yoffset = pair.Key.ToLower().Contains("orange") ? 0.231f : 0;
+                Vector3 newPosition = new Vector3(targetPosition.x, targetPosition.y - yoffset, targetPosition.z);
+                StartCoroutine(MoveCollectableInParabola(instance, newPosition, 1.0f));
+                yield return new WaitForSeconds(delayBetweenItems);
+            }
 
         }
     }
 
-IEnumerator MoveCollectableInParabola(GameObject collectable, Vector3 targetPos, float duration)
-{
-    float time = 0;
-    Vector3 startPos = collectable.transform.position;
-    float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2; // Height of the parabola
-    while (time < duration)
+    IEnumerator MoveCollectableInParabola(GameObject collectable, Vector3 targetPos, float duration)
     {
-        float t = time / duration; // Normalize time
-        
-        collectable.transform.position = Vector3.Lerp(startPos, targetPos, t) + new Vector3(0, height * Mathf.Sin(Mathf.PI * t), 0);
-        time += Time.deltaTime;
+        float time = 0;
+        Vector3 startPos = collectable.transform.position;
+        float height = Mathf.Abs(targetPos.y - startPos.y) / 2 + 2; // Height of the parabola
+        while (time < duration)
+        {
+            float t = time / duration; // Normalize time
+
+            collectable.transform.position = Vector3.Lerp(startPos, targetPos, t) + new Vector3(0, height * Mathf.Sin(Mathf.PI * t), 0);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        collectable.transform.position = targetPos;
+
+        //Trigger movement to the right
+        float yoffset = collectable.name.ToLower().Contains("orange") ? 0.231f : 0;
+        StartCoroutine(MoveCollectable(collectable, new Vector3(3.549f, -2.283f - yoffset, 0), 1.0f, ContinueCase2));
         yield return null;
+
     }
-
-    collectable.transform.position = targetPos; 
-
-    //Trigger movement to the right
-    float yoffset = collectable.name.ToLower().Contains("orange") ? 0.231f : 0;
-    StartCoroutine(MoveCollectable(collectable, new Vector3(3.549f, -2.283f-yoffset, 0), 1.0f, ContinueCase2));
-    yield return null;
-
-}
-    IEnumerator MoveCollectable(GameObject collectable, Vector3 targetPos, float duration, System.Action onCompleted, bool destroy=true)
+    IEnumerator MoveCollectable(GameObject collectable, Vector3 targetPos, float duration, System.Action onCompleted, bool destroy = true)
     {
         float time = 0;
         Vector3 startPos = collectable.transform.position;
@@ -208,7 +209,7 @@ IEnumerator MoveCollectableInParabola(GameObject collectable, Vector3 targetPos,
             yield return null;
         }
         collectable.transform.position = targetPos; // Ensure it ends exactly at the target position
-        if(destroy) Destroy(collectable);
+        if (destroy) Destroy(collectable);
         onCompleted?.Invoke();
     }
 
@@ -217,28 +218,28 @@ IEnumerator MoveCollectableInParabola(GameObject collectable, Vector3 targetPos,
         coroutinesCounter--;
         if (coroutinesCounter == 0)
         {
-            cam.currentStop=1;
+            cam.currentStop = 1;
             cam.isFollowingPlayer = true;
             coroutinesCounter = numberOfSpeziBottles;
             helmut.WalkTo(new Vector3(5.28f, -2.4f, 0), TriggerSpeziOut);
         }
     }
 
-        IEnumerator FadeIn(float fadeInTime, CanvasGroup canvasGroup, System.Action onComplete)
+    IEnumerator FadeIn(float fadeInTime, CanvasGroup canvasGroup, System.Action onComplete)
+    {
+        float elapsed = 0f;
+        while (elapsed < fadeInTime)
         {
-            float elapsed = 0f;
-            while (elapsed < fadeInTime)
-            {
-                elapsed += Time.deltaTime;
-                canvasGroup.alpha = Mathf.Lerp(0, 1, elapsed / fadeInTime);
-                yield return null;
-            }
-            canvasGroup.alpha = 1; 
-            onComplete?.Invoke();
+            elapsed += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(0, 1, elapsed / fadeInTime);
+            yield return null;
         }
-    
-    
+        canvasGroup.alpha = 1;
+        onComplete?.Invoke();
+    }
 
 
-   
+
+
+
 }

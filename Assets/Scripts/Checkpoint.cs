@@ -5,9 +5,11 @@ public class Checkpoint : MonoBehaviour
     [SerializeField] private bool isFinalCheckpoint = false;
     private bool isreached = false;
 
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Player" && !isreached) {
-            isreached = true; 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Player" && !isreached)
+        {
+            isreached = true;
             string name = gameObject.name.Split(' ')[0].Trim();
             Sprite sprite = Resources.Load<Sprite>("Sprites/" + name);
             SoundManager.Instance.PlaySound("checkpoint");
@@ -17,8 +19,12 @@ public class Checkpoint : MonoBehaviour
             if (isFinalCheckpoint)
             {
                 GameManager.Instance.TriggerLevelComplete();
-                
+
             }
+        }
+        else if (!isreached && other.gameObject.tag == "Helicopter")
+        {
+            GameManager.Instance.TriggerGameOver();
         }
     }
 }

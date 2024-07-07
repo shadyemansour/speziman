@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HelmutBarbaraSceneController : MonoBehaviour
@@ -16,24 +14,24 @@ public class HelmutBarbaraSceneController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
+
     }
 
     void Update()
     {
         if (isWaliking)
         {
-            transform.position = Vector3.MoveTowards(transform.position, currentTarget, 1.5f* Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, currentTarget, 1.5f * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, currentTarget) < 0.1f)
             {
-                isWaliking = false; 
+                isWaliking = false;
                 animator.enabled = false;
                 spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/standing");
                 onComplete?.Invoke();
             }
         }
-  
+
     }
 
 
@@ -44,13 +42,7 @@ public class HelmutBarbaraSceneController : MonoBehaviour
         currentTarget = target;
         isWaliking = true;
         this.onComplete = onComplete;
-    
-    }
-
-    public void ThrowCollected()
-    {
 
     }
-
 
 }

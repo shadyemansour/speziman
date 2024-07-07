@@ -1,65 +1,136 @@
+// Adaapted from https://github.com/Brackeys/2D-Movement/tree/master/2D%20Movement/Assets
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour
+{
 
-	public CharacterController2D controller;
+    public enum MovementState { Normal, Mud, Swim }
+    public enum BoostState { None, Boosted }
 
-	[SerializeField] private float runSpeed;
-    [SerializeField] private float boostSpeed = 40f;
-    [SerializeField] private float swimSpeed = 10f;
+    [Header("Speed Settings")]
+    [SerializeField] private float defaultSpeed = 30f;
     [SerializeField] private float mudSpeed = 3f;
-	[SerializeField] private float defaultSpeed = 30f;
+    [SerializeField] private float swimSpeed = 10f;
+    [SerializeField] private float boostMultiplier = 1.5f;
+
+    [Header("Jump Settings")]
     [SerializeField] private float defaultJumpForce = 400f;
     [SerializeField] private float mudJumpForce = 100f;
-    [SerializeField] private float waterJumpForce = 250f;
-    [SerializeField] private float boostJumpForce = 500f;
+    [SerializeField] private float waterJumpForce = 220f;
+    [SerializeField] private float boostJumpMultiplier = 1.5f;
+
+    [Header("Animation Speeds")]
     [SerializeField] private float boostAnimationSpeed = 1.5f;
     [SerializeField] private float reducedAnimationSpeed = .5f;
+
+    private CharacterController2D controller;
+    private Animator anim;
     private Action disableBoostCallback;
-    private Rigidbody2D rb;
-    public bool isStopped = false;
+    private MovementState currentMovementState = MovementState.Normal;
+    private BoostState currentBoostState = BoostState.None;
+    private float speedFactor = 1f;
+    private bool isStopped = false;
+    private float horizontalMove = 0f;
+    private bool jump = false;
 
-
-
-	float horizontalMove = 0f;
-	bool jump = false;
-    public Animator anim;    
-    void Start() {
-        runSpeed = defaultSpeed;   
-        rb = GetComponent<Rigidbody2D>(); 
+    void Start()
+    {
+        controller = GetComponent<CharacterController2D>();
+        anim = GetComponent<Animator>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (isStopped){
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (isStopped)
+        {
             horizontalMove = 0;
             return;
         }
 
-		horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+        float speed = GetSpeed();
+        horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
         anim.SetFloat("speed", Mathf.Abs(horizontalMove));
 
-		if (Input.GetButtonDown("Jump"))
-		{
-			jump = true;
+        if (Input.GetButtonDown("Jump"))
+        {
+            jump = true;
             anim.SetBool("isJumping", true);
         }
 
-	}
+    }
 
-    void FixedUpdate ()
-	{
-		// Move our character
-		controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
-		jump = false;
-	}
+    void FixedUpdate()
+    {
+        controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
+        jump = false;
+    }
 
+    private float GetSpeed()
+    {
+        float baseSpeed = defaultSpeed;
+        switch (currentMovementState)
+        {
+            case MovementState.Mud:
+                baseSpeed = mudSpeed;
+                break;
+            case MovementState.Swim:
+                baseSpeed = swimSpeed;
+                break;
+        }
+        return baseSpeed * (currentBoostState == BoostState.Boosted ? boostMultiplier : 1f);
+    }
 
-    public void onLanding() {
+    private float GetJumpForce()
+    {
+        float baseJumpForce = defaultJumpForce;
+        switch (currentMovementState)
+        {
+            case MovementState.Mud:
+                baseJumpForce = mudJumpForce;
+                break;
+            case MovementState.Swim:
+                baseJumpForce = waterJumpForce;
+                break;
+        }
+        return baseJumpForce * (currentBoostState == BoostState.Boosted ? boostJumpMultiplier : 1f);
+    }
+
+    public void SetMovementState(MovementState state)
+    {
+        currentMovementState = state;
+        controller.SetJumpForce(GetJumpForce());
+    }
+
+    public void Boost(float length, Action onComplete)
+    {
+        SetBoostState(BoostState.Boosted, length);
+        disableBoostCallback = onComplete;
+    }
+
+    public void SetBoostState(BoostState state, float duration)
+    {
+        currentBoostState = state;
+        if (state == BoostState.Boosted)
+        {
+            Invoke(nameof(ClearBoost), duration);
+        }
+    }
+
+    private void ClearBoost()
+    {
+        SetBoostState(BoostState.None, 0);
+        if (disableBoostCallback != null)
+        {
+            disableBoostCallback.Invoke();
+            disableBoostCallback = null;
+        }
+    }
+
+    public void onLanding()
+    {
         anim.SetBool("isJumping", false);
     }
 
@@ -68,46 +139,25 @@ public class PlayerMovement : MonoBehaviour {
         anim.speed = speed;
     }
 
-
-    public void Boost(float length, Action onComplete) {
-        StartCoroutine(BoostDuration(length, onComplete));
-    }
-
-     private IEnumerator BoostDuration(float length, Action onComplete) {
-        // Set boosted parameters
-        runSpeed = boostSpeed;
-        controller.SetJumpForce(boostJumpForce);
-        SetAnimationSpeed(boostAnimationSpeed);
-        disableBoostCallback = onComplete;
-
-
-        // Wait for 'length' seconds
-        yield return new WaitForSeconds(length);
-        onComplete?.Invoke();
-        disableBoostCallback = null;
-        ResetSpeed();
-    }
-
-    public void ReduceSpeed(bool isMud) {
-        if (isMud) {
-            runSpeed = mudSpeed;
-            controller.SetJumpForce(mudJumpForce);
-        } else {
-            runSpeed = swimSpeed;
-            controller.SetJumpForce(waterJumpForce);
-        }
+    public void ReduceSpeed(bool isMud)
+    {
+        SetMovementState(isMud ? MovementState.Mud : MovementState.Swim);
         anim.speed = reducedAnimationSpeed;
-
     }
 
-    public void ResetSpeed() {
-        if (disableBoostCallback!=null) disableBoostCallback?.Invoke();
-        runSpeed = defaultSpeed;
+    public void ResetSpeed()
+    {
+        SetMovementState(MovementState.Normal);
         SetAnimationSpeed(1);
-        controller.SetJumpForce(defaultJumpForce);
+        if (disableBoostCallback != null)
+        {
+            disableBoostCallback.Invoke();
+            disableBoostCallback = null;
+        }
     }
 
-  
+
+
     // todo to be called when needed
     public void IncrementScore(int amount)
     {
@@ -119,11 +169,12 @@ public class PlayerMovement : MonoBehaviour {
         GameManager.Instance.UpdateDeliveries();
     }
 
-    public void SetIsStopped(bool value) {
+    public void SetIsStopped(bool value)
+    {
         isStopped = value;
         controller.SetIsStopped(value);
-    }   
+    }
 
-    
+
 
 }

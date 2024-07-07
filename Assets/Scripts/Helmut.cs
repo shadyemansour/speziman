@@ -59,7 +59,7 @@ public class Helmut : MonoBehaviour
         animator.Play("helmut");
     }
 
-        public void PauseDrinking(System.Action onComplete)
+    public void PauseDrinking(System.Action onComplete)
     {
         animator.enabled = false;
         ChangeSprite("Story 2");

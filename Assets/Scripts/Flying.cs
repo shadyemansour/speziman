@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Flying : MonoBehaviour
 {
-    private Transform player; 
+    private Transform player;
     [SerializeField] private float maintainDistanceX = 5f;
     [SerializeField] private float maintainDistanceY = 3f;
 
@@ -17,7 +17,7 @@ public class Flying : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.FindWithTag("Player")?.transform; 
+        player = GameObject.FindWithTag("Player")?.transform;
         weapon = GetComponent<Weapon>();
     }
 

@@ -1,14 +1,16 @@
+// Adaapted from https://github.com/Brackeys/2D-Movement/tree/master/2D%20Movement/Assets
+
 using UnityEngine;
 using UnityEngine.Events;
 
 public class CharacterController2D : MonoBehaviour
 {
-	[SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
-	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .5f;	// How much to smooth out the movement
-	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
-	[SerializeField] private LayerMask m_WhatIsGround;							// A mask determining what is ground to the character
-	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
-	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
+	[SerializeField] private float m_JumpForce = 400f;                          // Amount of force added when the player jumps.
+	[Range(0, .3f)][SerializeField] private float m_MovementSmoothing = .5f;    // How much to smooth out the movement
+	[SerializeField] private bool m_AirControl = false;                         // Whether or not a player can steer while jumping;
+	[SerializeField] private LayerMask m_WhatIsGround;                          // A mask determining what is ground to the character
+	[SerializeField] private Transform m_GroundCheck;                           // A position marking where to check if the player is grounded.
+	[SerializeField] private Transform m_CeilingCheck;                          // A position marking where to check for ceilings
 
 	const float k_GroundedRadius = 0.05f; // Radius of the overlap circle to determine if grounded
 	private bool m_Grounded;            // Whether or not the player is grounded.
@@ -18,7 +20,7 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 	private Vector3 m_Velocity = Vector3.zero;
 	private float jumpCooldown = 0.1f; // Cooldown duration in seconds
-    private float jumpCooldownTimer;
+	private float jumpCooldownTimer;
 	private bool m_IsStopped = false;
 
 	[Header("Events")]
@@ -51,18 +53,18 @@ public class CharacterController2D : MonoBehaviour
 			}
 			else
 			{
-			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-			Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-			for (int i = 0; i < colliders.Length; i++)
-			{
-				if (colliders[i].gameObject != gameObject)
+				// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
+				// This can be done using layers instead but Sample Assets will not overwrite your project settings.
+				Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+				for (int i = 0; i < colliders.Length; i++)
 				{
-					m_Grounded = true;
-					if (!wasGrounded)
-						OnLandEvent.Invoke();
+					if (colliders[i].gameObject != gameObject)
+					{
+						m_Grounded = true;
+						if (!wasGrounded)
+							OnLandEvent.Invoke();
+					}
 				}
-			}
 			}
 		}
 	}
@@ -81,10 +83,10 @@ public class CharacterController2D : MonoBehaviour
 			m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
 
 			// If the input is moving the player right and the player is facing left...
-			 if (move > 0 && !m_FacingRight || move < 0 && m_FacingRight)
-            {
-                Flip();
-            }
+			if (move > 0 && !m_FacingRight || move < 0 && m_FacingRight)
+			{
+				Flip();
+			}
 		}
 		// If the player should jump...
 		if (m_Grounded && jump)
@@ -97,7 +99,7 @@ public class CharacterController2D : MonoBehaviour
 		if (m_InWater && jump)
 		{
 			jumpCooldownTimer = jumpCooldown; // Start the cooldown
-			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce / 1.2f));
+			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
 	}
 
@@ -105,7 +107,7 @@ public class CharacterController2D : MonoBehaviour
 	private void Flip()
 	{
 		m_FacingRight = !m_FacingRight;
-		if(m_InWater)
+		if (m_InWater)
 		{
 			transform.Rotate(0, 180, 180);
 		}
@@ -115,10 +117,12 @@ public class CharacterController2D : MonoBehaviour
 		}
 	}
 
-	public void SetJumpForce(float jumpForce) {
+	public void SetJumpForce(float jumpForce)
+	{
 		m_JumpForce = jumpForce;
 	}
-	public void SetInWater(bool inWater) {
+	public void SetInWater(bool inWater)
+	{
 		m_InWater = inWater;
 		if (inWater)
 		{
@@ -131,11 +135,13 @@ public class CharacterController2D : MonoBehaviour
 			transform.rotation = Quaternion.Euler(0, yRotation, 0);
 		}
 	}
-	public void SetIsStopped(bool isStopped) {
+	public void SetIsStopped(bool isStopped)
+	{
 		m_IsStopped = isStopped;
 	}
 
-	public Rigidbody2D getRigidbody2D() {
+	public Rigidbody2D getRigidbody2D()
+	{
 		return m_Rigidbody2D;
 	}
 

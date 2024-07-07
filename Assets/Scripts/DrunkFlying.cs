@@ -1,11 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class DrunkFlying : MonoBehaviour
 {
-    private Transform player; 
+    private Transform player;
     [SerializeField] private float maintainDistanceX = 5f;
     [SerializeField] private float maintainDistanceY = 3f;
     [SerializeField] private float drunkFlyDuration = 3f; // Duration to fly in a "drunk" way
@@ -18,17 +16,18 @@ public class DrunkFlying : MonoBehaviour
 
     private Vector3 attackTargetPosition;
     private bool hasAttacked = false;
-    private Vector3 velocity = Vector3.zero; // For smooth damp
+    private Vector3 velocity = Vector3.zero;
 
-void Start()
+    void Start()
     {
-        player = GameObject.FindWithTag("Player")?.transform; // Find the player by tag
+        player = GameObject.FindWithTag("Player")?.transform;
         StartCoroutine(FlyRoutine());
     }
 
     void Update()
     {
-        if(player != null){
+        if (player != null)
+        {
             if (!hasAttacked)
             {
                 if (!isFlyingErratically)
@@ -50,7 +49,9 @@ void Start()
                     transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized * drunkFlySpeed * Time.deltaTime;
                 }
             }
-        }else{
+        }
+        else
+        {
             player = GameObject.FindWithTag("Player").transform;
         }
     }

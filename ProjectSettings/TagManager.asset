@@ -29,6 +29,10 @@ TagManager:
   - LevelButton
   - SFXSlider
   - MusicSlider
+  - Helicopter
+  - FinishLine
+  - Paulaner_Text
+  - Paulaner_Tag
   layers:
   - Default
   - TransparentFX

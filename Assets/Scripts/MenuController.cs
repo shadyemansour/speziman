@@ -133,7 +133,6 @@ public class MenuController : MonoBehaviour
 
         for (int i = 0; i < levelButtons.Count; i++)
         {
-            // Enable buttons up to the player's current max level
             levelButtons[i].interactable = i < playerMaxLevel;
         }
     }
@@ -167,7 +166,9 @@ public class MenuController : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        SetMenuState(true, false, false, false, false, false);
+        usernameInputField.text = "";
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
+        SetMenuState(true, false, false, false, false);
     }
 
     public void ShowDetails()

@@ -4,12 +4,12 @@ using UnityEngine.Events;
 
 public class Timer : MonoBehaviour
 {
-    [SerializeField] private float initialTime = 900; // Example start time in seconds (15 minutes)
+    [SerializeField] private float initialTime = 900;
     [SerializeField] private float timeRemaining;
     [SerializeField] private bool timerIsRunning = true;
-    [SerializeField] private string timerDisplayName = "TimerText"; // Name of the GameObject with the TextMeshPro component
-    private TextMeshProUGUI timerDisplay; // TextMeshPro component for displaying the timer
-    public UnityEvent onTimerEnd; // Event triggered when timer ends
+    [SerializeField] private string timerDisplayName = "TimerText";
+    private TextMeshProUGUI timerDisplay;
+    public UnityEvent onTimerEnd;
     [SerializeField] private Animator animator;
 
 
@@ -20,7 +20,7 @@ public class Timer : MonoBehaviour
         if (displayObject != null)
         {
             timerDisplay = displayObject.GetComponent<TextMeshProUGUI>();
-            animator = timerDisplay.GetComponent<Animator>();
+            animator = timerDisplay.GetComponentInParent<Animator>();
         }
 
         // ResetTimer();
@@ -81,5 +81,10 @@ public class Timer : MonoBehaviour
             // Update the text component
             timerDisplay.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }
+    }
+
+    public float GetTimeRemaining()
+    {
+        return timeRemaining;
     }
 }
