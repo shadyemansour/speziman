@@ -16,23 +16,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float[] levelDurations = { 90f, 450f, 600f, 700f }; // Durations in seconds for each level
     [SerializeField] private GameObject timerPrefab;
-    [SerializeField] private int totalOranges;
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private float[] levelDurations = { 90f, 450f, 600f, 700f }; // Durations in seconds for each level
-    [SerializeField] private GameObject timerPrefab;
 
     private GameObject kickBottlePrefab;
     private GameObject faxPrefab;
     private GameObject boostPrefab;
 
-<<<<<<< HEAD
-=======
-    private GameObject kickBottlePrefab;
-    private GameObject faxPrefab;
-    private GameObject boostPrefab;
-
->>>>>>> origin/main
     private GameObject currentPlayer;
     private GameObject levelCompleteScreen;
     private Vector3 lastCheckpointPosition;
@@ -145,14 +133,6 @@ public class GameManager : MonoBehaviour
         currentLevel = sceneNumber;
         string levelName = isCut ? "Cut" : "Level";
         levelName += sceneNumber.ToString();
-        SceneManager.LoadScene(levelName);
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
-    }
-
-    public void LoadMenu()
-    {
-=======
         if (SceneExists(levelName))
         {
             SceneManager.LoadScene(levelName);
@@ -573,7 +553,7 @@ public class GameManager : MonoBehaviour
 
     private void StopLevel()
     {
-        
+
         currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(true);
         timerInstance.StopTimer();
 
@@ -646,7 +626,6 @@ public class GameManager : MonoBehaviour
 
     public bool SendCollectables(GameObject player, Vector3 barbaraPosition)
     {
->>>>>>> origin/main
         int value = int.Parse(collectableTexts.First().Value.text.Split("/")[0]);
         if (value > 0)
         {
