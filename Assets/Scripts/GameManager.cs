@@ -511,7 +511,13 @@ public class GameManager : MonoBehaviour
 
     public void ToggleTimer()
     {
-        currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(timerInstance.TogglePause());
+        bool paused = timerInstance.TogglePause();
+        currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(paused);
+        HelicopterController copter = FindObjectOfType<HelicopterController>();
+        if (copter != null)
+        {
+            copter.isPaused = paused;
+        }
     }
 
     private void InstantiateTimer()

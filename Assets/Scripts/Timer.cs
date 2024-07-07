@@ -62,7 +62,7 @@ public class Timer : MonoBehaviour
     public bool TogglePause()
     {
         timerIsRunning = !timerIsRunning;
-        return timerIsRunning;
+        return !timerIsRunning;
     }
 
     public void ResetTimer()

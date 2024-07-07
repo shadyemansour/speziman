@@ -13,6 +13,7 @@ public class HelicopterController : MonoBehaviour
     private bool readyToRotate = false;
     private bool readyToDescend = false; float timeToArrive = 0f;
     private float originalY;
+    public bool isPaused = false;
 
     void Start()
     {
@@ -33,21 +34,24 @@ public class HelicopterController : MonoBehaviour
 
     void Update()
     {
-        if (!readyToMove)
+        if (!isPaused)
         {
-            RiseToInitialPosition();
-        }
-        else if (!readyToRotate)
-        {
-            MoveTowardsFinishLine();
-        }
-        else if (!readyToDescend)
-        {
-            RotateHelicopter();
-        }
-        else
-        {
-            DescendToOriginalY();
+            if (!readyToMove)
+            {
+                RiseToInitialPosition();
+            }
+            else if (!readyToRotate)
+            {
+                MoveTowardsFinishLine();
+            }
+            else if (!readyToDescend)
+            {
+                RotateHelicopter();
+            }
+            else
+            {
+                DescendToOriginalY();
+            }
         }
     }
     void RiseToInitialPosition()
