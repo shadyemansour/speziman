@@ -99,7 +99,7 @@ public class CharacterController2D : MonoBehaviour
 		if (m_InWater && jump)
 		{
 			jumpCooldownTimer = jumpCooldown; // Start the cooldown
-			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce / 1.2f));
+			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
 	}
 
