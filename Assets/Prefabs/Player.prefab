@@ -148,17 +148,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a832acf77fa254fc79d86f9ea831f6b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 6985890838842617642}
-  runSpeed: 20
-  boostSpeed: 30
-  swimSpeed: 15
-  mudSpeed: 5
   defaultSpeed: 20
+  mudSpeed: 5
+  swimSpeed: 15
+  boostMultiplier: 1.5
   defaultJumpForce: 330
-  boostJumpForce: 380
+  mudJumpForce: 100
+  waterJumpForce: 220
+  boostJumpMultiplier: 1.5
   boostAnimationSpeed: 1.5
   reducedAnimationSpeed: 0.5
-  anim: {fileID: 5817922354623032587}
 --- !u!114 &6985890838842617642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,6 +178,7 @@ MonoBehaviour:
     m_Bits: 64
   m_GroundCheck: {fileID: 8971609865207090002}
   m_CeilingCheck: {fileID: 2689714525477105196}
+  m_FacingRight: 1
   OnLandEvent:
     m_PersistentCalls:
       m_Calls:
