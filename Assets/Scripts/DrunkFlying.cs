@@ -13,6 +13,7 @@ public class DrunkFlying : MonoBehaviour
 
     private bool isFlyingErratically = false;
     private Vector3 targetPosition;
+    public bool isActive = false;
 
     private Vector3 attackTargetPosition;
     private bool hasAttacked = false;
@@ -21,33 +22,37 @@ public class DrunkFlying : MonoBehaviour
     void Start()
     {
         player = GameObject.FindWithTag("Player")?.transform;
-        StartCoroutine(FlyRoutine());
     }
 
     void Update()
     {
         if (player != null)
         {
-            if (!hasAttacked)
+            if (isActive)
             {
-                if (!isFlyingErratically)
+                StartCoroutine(FlyRoutine());
+                
+                if (!hasAttacked)
                 {
-                    // Calculate the target position to maintain distance in front of the player
-                    Vector3 direction = (player.position - transform.position).normalized;
-                    targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
-                    targetPosition = new Vector3(
-                        player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
-                        player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
-                        transform.position.z
-                    );
+                    if (!isFlyingErratically)
+                    {
+                        // Calculate the target position to maintain distance in front of the player
+                        Vector3 direction = (player.position - transform.position).normalized;
+                        targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
+                        targetPosition = new Vector3(
+                            player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
+                            player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
+                            transform.position.z
+                        );
 
-                    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);
-                }
-                else
-                {
-                    // Fly erratically
-                    transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized * drunkFlySpeed * Time.deltaTime;
-                }
+                        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);
+                    }
+                    else
+                    {
+                        // Fly erratically
+                        transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized * drunkFlySpeed * Time.deltaTime;
+                    }
+                } 
             }
         }
         else
