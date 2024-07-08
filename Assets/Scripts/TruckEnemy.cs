@@ -45,30 +45,34 @@ public class TruckEnemy : MonoBehaviour
         if (!IsGrounded())
         {
             ChangeDirection();
-            return;
         }
-
-        if (IsObstacleAhead())
+        else if (IsObstacleAhead())
         {
             ChangeDirection();
-            return;
+        }
+
+        float distanceMoved = transform.position.x - startPosition.x;
+
+        if (distanceMoved >= moveDistance && movingRight)
+        {
+            ChangeDirection();
+        }
+        else if ((-1)*distanceMoved >= moveDistance && !movingRight)
+        {
+            ChangeDirection();
         }
 
         float movement = movingRight ? moveSpeed : -moveSpeed;
         rb.velocity = new Vector2(movement, rb.velocity.y);
 
-        float distanceMoved = Mathf.Abs(transform.position.x - startPosition.x);
-        if (distanceMoved >= moveDistance)
-        {
-            ChangeDirection();
-        }
     }
     private void CheckDirection()
     {
         if (spriteRenderer != null)
         {
             // Flip the sprite based on the movement direction
-            spriteRenderer.flipX = !movingRight;
+            bool newDirection = !movingRight;
+            spriteRenderer.flipX = newDirection;
         }
     }
     private void ChangeDirection()
