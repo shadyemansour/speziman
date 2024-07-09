@@ -132,7 +132,7 @@ public class HelicopterController : MonoBehaviour
 
     private void CalculateMoveSpeed()
     {
-        timeToArrive = Math.Min(GameManager.Instance.GetTimeLeft() - 15f, 20f);
+        timeToArrive = Math.Max(GameManager.Instance.GetTimeLeft() - 15f, 20f);
         float distance = Mathf.Abs(finishLine.x - transform.position.x);
         moveSpeed = distance / timeToArrive;
     }
