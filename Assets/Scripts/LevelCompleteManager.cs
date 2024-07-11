@@ -23,6 +23,8 @@ public class LevelCompleteManager : MonoBehaviour
     [SerializeField] private Animator uiAnimator;
     [SerializeField] private Animator backgroundAnimator;
 
+    [SerializeField] private Button nextLevelButton;
+
 
     private int currentLevel;
 
@@ -64,11 +66,13 @@ public class LevelCompleteManager : MonoBehaviour
                 break;
         }
 
+        // Handle completion status
         if (complete)
         {
             titleText.text = "Level Complete!";
             levelCompleteButtons.SetActive(true);
             gameOverButtons.SetActive(false);
+            UpdateButtonVisibility();
         }
         else
         {
@@ -77,17 +81,9 @@ public class LevelCompleteManager : MonoBehaviour
             gameOverButtons.SetActive(true);
         }
 
-        // Handle Next Level button visibility
-        Transform nextLevelButton = levelCompleteButtons.transform.Find("NextLevelButton");
-        if (nextLevelButton != null)
-        {
-            nextLevelButton.gameObject.SetActive(currentLevel < 4);
-        }
-
         backgroundAnimator.Play("BackgroundFadeIn");
         uiAnimator.Play("ZoomInAndFadeIn");
     }
-
     private void SetBarbaraHeadsActive(bool active)
     {
         foreach (Image barbaraHead in barbaraHeads)
@@ -118,6 +114,7 @@ public class LevelCompleteManager : MonoBehaviour
 
     private void UpdateLevel1UI(int collectedItems, int totalItems)
     {
+        itemsText.gameObject.SetActive(true);
         itemsText.text = $"Collected items: {collectedItems}/{totalItems}";
         deliveriesText.gameObject.SetActive(false);
         SetBarbaraHeadsActive(false);
@@ -125,6 +122,7 @@ public class LevelCompleteManager : MonoBehaviour
 
     private void UpdateLevel2And3UI(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
     {
+        itemsText.gameObject.SetActive(true);
         itemsText.text = $"Collected items: {collectedItems}/{totalItems}";
         deliveriesText.gameObject.SetActive(true);
         deliveriesText.text = $"Deliveries: {reachedDeliveries}/{totalDeliveries}";
@@ -134,10 +132,23 @@ public class LevelCompleteManager : MonoBehaviour
 
     private void UpdateLevel4UI(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
     {
+        itemsText.gameObject.SetActive(true);
         itemsText.text = $"Destroyed items: {collectedItems}/{totalItems}";
         deliveriesText.gameObject.SetActive(true);
         deliveriesText.text = $"Deliveries: {reachedDeliveries}/{totalDeliveries}";
         SetBarbaraHeadsActive(true);
         UpdateBarbaraHeads(reachedDeliveries, totalDeliveries);
+    }
+
+    private void UpdateButtonVisibility()
+    {
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.gameObject.SetActive(currentLevel < 4);
+        }
+        else
+        {
+            Debug.LogError("Next Level button reference is missing. Please assign it in the Inspector.");
+        }
     }
 }
