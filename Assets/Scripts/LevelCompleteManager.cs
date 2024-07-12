@@ -45,10 +45,11 @@ public class LevelCompleteManager : MonoBehaviour
         GameManager.Instance.LoadNextLevel();
 
     }
-    public void UpdateUI(int score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, bool complete, int level)
+    public void UpdateUI(float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, bool complete, int level)
     {
         currentLevel = level;
-        scoreText.text = $"Score: {score}";
+        int calculatedScore = CalculateScore(completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+        scoreText.text = $"Score: {calculatedScore}";
         timeText.text = $"Time: {FormatTime(completionTime)}";
 
         // Handle level-specific UI elements
@@ -83,6 +84,9 @@ public class LevelCompleteManager : MonoBehaviour
 
         backgroundAnimator.Play("BackgroundFadeIn");
         uiAnimator.Play("ZoomInAndFadeIn");
+
+        // Return the calculated score to be used by GameManager
+        GameManager.Instance.UpdatePlayerScore(calculatedScore);
     }
     private void SetBarbaraHeadsActive(bool active)
     {
@@ -150,5 +154,15 @@ public class LevelCompleteManager : MonoBehaviour
         {
             Debug.LogError("Next Level button reference is missing. Please assign it in the Inspector.");
         }
+    }
+
+    private int CalculateScore(float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
+    {
+        float timeScore = Mathf.Max(0, 1000 - (completionTime * 2)); // Decrease score as time increases
+        float collectableScore = (float)collectedItems / totalItems * 1000; // Max 1000 points for collectables
+        float deliveryScore = (float)reachedDeliveries / totalDeliveries * 1000; // Max 1000 points for deliveries
+
+        int totalScore = Mathf.RoundToInt(timeScore + collectableScore + deliveryScore);
+        return totalScore;
     }
 }

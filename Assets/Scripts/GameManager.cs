@@ -589,7 +589,7 @@ public class GameManager : MonoBehaviour
             LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
             if (lcManager != null)
             {
-                lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete, currentLevel);
+                lcManager.UpdateUI(completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete, currentLevel);
                 Debug.Log("LevelCompleteManager UpdateUI called");
             }
             else
@@ -601,7 +601,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("levelCompleteScreen is null in GameManager");
         }
-    }   
+    }
 
     private int GetCollectedItemsCount()
     {
@@ -796,7 +796,11 @@ public class GameManager : MonoBehaviour
     {
         if (currentPlayerData != null)
         {
-            currentPlayerData.score = newScore;
+            if (newScore > currentPlayerData.score)
+            {
+                currentPlayerData.score = newScore;
+                SaveGameData();
+            }
         }
         else
         {
