@@ -46,14 +46,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   totalCola: 0
   totalOranges: 0
-  collectedCola: 0
-  collectedOranges: 0
-  colaSlider: {fileID: 0}
-  orangeSlider: {fileID: 0}
   playerPrefab: {fileID: 2624131437777484822, guid: fe34509d8b2d44ad89d3098f6e49d366, type: 3}
   spawnPoint: {fileID: 0}
-  timerPrefab: {fileID: 6814373221199184874, guid: 35149b0364ebc418d8bfe9ff8b126db5, type: 3}
   levelDurations:
   - 90
   - 450
   - 600
+  - 600
+  timerPrefab: {fileID: 6814373221199184874, guid: 35149b0364ebc418d8bfe9ff8b126db5, type: 3}
+  score: 0
+  reachedDeliveries: 0
+  currentLevel: 1
+  barbaras: []
+  gameData:
+    players: []

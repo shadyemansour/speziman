@@ -8,10 +8,11 @@ public class Water : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && !coolOff)
+        Debug.Log(other.tag);
+        if (other.CompareTag("WaterCheck") && !coolOff)
         {
-            CharacterController2D playercontroller = other.GetComponent<CharacterController2D>();
-            PlayerMovement playerMovement = other.GetComponent<PlayerMovement>();
+            CharacterController2D playercontroller = other.transform.parent.GetComponent<CharacterController2D>();
+            PlayerMovement playerMovement = other.transform.parent.GetComponent<PlayerMovement>();
 
             if (playercontroller != null)
             {
@@ -24,12 +25,35 @@ public class Water : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay2D(Collider2D other)
+    {
+
+        if (other.CompareTag("WaterCheck") && !coolOff)
+        {
+            CharacterController2D playercontroller = other.transform.parent.GetComponent<CharacterController2D>();
+            PlayerMovement playerMovement = other.transform.parent.GetComponent<PlayerMovement>();
+
+            if (playercontroller != null)
+            {
+                if (playerMovement.GetMovementState() != PlayerMovement.MovementState.Swim)
+                {
+                    playerMovement.ReduceSpeed(false);
+                    playercontroller.SetInWater(true);
+                    coolOff = true;
+                    StartCoroutine(WaitXSeconds(0.2f));
+                }
+
+            }
+        }
+
+    }
+
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && !coolOff)
+        if (other.CompareTag("WaterCheck") && !coolOff)
         {
-            CharacterController2D playercontroller = other.GetComponent<CharacterController2D>();
-            PlayerMovement playerMovement = other.GetComponent<PlayerMovement>();
+            CharacterController2D playercontroller = other.transform.parent.GetComponent<CharacterController2D>();
+            PlayerMovement playerMovement = other.transform.parent.GetComponent<PlayerMovement>();
             if (playercontroller != null)
             {
                 playerMovement.ResetSpeed();

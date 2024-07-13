@@ -13,6 +13,7 @@ public class LevelCompleteManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI deliveriesText;
     [SerializeField] private Image[] barbaraHeads;
 
+
     [Header("Buttons")]
     [SerializeField] private GameObject levelCompleteButtons;
     [SerializeField] private GameObject gameOverButtons;
@@ -48,21 +49,21 @@ public class LevelCompleteManager : MonoBehaviour
     public void UpdateUI(int score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, bool complete, int level)
     {
         currentLevel = level;
-        scoreText.text = $"Score: {score}";
-        timeText.text = $"Time: {FormatTime(completionTime)}";
+        scoreText.text = $"score \n{score}";
+        timeText.text = $"time \n{FormatTime(completionTime)}";
 
         // Handle level-specific UI elements
         switch (currentLevel)
         {
             case 1:
-                UpdateLevel1UI(collectedItems, totalItems);
+                UpdateLevelUI(collectedItems, totalItems, "Collected");
                 break;
             case 2:
             case 3:
-                UpdateLevel2And3UI(collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+                UpdateLevelUI(collectedItems, totalItems, "Collected", reachedDeliveries, totalDeliveries);
                 break;
             case 4:
-                UpdateLevel4UI(collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+                UpdateLevelUI(collectedItems, totalItems, "Destroyed", reachedDeliveries, totalDeliveries);
                 break;
         }
 
@@ -112,33 +113,36 @@ public class LevelCompleteManager : MonoBehaviour
         currentLevel = level;
     }
 
-    private void UpdateLevel1UI(int collectedItems, int totalItems)
+    private void UpdateLevelUI(int collectedItems, int totalItems, string collectableText, int reachedDeliveries = -1, int totalDeliveries = -1)
     {
+        bool isActive = true;
+        if (currentLevel == 1)
+        {
+            scoreText.gameObject.transform.localPosition = new Vector3(0, 102.4f, 0);
+            scoreText.gameObject.transform.localScale = new Vector3(2, 2, 2);
+            itemsText.gameObject.transform.localPosition = new Vector3(0, -8.6f, 0);
+            itemsText.gameObject.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            timeText.gameObject.transform.localPosition = new Vector3(0, -60f, 0);
+            timeText.gameObject.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            isActive = false;
+
+        }
         itemsText.gameObject.SetActive(true);
-        itemsText.text = $"Collected items: {collectedItems}/{totalItems}";
-        deliveriesText.gameObject.SetActive(false);
-        SetBarbaraHeadsActive(false);
+        itemsText.text = $"{collectableText} \n{collectedItems}/{totalItems}";
+        deliveriesText.gameObject.SetActive(isActive);
+        deliveriesText.text = $"deliveries \n{reachedDeliveries}/{totalDeliveries}";
+        SetBarbaraHeadsActive(isActive);
     }
 
-    private void UpdateLevel2And3UI(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
+    private void UpdateLevel2And3UI(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, string collectableText)
     {
         itemsText.gameObject.SetActive(true);
-        itemsText.text = $"Collected items: {collectedItems}/{totalItems}";
+        itemsText.text = $"{collectableText} items: {collectedItems}/{totalItems}";
         deliveriesText.gameObject.SetActive(true);
-        deliveriesText.text = $"Deliveries: {reachedDeliveries}/{totalDeliveries}";
         SetBarbaraHeadsActive(true);
         UpdateBarbaraHeads(reachedDeliveries, totalDeliveries);
     }
 
-    private void UpdateLevel4UI(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
-    {
-        itemsText.gameObject.SetActive(true);
-        itemsText.text = $"Destroyed items: {collectedItems}/{totalItems}";
-        deliveriesText.gameObject.SetActive(true);
-        deliveriesText.text = $"Deliveries: {reachedDeliveries}/{totalDeliveries}";
-        SetBarbaraHeadsActive(true);
-        UpdateBarbaraHeads(reachedDeliveries, totalDeliveries);
-    }
 
     private void UpdateButtonVisibility()
     {

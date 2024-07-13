@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private GameObject kickBottlePrefab;
     private GameObject faxPrefab;
     private GameObject boostPrefab;
+    private GameObject aloisiusPrefab;
 
     private GameObject currentPlayer;
     private GameObject levelCompleteScreen;
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     private List<(Vector3 position, Quaternion rotation)> kickBottles;
     private List<(Vector3 position, Quaternion rotation)> boosts;
     private List<(Vector3 position, Quaternion rotation)> faxMachines;
+    private List<(Vector3 position, Quaternion rotation)> aloisiuses;
     public List<Barbara> barbaras;
 
     //GameStats
@@ -68,6 +70,7 @@ public class GameManager : MonoBehaviour
             kickBottlePrefab = Resources.Load<GameObject>("Prefabs/KickBottle");
             boostPrefab = Resources.Load<GameObject>("Prefabs/Breze");
             faxPrefab = Resources.Load<GameObject>("Prefabs/FaxMachineField");
+            aloisiusPrefab = Resources.Load<GameObject>("Prefabs/AloisiusField");
         }
         else
         {
@@ -272,6 +275,7 @@ public class GameManager : MonoBehaviour
         // kickBottles = FindObjects<BottleKick>();
         boosts = FindObjects<BoostCharacter>();
         faxMachines = FindObjects<FaxField>();
+        aloisiuses = FindObjects<AloisiusField>();
     }
     private void RespawnGameObjects()
     {
@@ -282,6 +286,8 @@ public class GameManager : MonoBehaviour
         SpawnObjects(boostPrefab, boosts);
         DestroyAll<FaxField>();
         SpawnObjects(faxPrefab, faxMachines);
+        DestroyAll<AloisiusField>();
+        SpawnObjects(aloisiusPrefab, aloisiuses);
 
     }
 
@@ -487,7 +493,7 @@ public class GameManager : MonoBehaviour
         ResetCollectables();
         RespawnGameObjects();
         ResetBarbaras();
-        player.GetComponent<PlayerMovement>().ResetSpeed();
+        player.GetComponent<CharacterController2D>().Move(0, false);
 
         player.transform.position = lastCheckpointPosition;
     }
@@ -601,7 +607,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("levelCompleteScreen is null in GameManager");
         }
-    }   
+    }
 
     private int GetCollectedItemsCount()
     {

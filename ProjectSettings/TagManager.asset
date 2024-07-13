@@ -33,6 +33,7 @@ TagManager:
   - FinishLine
   - Paulaner_Text
   - Paulaner_Tag
+  - WaterCheck
   layers:
   - Default
   - TransparentFX

@@ -53,6 +53,8 @@ public class PlayerMovement : MonoBehaviour
         float speed = GetSpeed();
         horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
         anim.SetFloat("speed", Mathf.Abs(horizontalMove));
+        float jf = GetJumpForce();
+        if (controller.GetJumpForce() != jf) controller.SetJumpForce(jf);
 
         if (Input.GetButtonDown("Jump"))
         {
@@ -115,13 +117,22 @@ public class PlayerMovement : MonoBehaviour
         currentBoostState = state;
         if (state == BoostState.Boosted)
         {
+            SetAnimationSpeed(boostAnimationSpeed);
+            CancelInvoke(nameof(ClearBoost));
             Invoke(nameof(ClearBoost), duration);
         }
+    }
+
+    public MovementState GetMovementState()
+    {
+        return currentMovementState;
     }
 
     private void ClearBoost()
     {
         SetBoostState(BoostState.None, 0);
+        SetAnimationSpeed(1);
+        Debug.Log("Boost cleared");
         if (disableBoostCallback != null)
         {
             disableBoostCallback.Invoke();
@@ -145,12 +156,14 @@ public class PlayerMovement : MonoBehaviour
         anim.speed = reducedAnimationSpeed;
     }
 
-    public void ResetSpeed()
+    public void ResetSpeed(bool isDead = false)
     {
         SetMovementState(MovementState.Normal);
-        SetAnimationSpeed(1);
-        if (disableBoostCallback != null)
+        float animSpeed = BoostState.Boosted == currentBoostState ? boostAnimationSpeed : 1;
+        SetAnimationSpeed(animSpeed);
+        if (isDead && disableBoostCallback != null)
         {
+            SetAnimationSpeed(1);
             disableBoostCallback.Invoke();
             disableBoostCallback = null;
         }
