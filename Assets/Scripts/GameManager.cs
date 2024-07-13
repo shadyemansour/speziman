@@ -751,6 +751,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Logout()
+    {
+        SaveGameData();
+        currentLevel = -1;
+        currentPlayerData = null;
+    }
+
     public int GetPlayerMaxLevel()
     {
         if (currentPlayerData != null)
