@@ -507,6 +507,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1131495619}
     m_Modifications:
+    - target: {fileID: 317356681045282469, guid: fe8ad4b5b8f1f42d79a313e51c074b4b, type: 3}
+      propertyPath: m_margin.z
+      value: 0.000016274027
+      objectReference: {fileID: 0}
     - target: {fileID: 4636446044275025746, guid: fe8ad4b5b8f1f42d79a313e51c074b4b, type: 3}
       propertyPath: m_Name
       value: Paulaner_Text
@@ -537,7 +541,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5079067214228636171, guid: fe8ad4b5b8f1f42d79a313e51c074b4b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 31.8589
+      value: 93
       objectReference: {fileID: 0}
     - target: {fileID: 5079067214228636171, guid: fe8ad4b5b8f1f42d79a313e51c074b4b, type: 3}
       propertyPath: m_SizeDelta.y
@@ -573,7 +577,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5079067214228636171, guid: fe8ad4b5b8f1f42d79a313e51c074b4b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -312
+      value: -283.5
       objectReference: {fileID: 0}
     - target: {fileID: 5079067214228636171, guid: fe8ad4b5b8f1f42d79a313e51c074b4b, type: 3}
       propertyPath: m_AnchoredPosition.y
