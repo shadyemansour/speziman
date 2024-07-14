@@ -47,6 +47,11 @@ public class SoundManager : MonoBehaviour
             { "cut25", Resources.Load<AudioClip>("Audio/Narration/Cut2/5") },
             { "cut26", Resources.Load<AudioClip>("Audio/Narration/Cut2/6") },
             { "cut27", Resources.Load<AudioClip>("Audio/Narration/Cut2/7") },
+            { "cut41", Resources.Load<AudioClip>("Audio/Narration/Cut4/1") },
+            { "cut42", Resources.Load<AudioClip>("Audio/Narration/Cut4/2") },
+            { "cut43", Resources.Load<AudioClip>("Audio/Narration/Cut4/3") },
+            { "cut44", Resources.Load<AudioClip>("Audio/Narration/Cut4/4") },
+            { "cut45", Resources.Load<AudioClip>("Audio/Narration/Cut4/5") },
 
 
         };

@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 
 public class BarbaraController : MonoBehaviour
@@ -6,10 +7,12 @@ public class BarbaraController : MonoBehaviour
     private Animator animator;
     private System.Action OnAnimationFinished;
     public bool sayingBye = false;
+    private Sprite initialSprite;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        initialSprite = GetComponent<SpriteRenderer>().sprite;
 
     }
 
@@ -36,6 +39,20 @@ public class BarbaraController : MonoBehaviour
     {
         sayingBye = true;
         animator.SetTrigger("Wave");
+    }
+
+    public void WaveNoPos()
+    {
+        sayingBye = true;
+        animator.SetTrigger("WaveNoPos");
+    }
+
+    public void StopWaveNoPos()
+    {
+        sayingBye = false;
+        animator.enabled = false;
+        GetComponent<SpriteRenderer>().sprite = initialSprite;
+
     }
 
     public void WaveAndMove(System.Action callback)
@@ -77,6 +94,22 @@ public class BarbaraController : MonoBehaviour
         float animationDuration = GetAnimationDuration("BarbaraDrink");
         StartCoroutine(WaitForAnimation(animationDuration));
 
+    }
+    public void MoveAway()
+    {
+        StartCoroutine(MoveToTargetCoroutine());
+
+    }
+
+    IEnumerator MoveToTargetCoroutine()
+    {
+
+        Vector3 targetPosition = transform.position.x > 0 ? new Vector3(10f, transform.position.y, 0) : new Vector3(-7f, transform.position.y, 0);
+        while (transform.position != targetPosition)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.005f);
+            yield return null;
+        }
     }
 
 }

@@ -57,6 +57,7 @@ public class UIManager : MonoBehaviour
             if (textWriterSingle != null && textWriterSingle.IsActive())
             {
                 textWriterSingle.WriteAllAndDestroy();
+                buttonEnabled = true;
             }
             else
             {
