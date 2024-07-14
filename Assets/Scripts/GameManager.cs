@@ -85,7 +85,6 @@ public class GameManager : MonoBehaviour
         if (spawnPoint != null) lastCheckpointPosition = spawnPoint.position;
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
-        levelStartTime = Time.time;
     }
 
     void FindTextObjects()
@@ -219,6 +218,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Scene number: " + sceneNumber);
             currentLevel = sceneNumber;
             timerInstance.StartTimer(levelDurations[sceneNumber - 1]);
+            levelStartTime = Time.time;
         }
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
