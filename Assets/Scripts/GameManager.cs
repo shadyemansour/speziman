@@ -585,13 +585,49 @@ public class GameManager : MonoBehaviour
 
     private int CalculateScore(float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
     {
-        float timeScore = Mathf.Max(0, 1000 - (completionTime * 2)); // Decrease score as time increases
-        float collectableScore = (float)collectedItems / totalItems * 1000; // Max 1000 points for collectables
-        float deliveryScore = (float)reachedDeliveries / totalDeliveries * 1000; // Max 1000 points for deliveries
+        float timeScore = CalculateTimeScore(completionTime, levelDurations[currentLevel - 1], 500);
+        float collectableScore = (float)collectedItems / totalItems * 500;
+        float deliveryScore = (float)reachedDeliveries / totalDeliveries * 750;
 
-        int totalScore = Mathf.RoundToInt(timeScore + collectableScore + deliveryScore);
+        int bonus = CalculateBonus(collectedItems, totalItems, reachedDeliveries, totalDeliveries);
+
+        int totalScore = Mathf.RoundToInt(timeScore + collectableScore + deliveryScore + bonus);
         return totalScore;
     }
+    public int CalculateTimeScore(float completionTime, float totalTime, int maxScore = 500)
+    {
+        float timePercentage = completionTime / totalTime * 100;
+
+        if (timePercentage <= 60)
+        {
+            return maxScore;
+        }
+        else if (timePercentage <= 70)
+        {
+            return (int)(maxScore * 0.75);
+        }
+        else if (timePercentage <= 80)
+        {
+            return (int)(maxScore * 0.50);
+        }
+        else if (timePercentage <= 90)
+        {
+            return (int)(maxScore * 0.25);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private int CalculateBonus(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
+    {
+        int bonus = 0;
+        if (collectedItems == totalItems) bonus += 750;
+        if (reachedDeliveries == totalDeliveries) bonus += 250;
+        return bonus;
+    }
+
 
     public void ActivateEndCanvas(bool complete)
     {

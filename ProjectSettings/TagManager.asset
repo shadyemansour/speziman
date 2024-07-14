@@ -34,6 +34,7 @@ TagManager:
   - Paulaner_Text
   - Paulaner_Tag
   - WaterCheck
+  - BackButton
   layers:
   - Default
   - TransparentFX

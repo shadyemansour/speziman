@@ -16,6 +16,8 @@ public class MenuController : MonoBehaviour
     private GameObject newPlayerObjects;
     private GameObject oldPlayerObjects;
     private HighscoreTable highscoreTable;
+    private Button addNewPlayerButton;
+    private Button existingPlayerButton;
 
     public Toggle skipIntroToggle;
     private TMP_InputField usernameInputField;
@@ -28,7 +30,11 @@ public class MenuController : MonoBehaviour
         enterName.SetActive(true);  // Temporarily active to ensure it can be found if inactive at design time.
         newPlayerObjects = GameObject.FindGameObjectWithTag("NewPlayerMenu");
         oldPlayerObjects = GameObject.FindGameObjectWithTag("ExistingPlayerMenu");
+        addNewPlayerButton = newPlayerObjects.GetComponentInChildren<Button>();
+        existingPlayerButton = oldPlayerObjects.GetComponentInChildren<Button>();
         usernameInputField = GameObject.FindGameObjectWithTag("UsernameInputField").GetComponent<TMP_InputField>();
+        usernameInputField.GetComponent<TextInputFilter>().SetOnEscape(GameObject.FindGameObjectWithTag("BackButton").GetComponent<Button>().onClick.Invoke);
+
         errorText = GameObject.Find("errorText").GetComponent<TMP_Text>();
         enterName.SetActive(false);
 
@@ -161,11 +167,15 @@ public class MenuController : MonoBehaviour
     //Navigation
     public void NewUserMenu()
     {
+        usernameInputField.onSubmit.RemoveAllListeners();
+        usernameInputField.onSubmit.AddListener(delegate { addNewPlayerButton.onClick.Invoke(); });
         SetMenuState(false, true, false, true, false, false);
     }
 
     public void ExistingUserMenu()
     {
+        usernameInputField.onSubmit.RemoveAllListeners();
+        usernameInputField.onSubmit.AddListener(delegate { existingPlayerButton.onClick.Invoke(); });
         SetMenuState(false, true, false, false, true, false);
     }
 
