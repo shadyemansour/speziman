@@ -171,6 +171,8 @@ public class MenuController : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        usernameInputField.text = "";
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
         SetMenuState(true, false, false, false, false, false);
     }
 

@@ -163,9 +163,7 @@ public class PlayerMovement : MonoBehaviour
         SetAnimationSpeed(animSpeed);
         if (isDead && disableBoostCallback != null)
         {
-            SetAnimationSpeed(1);
-            disableBoostCallback.Invoke();
-            disableBoostCallback = null;
+            ClearBoost();
         }
     }
 

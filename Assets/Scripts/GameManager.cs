@@ -607,6 +607,8 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("levelCompleteScreen is null in GameManager");
         }
+        UpdatePlayerScore();
+
     }
 
     private int GetCollectedItemsCount()
@@ -706,7 +708,6 @@ public class GameManager : MonoBehaviour
     /////    GameData    /////
     public bool RegisterNewPlayer(string playerName)
     {
-        // Check if the username already exists
         if (gameData.players.Any(p => p.playerName == playerName))
         {
             Debug.Log("Username already exists. Choose a different username.");
@@ -714,25 +715,21 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Create new player data
             PlayerData newPlayer = new PlayerData()
             {
                 playerName = playerName,
-                score = 0,
                 currentLevel = 1,
-                unlockedLevels = new List<int>() { 1 }
+                levelsData = new List<LevelData>() { new LevelData(1, 0) }
             };
 
             gameData.players.Add(newPlayer);
             SaveGameData();
             currentPlayerData = newPlayer;
-
             Debug.Log("New player registered: " + playerName);
-
-
             return true;
         }
     }
+
 
     public bool LoginExistingPlayer(string playerName)
     {
@@ -760,9 +757,9 @@ public class GameManager : MonoBehaviour
 
     public int GetPlayerMaxLevel()
     {
-        if (currentPlayerData != null)
+        if (currentPlayerData != null && currentPlayerData.levelsData.Any())
         {
-            return currentPlayerData.unlockedLevels.Max();
+            return currentPlayerData.levelsData.Max(ld => ld.levelNumber);
         }
         else
         {
@@ -805,37 +802,58 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdatePlayerScore(int newScore)
+    public void UpdatePlayerScore()
     {
         if (currentPlayerData != null)
         {
-            currentPlayerData.score = newScore;
+            LevelData levelData = currentPlayerData.levelsData.FirstOrDefault(ld => ld.levelNumber == currentPlayerData.currentLevel);
+            if (levelData != null)
+            {
+                if (score > levelData.score)
+                {
+                    levelData.score = score;
+                    SaveGameData();
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Level data not found for current level.");
+            }
         }
         else
         {
             Debug.LogWarning("Player not found");
         }
+        score = 0;
     }
+
 
 
 
     public void UnlockLevel(int level)
     {
-        Debug.Log("Unlocking level " + level);
-        if (currentPlayerData != null && !currentPlayerData.unlockedLevels.Contains(level))
+        if (currentPlayerData != null)
         {
-            currentPlayerData.currentLevel = level;
-            currentPlayerData.unlockedLevels.Add(level);
-            SaveGameData();
-            Debug.Log("Unlocked level");
-
+            LevelData levelData = currentPlayerData.levelsData.FirstOrDefault(ld => ld.levelNumber == level);
+            if (levelData == null)
+            {
+                currentPlayerData.levelsData.Add(new LevelData(level, 0)); // Unlock new level with 0 initial score
+                currentPlayerData.currentLevel = level; // Optionally set as the current level
+                SaveGameData();
+                Debug.Log($"Unlocked level {level}");
+            }
+            else
+            {
+                Debug.Log("Level already unlocked");
+            }
         }
     }
 
 
-    public void EndGame(int score)
+
+    public void EndGame()
     {
-        UpdatePlayerScore(score);
+        UpdatePlayerScore();
         SaveGameData();
     }
 
