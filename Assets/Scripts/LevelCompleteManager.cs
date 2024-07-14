@@ -46,9 +46,10 @@ public class LevelCompleteManager : MonoBehaviour
         GameManager.Instance.LoadNextLevel();
 
     }
-    public void UpdateUI(int score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, bool complete, int level)
+    public void UpdateUI(float score, float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, bool complete, int level)
     {
         currentLevel = level;
+
         scoreText.text = $"score \n{score}";
         timeText.text = $"time \n{FormatTime(completionTime)}";
 
@@ -155,4 +156,5 @@ public class LevelCompleteManager : MonoBehaviour
             Debug.LogError("Next Level button reference is missing. Please assign it in the Inspector.");
         }
     }
+
 }
