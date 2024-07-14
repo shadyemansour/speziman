@@ -50,9 +50,9 @@ MonoBehaviour:
   spawnPoint: {fileID: 0}
   levelDurations:
   - 90
-  - 450
-  - 600
-  - 600
+  - 165
+  - 360
+  - 180
   timerPrefab: {fileID: 6814373221199184874, guid: 35149b0364ebc418d8bfe9ff8b126db5, type: 3}
   score: 0
   reachedDeliveries: 0
