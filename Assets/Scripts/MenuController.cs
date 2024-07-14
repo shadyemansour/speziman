@@ -11,9 +11,11 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject start;
     [SerializeField] private GameObject enterName;
     [SerializeField] private GameObject levelSelect;
+    [SerializeField] private GameObject stats;
     [SerializeField] private TMP_Text nameText;
     private GameObject newPlayerObjects;
     private GameObject oldPlayerObjects;
+    private HighscoreTable highscoreTable;
 
     public Toggle skipIntroToggle;
     private TMP_InputField usernameInputField;
@@ -34,6 +36,9 @@ public class MenuController : MonoBehaviour
         levelButtons = new List<Button>();
         InitializeLevelButtons();
         levelSelect.SetActive(false);
+        stats.SetActive(true);
+        highscoreTable = FindObjectOfType<HighscoreTable>();
+        stats.SetActive(false);
 
         start.SetActive(true);
     }
@@ -176,9 +181,20 @@ public class MenuController : MonoBehaviour
         SetMenuState(true, false, false, false, false, false);
     }
 
+    public void BackToMainMenuLeaderboard()
+    {
+
+        SetMenuState(false, false, true, false, false, false);
+    }
+
     public void ShowDetails()
     {
         SetMenuState(false, false, false, false, false, false);
+    }
+    public void ShowStats()
+    {
+        highscoreTable.PopulateTable();
+        SetMenuState(false, false, false, false, false, true);
     }
 
     public void ChangePlayer()
@@ -197,10 +213,11 @@ public class MenuController : MonoBehaviour
         GameManager.Instance.LoadLevel(levelNum, true);
     }
 
-    private void SetMenuState(bool showStart, bool showEnterName, bool showLevelSelect, bool showNewPlayerObjects, bool showOldPlayerObjects, bool showSettings)
+    private void SetMenuState(bool showStart, bool showEnterName, bool showLevelSelect, bool showNewPlayerObjects, bool showOldPlayerObjects, bool showStats)
     {
         start.SetActive(showStart);
         enterName.SetActive(showEnterName);
+        stats.SetActive(showStats);
         levelSelect.SetActive(showLevelSelect);
         newPlayerObjects.SetActive(showNewPlayerObjects);
         oldPlayerObjects.SetActive(showOldPlayerObjects);

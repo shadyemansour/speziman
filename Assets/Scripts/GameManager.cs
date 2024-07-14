@@ -582,12 +582,24 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private int CalculateScore(float completionTime, int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries)
+    {
+        float timeScore = Mathf.Max(0, 1000 - (completionTime * 2)); // Decrease score as time increases
+        float collectableScore = (float)collectedItems / totalItems * 1000; // Max 1000 points for collectables
+        float deliveryScore = (float)reachedDeliveries / totalDeliveries * 1000; // Max 1000 points for deliveries
+
+        int totalScore = Mathf.RoundToInt(timeScore + collectableScore + deliveryScore);
+        return totalScore;
+    }
+
     public void ActivateEndCanvas(bool complete)
     {
         StopLevel();
         float completionTime = CalculateLevelCompletionTime();
         int collectedItems = GetCollectedItemsCount();
         int totalItems = GetTotalItemsCount();
+
+        score = CalculateScore(completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries);
 
         if (levelCompleteScreen != null)
         {
@@ -597,7 +609,7 @@ public class GameManager : MonoBehaviour
             LevelCompleteManager lcManager = levelCompleteScreen.GetComponent<LevelCompleteManager>();
             if (lcManager != null)
             {
-                lcManager.UpdateUI(completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete, currentLevel);
+                lcManager.UpdateUI(score, completionTime, collectedItems, totalItems, reachedDeliveries, totalDeliveries, complete, currentLevel);
                 Debug.Log("LevelCompleteManager UpdateUI called");
             }
             else
@@ -847,6 +859,17 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Level already unlocked");
             }
         }
+    }
+
+    public List<(string playerName, int highScore)> GetPlayerScores()
+    {
+        List<(string playerName, int highScore)> scores = new List<(string playerName, int highScore)>();
+        foreach (var player in gameData.players)
+        {
+            int highScore = player.levelsData.Max(ld => ld.score);  // Assumes high score is the max score from levelsData
+            scores.Add((player.playerName, highScore));
+        }
+        return scores;
     }
 
 
