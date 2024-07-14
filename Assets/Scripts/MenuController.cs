@@ -9,8 +9,9 @@ using TMPro;
 public class MenuController : MonoBehaviour
 {
     [SerializeField] private GameObject start;
-    public GameObject enterName;
-    public GameObject levelSelect;
+    [SerializeField] private GameObject enterName;
+    [SerializeField] private GameObject levelSelect;
+    [SerializeField] private TMP_Text nameText;
     private GameObject newPlayerObjects;
     private GameObject oldPlayerObjects;
 
@@ -20,9 +21,7 @@ public class MenuController : MonoBehaviour
 
     private List<Button> levelButtons;
 
-    [SerializeField] private AudioClip menuBackgroundMusic; // for testing volume settings
-
-    private void Awake()
+    void Awake()
     {
         enterName.SetActive(true);  // Temporarily active to ensure it can be found if inactive at design time.
         newPlayerObjects = GameObject.FindGameObjectWithTag("NewPlayerMenu");
@@ -83,7 +82,10 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("Registration successful.");
                 UpdateLevelAccess();
+                nameText.text = $"Hi {username}!";
                 LevelSelectMenu();
+                usernameInputField.text = "";
+
             }
             else
             {
@@ -109,8 +111,10 @@ public class MenuController : MonoBehaviour
             if (found)
             {
                 Debug.Log("Login successful.");
+                nameText.text = $"Hi {username}!";
                 UpdateLevelAccess();
                 LevelSelectMenu();
+                usernameInputField.text = "";
             }
             else
             {
@@ -167,12 +171,20 @@ public class MenuController : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        usernameInputField.text = "";
+        errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 0f);
         SetMenuState(true, false, false, false, false, false);
     }
 
     public void ShowDetails()
     {
         SetMenuState(false, false, false, false, false, false);
+    }
+
+    public void ChangePlayer()
+    {
+        GameManager.Instance.Logout();
+        SetMenuState(true, false, false, false, false, false);
     }
 
     public void StartGame()

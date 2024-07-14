@@ -76,6 +76,7 @@ public class CharacterController2D : MonoBehaviour
 		//only control the player if grounded or airControl is turned on
 		if (m_Grounded || m_AirControl)
 		{
+			// Debug.Log("Move: " + move);
 
 			// Move the character by finding the target velocity
 			Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
@@ -95,11 +96,13 @@ public class CharacterController2D : MonoBehaviour
 			m_Grounded = false;
 			jumpCooldownTimer = jumpCooldown; // Start the cooldown
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+			Debug.Log(m_JumpForce);
 		}
 		if (m_InWater && jump)
 		{
 			jumpCooldownTimer = jumpCooldown; // Start the cooldown
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+			Debug.Log(m_JumpForce);
 		}
 	}
 
@@ -115,6 +118,10 @@ public class CharacterController2D : MonoBehaviour
 		{
 			transform.Rotate(0, 180, 0);
 		}
+	}
+	public float GetJumpForce()
+	{
+		return m_JumpForce;
 	}
 
 	public void SetJumpForce(float jumpForce)
