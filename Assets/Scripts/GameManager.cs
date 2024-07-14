@@ -158,6 +158,7 @@ public class GameManager : MonoBehaviour
             {
                 SceneManager.LoadScene(levelName);
                 SceneManager.sceneLoaded += OnSceneLoaded;
+                SoundManager.Instance.FadeInBackgroundSound();
             }
             else
             {

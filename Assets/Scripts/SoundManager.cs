@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
@@ -10,6 +9,9 @@ public class SoundManager : MonoBehaviour
     private List<AudioClip> dieSounds;
     private AudioSource musicSource;
     private AudioSource sfxSource;
+
+    private Coroutine currentMusicFade;
+    private Coroutine currentSfxFade;
 
     void Awake()
     {
@@ -116,12 +118,20 @@ public class SoundManager : MonoBehaviour
 
     public void FadeOutBackgroundSound(float fadeOutTime = 2f)
     {
-        StartCoroutine(FadeOut(musicSource, fadeOutTime));
+        if (currentMusicFade != null)
+        {
+            StopCoroutine(currentMusicFade);
+        }
+        currentMusicFade = StartCoroutine(FadeOut(musicSource, fadeOutTime));
     }
 
     public void FadeOutSfxSound(float fadeOutTime = 0.5f)
     {
-        StartCoroutine(FadeOut(sfxSource, fadeOutTime));
+        if (currentSfxFade != null)
+        {
+            StopCoroutine(currentSfxFade);
+        }
+        currentSfxFade = StartCoroutine(FadeOut(sfxSource, fadeOutTime));
     }
 
     private IEnumerator FadeOut(AudioSource audioSource, float fadeOutTime)
@@ -137,11 +147,25 @@ public class SoundManager : MonoBehaviour
 
         audioSource.Stop();
         audioSource.volume = startVolume;
+        if (audioSource == musicSource)
+        {
+            currentMusicFade = null;
+        }
+        else if (audioSource == sfxSource)
+        {
+            currentSfxFade = null;
+        }
     }
 
-    public void FadeInBackgroundSound(float fadeOutTime = 2f)
+    public void FadeInBackgroundSound(float fadeInTime = 2f)
     {
-        StartCoroutine(FadeIn(musicSource, fadeOutTime));
+        if (currentMusicFade != null)
+        {
+            Debug.Log("Stop fade out");
+            StopCoroutine(currentMusicFade);
+        }
+        Debug.Log("Start fade in");
+        currentMusicFade = StartCoroutine(FadeIn(musicSource, fadeInTime));
     }
 
     private IEnumerator FadeIn(AudioSource audioSource, float fadeOutTime)
@@ -159,6 +183,14 @@ public class SoundManager : MonoBehaviour
         }
 
         audioSource.volume = startVolume;
+        if (audioSource == musicSource)
+        {
+            currentMusicFade = null;
+        }
+        else if (audioSource == sfxSource)
+        {
+            currentSfxFade = null;
+        }
     }
 
 
