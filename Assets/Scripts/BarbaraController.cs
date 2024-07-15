@@ -7,6 +7,12 @@ public class BarbaraController : MonoBehaviour
     private System.Action OnAnimationFinished;
     public bool sayingBye = false;
     private Sprite initialSprite;
+    private bool moveToTarget = false;
+    private float timeElapsed = 0;
+    Vector3 targetPosition;
+    // [SerializeField] private float duration = 2f;
+
+
 
     void Start()
     {
@@ -34,11 +40,28 @@ public class BarbaraController : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+
+        if (moveToTarget)
+        {
+
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.1f);
+            if (transform.position == targetPosition)
+            {
+                this.moveToTarget = false;
+            }
+        }
+
+    }
+
     public void Wave()
     {
         sayingBye = true;
         animator.SetTrigger("Wave");
     }
+
+
 
     public void WaveNoPos()
     {
@@ -96,19 +119,11 @@ public class BarbaraController : MonoBehaviour
     }
     public void MoveAway()
     {
-        StartCoroutine(MoveToTargetCoroutine());
+        targetPosition = transform.position.x > 0 ? new Vector3(10f, transform.position.y, 0) : new Vector3(-7f, transform.position.y, 0);
+        moveToTarget = true;
+
 
     }
 
-    IEnumerator MoveToTargetCoroutine()
-    {
-
-        Vector3 targetPosition = transform.position.x > 0 ? new Vector3(10f, transform.position.y, 0) : new Vector3(-7f, transform.position.y, 0);
-        while (transform.position != targetPosition)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.005f);
-            yield return null;
-        }
-    }
 
 }
