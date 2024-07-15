@@ -53,24 +53,22 @@ public class LevelCompleteManager : MonoBehaviour
         scoreText.text = $"score \n{score}";
         timeText.text = $"time \n{FormatTime(completionTime)}";
 
-        // Handle level-specific UI elements
-        switch (currentLevel)
-        {
-            case 1:
-                UpdateLevelUI(collectedItems, totalItems, "Collected");
-                break;
-            case 2:
-            case 3:
-                UpdateLevelUI(collectedItems, totalItems, "Collected", reachedDeliveries, totalDeliveries);
-                break;
-            case 4:
-                UpdateLevelUI(collectedItems, totalItems, "Destroyed", reachedDeliveries, totalDeliveries);
-                break;
-        }
-
         // Handle completion status
         if (complete)
         {
+            switch (level)
+            {
+                case 1:
+                    UpdateLevelUI(collectedItems, totalItems, "Collected");
+                    break;
+                case 2:
+                case 3:
+                    UpdateLevelUI(collectedItems, totalItems, "Collected", reachedDeliveries, totalDeliveries);
+                    break;
+                case 4:
+                    UpdateLevelUI(collectedItems, totalItems, "Destroyed", reachedDeliveries, totalDeliveries);
+                    break;
+            }
             titleText.text = "Level Complete!";
             levelCompleteButtons.SetActive(true);
             gameOverButtons.SetActive(false);
@@ -81,6 +79,12 @@ public class LevelCompleteManager : MonoBehaviour
             titleText.text = "Game Over :(";
             levelCompleteButtons.SetActive(false);
             gameOverButtons.SetActive(true);
+            itemsText.gameObject.SetActive(false);
+            timeText.gameObject.SetActive(false);
+            deliveriesText.gameObject.SetActive(false);
+            scoreText.color = new Color(0.831f, 0f, 0.11f, 1f);
+            scoreText.text = $"Time's up!";
+            scoreText.fontSize = 30;
         }
 
         backgroundAnimator.Play("BackgroundFadeIn");
@@ -133,16 +137,9 @@ public class LevelCompleteManager : MonoBehaviour
         deliveriesText.gameObject.SetActive(isActive);
         deliveriesText.text = $"deliveries \n{reachedDeliveries}/{totalDeliveries}";
         SetBarbaraHeadsActive(isActive);
-    }
-
-    private void UpdateLevel2And3UI(int collectedItems, int totalItems, int reachedDeliveries, int totalDeliveries, string collectableText)
-    {
-        itemsText.gameObject.SetActive(true);
-        itemsText.text = $"{collectableText} items: {collectedItems}/{totalItems}";
-        deliveriesText.gameObject.SetActive(true);
-        SetBarbaraHeadsActive(true);
         UpdateBarbaraHeads(reachedDeliveries, totalDeliveries);
     }
+
 
 
     private void UpdateButtonVisibility()

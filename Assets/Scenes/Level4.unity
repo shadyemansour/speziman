@@ -681,7 +681,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2637618682361685399, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.94
+      value: 2.834
       objectReference: {fileID: 0}
     - target: {fileID: 2637618682361685399, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -714,6 +714,18 @@ PrefabInstance:
     - target: {fileID: 2637618682361685399, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3086756743990980851, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
+      propertyPath: m_text
+      value: "You thought you left?\nStill M\xFCnchen"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3086756743990980851, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
+      propertyPath: m_fontSize
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3086756743990980851, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8547753283214435084, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
       propertyPath: m_Name
@@ -4788,11 +4800,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5820631208588643877, guid: 032bc14d1b87348bca6f148220ecb386, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.34
+      value: 122.99
       objectReference: {fileID: 0}
     - target: {fileID: 5820631208588643877, guid: 032bc14d1b87348bca6f148220ecb386, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.11
+      value: 1.705
       objectReference: {fileID: 0}
     - target: {fileID: 5820631208588643877, guid: 032bc14d1b87348bca6f148220ecb386, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7093,6 +7105,14 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: 8.925292
       objectReference: {fileID: 0}
+    - target: {fileID: 6738360901558645163, guid: 0519c941f58984b72b63b615e6c2f9b9, type: 3}
+      propertyPath: m_text
+      value: "M\xFCnchen"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6738360901558645163, guid: 0519c941f58984b72b63b615e6c2f9b9, type: 3}
+      propertyPath: m_fontSize
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 8143738961465355662, guid: 0519c941f58984b72b63b615e6c2f9b9, type: 3}
       propertyPath: m_SortingOrder
       value: -1
@@ -7152,6 +7172,18 @@ PrefabInstance:
     - target: {fileID: 2637618682361685399, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3086756743990980851, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
+      propertyPath: m_text
+      value: Do I really have to say it?
+      objectReference: {fileID: 0}
+    - target: {fileID: 3086756743990980851, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
+      propertyPath: m_fontSize
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3086756743990980851, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 8547753283214435084, guid: 5153e12677b3e4477a8c3f9d3178a34c, type: 3}
       propertyPath: m_Name

@@ -512,7 +512,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Time's up! Game over or level fail.");
         SoundManager.Instance.FadeOutBackgroundSound();
-        SoundManager.Instance.PlaySound("levelFailed");
         TriggerGameOver();
     }
 
@@ -563,6 +562,7 @@ public class GameManager : MonoBehaviour
     public void TriggerLevelComplete()
     {
         Debug.Log("TriggerLevelComplete called");
+        SoundManager.Instance.PlaySound("levelComplete");
         UnlockLevel(currentLevel + 1);
         ActivateEndCanvas(true);
         UpdatePlayerScore();
@@ -570,7 +570,8 @@ public class GameManager : MonoBehaviour
     }
     public void TriggerGameOver()
     {
-        Debug.Log("TriggerLevelComplete called");
+        Debug.Log("TriggerGameOver called");
+        SoundManager.Instance.PlaySound("levelFailed");
         ActivateEndCanvas(false);
         UpdatePlayerScore();
     }
@@ -855,7 +856,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentPlayerData != null)
         {
-            LevelData levelData = currentPlayerData.levelsData.FirstOrDefault(ld => ld.levelNumber == currentPlayerData.currentLevel);
+            LevelData levelData = currentPlayerData.levelsData.FirstOrDefault(ld => ld.levelNumber == currentLevel);
             if (levelData != null)
             {
                 if (score > levelData.score)
