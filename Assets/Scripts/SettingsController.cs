@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class SettingsController : MonoBehaviour
 {
@@ -114,6 +115,8 @@ public class SettingsController : MonoBehaviour
 
             }
         }
+        EventSystem.current.SetSelectedGameObject(null);
+
 
     }
 

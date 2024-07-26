@@ -3,7 +3,6 @@ using UnityEngine;
 public class TruckEnemy : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float moveDistance = 5f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask obstacleLayer;
     [SerializeField] private string playerTag = "Player";
@@ -41,7 +40,7 @@ public class TruckEnemy : MonoBehaviour
         CheckDirection();
     }
 
- private void Move()
+    private void Move()
     {
         if (!IsGrounded() || IsObstacleAhead())
         {
@@ -70,7 +69,7 @@ public class TruckEnemy : MonoBehaviour
     {
         float frontOffset = movingRight ? GetComponent<Collider2D>().bounds.extents.x : -GetComponent<Collider2D>().bounds.extents.x;
         Vector2 boxCastOrigin = (Vector2)transform.position + new Vector2(frontOffset, 0) + Vector2.down * (GetComponent<Collider2D>().bounds.extents.y - groundCheckDistance / 2);
-        
+
         RaycastHit2D hit = Physics2D.BoxCast(boxCastOrigin, groundCheckSize, 0f, Vector2.down, groundCheckDistance, groundLayer);
         return hit.collider != null;
     }

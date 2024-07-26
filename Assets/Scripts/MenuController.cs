@@ -54,6 +54,7 @@ public class MenuController : MonoBehaviour
         if (GameManager.Instance.ShowLevelSelectOnLoad)
         {
             LevelSelectMenu();
+            SetUsername(GameManager.Instance.GetPlayerName());
             UpdateLevelAccess();
             GameManager.Instance.ShowLevelSelectOnLoad = false;
 
@@ -93,7 +94,7 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("Registration successful.");
                 UpdateLevelAccess();
-                nameText.text = $"Hi {username}!";
+                SetUsername(username);
                 LevelSelectMenu();
                 usernameInputField.text = "";
 
@@ -102,7 +103,6 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("Registration failed. Username already exists.");
                 DisplayErrorMessages("Someone was faster than you! Try another name.");
-                // Inform the user to choose a different username
             }
         }
         else
@@ -122,7 +122,7 @@ public class MenuController : MonoBehaviour
             if (found)
             {
                 Debug.Log("Login successful.");
-                nameText.text = $"Hi {username}!";
+                SetUsername(username);
                 UpdateLevelAccess();
                 LevelSelectMenu();
                 usernameInputField.text = "";
@@ -131,7 +131,6 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("Login failed. User not found.");
                 DisplayErrorMessages("Can't find you. Maybe you're new?");
-                // Inform the user to choose a different username
             }
         }
         else
@@ -159,6 +158,11 @@ public class MenuController : MonoBehaviour
         errorText.color = new Color(errorText.color.r, errorText.color.g, errorText.color.b, 1f);
     }
 
+    void SetUsername(string username)
+    {
+        nameText.text = $"Hi {username}!";
+    }
+
 
 
 
@@ -182,6 +186,11 @@ public class MenuController : MonoBehaviour
     public void LevelSelectMenu()
     {
         SetMenuState(false, false, true, false, false, false);
+        ScrollRect[] rects = FindObjectsOfType<ScrollRect>();
+        foreach (ScrollRect rect in rects)
+        {
+            Debug.Log(rect.gameObject.name);
+        }
     }
 
     public void BackToMainMenu()

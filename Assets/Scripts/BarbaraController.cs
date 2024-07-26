@@ -8,9 +8,7 @@ public class BarbaraController : MonoBehaviour
     public bool sayingBye = false;
     private Sprite initialSprite;
     private bool moveToTarget = false;
-    private float timeElapsed = 0;
     Vector3 targetPosition;
-    // [SerializeField] private float duration = 2f;
 
 
 
@@ -79,7 +77,6 @@ public class BarbaraController : MonoBehaviour
 
     public void WaveAndMove(System.Action callback)
     {
-        Debug.Log("WaveAndMove called");
         OnAnimationFinished = callback;
         animator.SetTrigger("Move");
 
@@ -89,9 +86,7 @@ public class BarbaraController : MonoBehaviour
 
     IEnumerator WaitForAnimation(float time, bool isWave = false)
     {
-        Debug.Log($"Waiting for {time} seconds for the animation to complete.");
         yield return new WaitForSeconds(time);
-        Debug.Log("Animation wait time completed. Executing callback.");
         OnAnimationFinished?.Invoke();
     }
 
@@ -121,8 +116,6 @@ public class BarbaraController : MonoBehaviour
     {
         targetPosition = transform.position.x > 0 ? new Vector3(10f, transform.position.y, 0) : new Vector3(-7f, transform.position.y, 0);
         moveToTarget = true;
-
-
     }
 
 

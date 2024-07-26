@@ -8,7 +8,7 @@ public class Printer : MonoBehaviour
   public float shootingRate = 0.25f;
 
   private float shootCooldown;
-  public bool isActiveAndEnabled = false;
+  public bool isEnabled = false;
 
   void Start()
   {
@@ -17,7 +17,7 @@ public class Printer : MonoBehaviour
 
   void Update()
   {
-    if (isActiveAndEnabled)
+    if (isEnabled)
     {
       if (shootCooldown > 0)
       {

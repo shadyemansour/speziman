@@ -39,7 +39,7 @@ public class FaxActions : MonoBehaviour, IActions
                 _callbacks[0]?.Invoke();
                 break;
             case 2:
-                fax.isActiveAndEnabled = true;
+                fax.isEnabled = true;
                 _callbacks[0]?.Invoke();
                 _callbacks[1]?.Invoke();
                 break;

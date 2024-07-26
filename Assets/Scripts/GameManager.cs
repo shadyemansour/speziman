@@ -6,6 +6,9 @@ using TMPro;
 using System.Text;
 using System.Linq;
 using System.Collections;
+using UnityEditor;
+using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -494,9 +497,9 @@ public class GameManager : MonoBehaviour
         ResetCollectables();
         RespawnGameObjects();
         ResetBarbaras();
-        player.GetComponent<CharacterController2D>().Move(0, false);
 
-        player.transform.position = lastCheckpointPosition;
+        player.GetComponent<CharacterController2D>().ResetCharacter(lastCheckpointPosition);
+
     }
 
     private void DestroyShots()
@@ -908,6 +911,11 @@ public class GameManager : MonoBehaviour
             scores.Add((player.playerName, highScore));
         }
         return scores;
+    }
+
+    public string GetPlayerName()
+    {
+        return currentPlayerData != null ? currentPlayerData.playerName : "Guest";
     }
 
 

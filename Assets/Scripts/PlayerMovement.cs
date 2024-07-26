@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float defaultSpeed = 30f;
     [SerializeField] private float mudSpeed = 3f;
     [SerializeField] private float swimSpeed = 10f;
-    [SerializeField] private float boostMultiplier = 1.5f;
+    [SerializeField] private float boostMultiplier = 1.25f;
 
     [Header("Jump Settings")]
     [SerializeField] private float defaultJumpForce = 400f;
@@ -30,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
     private Action disableBoostCallback;
     private MovementState currentMovementState = MovementState.Normal;
     private BoostState currentBoostState = BoostState.None;
-    private float speedFactor = 1f;
     private bool isStopped = false;
     private float horizontalMove = 0f;
     private bool jump = false;

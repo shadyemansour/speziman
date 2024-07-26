@@ -30,6 +30,7 @@ public class WaterSpring : MonoBehaviour
     // adding the dampening to the force
     public void WaveSpringUpdate(float springStiffness, float dampening)
     {
+
         height = transform.localPosition.y;
         // maximum extension
         var x = height - target_height;
@@ -48,14 +49,16 @@ public class WaterSpring : MonoBehaviour
             Spline waterSpline = spriteShapeController.spline;
             Vector3 wavePosition = waterSpline.GetPosition(waveIndex);
             waterSpline.SetPosition(waveIndex, new Vector3(wavePosition.x, transform.localPosition.y, wavePosition.z));
+
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag.Equals("Player"))
+        if (other.CompareTag("WaterCheck"))
         {
-            CharacterController2D characterController = other.gameObject.GetComponent<CharacterController2D>();
+            CharacterController2D characterController = other.transform.parent.GetComponent<CharacterController2D>();
             Rigidbody2D rb = characterController.getRigidbody2D();
             var speed = rb.velocity;
 

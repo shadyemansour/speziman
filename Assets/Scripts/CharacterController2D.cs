@@ -96,13 +96,12 @@ public class CharacterController2D : MonoBehaviour
 			m_Grounded = false;
 			jumpCooldownTimer = jumpCooldown; // Start the cooldown
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
-			Debug.Log(m_JumpForce);
 		}
 		if (m_InWater && jump)
 		{
+			m_Grounded = false;
 			jumpCooldownTimer = jumpCooldown; // Start the cooldown
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
-			Debug.Log(m_JumpForce);
 		}
 	}
 
@@ -150,6 +149,20 @@ public class CharacterController2D : MonoBehaviour
 	public Rigidbody2D getRigidbody2D()
 	{
 		return m_Rigidbody2D;
+	}
+
+	public void ResetCharacter(Vector3 pos)
+	{
+		m_Rigidbody2D.velocity = Vector3.zero;
+		m_Rigidbody2D.angularVelocity = 0;
+		m_Rigidbody2D.rotation = 0;
+		transform.position = pos;
+		SetInWater(false);
+		if (!m_FacingRight)
+		{
+			Flip();
+		}
+
 	}
 
 }
