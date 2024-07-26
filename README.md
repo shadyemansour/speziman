@@ -1,4 +1,15 @@
+<div align="center">
+  <img src="https://github.com/shadyemansour/speziman/blob/main/Assets/Sprites/logo.png" alt="Logo" width="300"/>
+</div>
+
+
 # Speziman
+
+[![Made with Unity](https://img.shields.io/badge/Made%20with-Unity-57b9d3.svg?style=flat&logo=unity)](https://unity3d.com)
+![GitHub License](https://img.shields.io/github/license/shadyemansour/speziman)
+![GitHub Release](https://img.shields.io/github/v/release/shadyemansour/speziman)
+
+
 
 Welcome to "Speziman", a thrilling 2D runner game inspired by the cult classic "Pepsiman", but with our own unique twist!
 
@@ -14,7 +25,7 @@ In "Speziman", players navigate through a series of dynamic environments, dodgin
 
 ## How to Play
 
-- **Download the latest release from the Releases section.**
+- **Download the latest release from the [Releases](https://github.com/shadyemansour/speziman/releases) section.**
 - **Install the game on your preferred device.**
 - **Run the game and start playing!**
 
