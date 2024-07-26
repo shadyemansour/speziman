@@ -1,0 +1,57 @@
+name: Build and Test Pre-Release
+
+on:
+  push:
+    branches:
+      - 'pre-release'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Unity
+      uses: game-ci/unity-builder@v2
+      with:
+        version: 2020.3.11f1
+
+    - name: Build project for ${{ matrix.os }}
+      uses: game-ci/unity-builder@v2
+      with:
+        targetPlatform: ${{ matrix.os == 'windows-latest' && 'StandaloneWindows64' || 'StandaloneOSX' }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Build-${{ matrix.os }}
+        path: build
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Windows build
+      uses: actions/download-artifact@v2
+      with:
+        name: Build-windows-latest
+
+    - name: Download Mac build
+      uses: actions/download-artifact@v2
+      with:
+        name: Build-macos-latest
+
+    - name: Create GitHub Pre-Release
+      uses: softprops/action-gh-release@v1
+      with:
+        prerelease: true
+        files: |
+          build-windows-latest/**
+          build-macos-latest/**
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
