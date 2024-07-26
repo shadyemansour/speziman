@@ -4,7 +4,6 @@ using UnityEngine.UIElements;
 
 namespace CartoonFX
 {
-    [InitializeOnLoad]
     public class CFXR_WelcomeScreen : EditorWindow
     {
         static CFXR_WelcomeScreen()
@@ -15,7 +14,7 @@ namespace CartoonFX
                 {
                     return;
                 }
-            SessionState.SetBool("CFXR_WelcomeScreen_Shown", true);
+                SessionState.SetBool("CFXR_WelcomeScreen_Shown", true);
 
                 var importer = AssetImporter.GetAtPath(AssetDatabase.GUIDToAssetPath("bfd03f272fe010b4ba558a3bc456ffeb"));
                 if (importer != null && importer.userData == "dontshow")
