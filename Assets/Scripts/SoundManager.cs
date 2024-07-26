@@ -108,6 +108,16 @@ public class SoundManager : MonoBehaviour
         musicSource.Stop();
     }
 
+    public void PauseSFX()
+    {
+        sfxSource.Pause();
+    }
+
+    public void ResumeSFX()
+    {
+        sfxSource.UnPause();
+    }
+
 
 
     public void PlayRandomDieSound()

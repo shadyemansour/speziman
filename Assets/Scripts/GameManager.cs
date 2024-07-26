@@ -127,9 +127,9 @@ public class GameManager : MonoBehaviour
             LoadMenu();
         }
     }
-    public void RestartLevel()
+    public void RestartLevel(bool isCut = false)
     {
-        this.LoadLevel(currentLevel, false);
+        this.LoadLevel(currentLevel, isCut);
     }
 
 

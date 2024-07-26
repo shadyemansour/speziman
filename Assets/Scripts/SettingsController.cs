@@ -19,12 +19,26 @@ public class SettingsController : MonoBehaviour
     private CanvasGroup backgroundCanvas;
     private CanvasGroup pauseCanvas;
     private bool pauseOpen = false;
+    private bool isStartMenu;
+    private bool isCut;
+
+    private static SettingsController instance;
 
 
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
 
-
-
-    // Update is called once per frame
     void Start()
     {
         musicSlider.value = SoundManager.Instance.GetMusicVolume();
@@ -44,8 +58,10 @@ public class SettingsController : MonoBehaviour
 
     public void OpenSettings()
     {
-        bool inMenu = SceneManager.GetActiveScene().name.ToLower().Contains("start");
-        if (inMenu)
+        string sceneName = SceneManager.GetActiveScene().name.ToLower();
+        isStartMenu = sceneName.Contains("start");
+        isCut = sceneName.Contains("cut");
+        if (isStartMenu)
         {
             settingsAnimator.Play("ZoomInAndFadeInSettings");
             backgroundAnimator.Play("ZoomInAndFadeInSettings");
@@ -59,7 +75,14 @@ public class SettingsController : MonoBehaviour
         }
         else
         {
-            GameManager.Instance.ToggleTimer();
+            if (isCut)
+            {
+                FindAnyObjectByType<UIManager>().Pause();
+            }
+            else
+            {
+                GameManager.Instance.ToggleTimer();
+            }
             pauseAnimator.Play("ZoomInAndFadeInSettings");
             backgroundAnimator.Play("ZoomInAndFadeInSettings");
             pauseCanvas.interactable = true;
@@ -72,10 +95,9 @@ public class SettingsController : MonoBehaviour
 
     }
 
-    public void CloseSettings()
+    public void CloseSettings(bool isRestart = false)
     {
-        bool inMenu = SceneManager.GetActiveScene().name.ToLower().Contains("start");
-        if (inMenu)
+        if (isStartMenu)
         {
             settingsAnimator.Play("ZoomOutFadeOutSettings");
             backgroundAnimator.Play("ZoomOutFadeOutSettings");
@@ -100,7 +122,20 @@ public class SettingsController : MonoBehaviour
 
                 pauseOpen = false;
                 burgerButton.SetActive(true);
-                GameManager.Instance.ToggleTimer();
+
+                if (isRestart)
+                {
+                    SoundManager.Instance.StopSFX();
+                    return;
+                }
+                if (isCut)
+                {
+                    FindAnyObjectByType<UIManager>().Resume();
+                }
+                else
+                {
+                    GameManager.Instance.ToggleTimer();
+                }
             }
             else
             {
@@ -122,12 +157,14 @@ public class SettingsController : MonoBehaviour
 
     public void GoToMenu()
     {
+        CloseSettings();
         GameManager.Instance.LoadMenu();
     }
 
     public void RestartLevel()
     {
-        GameManager.Instance.RestartLevel();
+        CloseSettings(true);
+        GameManager.Instance.RestartLevel(isCut);
     }
 
     public void OpenVolumeSettings()

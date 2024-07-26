@@ -83,6 +83,24 @@ public class UIManager : MonoBehaviour
         textWriterSingle = TextWriter.AddWriter_Static(messageText, message, timePerChar, true, true, StopTalkingSound);
     }
 
+    public void Pause()
+    {
+        if (textWriterSingle != null && textWriterSingle.IsActive())
+        {
+            SoundManager.Instance.PauseSFX();
+            textWriterSingle.Pause();
+        }
+    }
+
+    public void Resume()
+    {
+        if (textWriterSingle != null && textWriterSingle.IsActive())
+        {
+            textWriterSingle.Resume();
+            SoundManager.Instance.ResumeSFX();
+        }
+    }
+
     private float StartTalkingSound(string message)
     {
         float audioLength = SoundManager.Instance.PlaySound(SceneManager.GetActiveScene().name.ToLower() + count.ToString());
