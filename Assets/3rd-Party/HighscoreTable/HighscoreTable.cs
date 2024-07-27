@@ -101,10 +101,10 @@ public class HighscoreTable : MonoBehaviour
 
     private void HighlightFirstPlace(Transform entryTransform)
     {
-        Color green = Color.green;
-        entryTransform.Find("posText").GetComponent<Text>().color = green;
-        entryTransform.Find("scoreText").GetComponent<Text>().color = green;
-        entryTransform.Find("nameText").GetComponent<Text>().color = green;
+        Color newColor = UtilsClass.GetColorFromString("F6FF45");
+        entryTransform.Find("posText").GetComponent<Text>().color = newColor;
+        entryTransform.Find("scoreText").GetComponent<Text>().color = newColor;
+        entryTransform.Find("nameText").GetComponent<Text>().color = newColor;
     }
 
     private void SetTrophyColor(int rank, Image trophy)
@@ -113,14 +113,6 @@ public class HighscoreTable : MonoBehaviour
         {
             case 1:
                 trophy.color = UtilsClass.GetColorFromString("FFD200");
-                trophy.gameObject.SetActive(true);
-                break;
-            case 2:
-                trophy.color = UtilsClass.GetColorFromString("C6C6C6");
-                trophy.gameObject.SetActive(true);
-                break;
-            case 3:
-                trophy.color = UtilsClass.GetColorFromString("B76F56");
                 trophy.gameObject.SetActive(true);
                 break;
             default:
