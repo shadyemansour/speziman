@@ -565,6 +565,7 @@ public class GameManager : MonoBehaviour
     public void TriggerLevelComplete()
     {
         Debug.Log("TriggerLevelComplete called");
+        timerInstance.StopTimer();
         SoundManager.Instance.PlaySound("levelComplete");
         UnlockLevel(currentLevel + 1);
         ActivateEndCanvas(true);
