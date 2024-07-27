@@ -85,6 +85,9 @@ public class LevelCompleteManager : MonoBehaviour
             scoreText.color = new Color(0.831f, 0f, 0.11f, 1f);
             scoreText.text = $"Time's up!";
             scoreText.fontSize = 30;
+            scoreText.gameObject.transform.localPosition = new Vector3(0, 40f, 0);
+            scoreText.gameObject.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            SetBarbaraHeadsActive(false);
         }
 
         backgroundAnimator.Play("BackgroundFadeIn");

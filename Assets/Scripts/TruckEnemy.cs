@@ -34,7 +34,7 @@ public class TruckEnemy : MonoBehaviour
     }
 
 
-    private void Update()
+    void FixedUpdate()
     {
         Move();
         CheckDirection();
@@ -42,6 +42,7 @@ public class TruckEnemy : MonoBehaviour
 
     private void Move()
     {
+
         if (!IsGrounded() || IsObstacleAhead())
         {
             ChangeDirection();
@@ -49,6 +50,15 @@ public class TruckEnemy : MonoBehaviour
 
         float movement = movingRight ? moveSpeed : -moveSpeed;
         rb.velocity = new Vector2(movement, rb.velocity.y);
+        if (gameObject.name == "TruckEnemy")
+        {
+            Debug.Log("IsGrounded: " + IsGrounded() +
+                             ", IsObstacleAhead: " + IsObstacleAhead() +
+                             ", Movement: " + movement +
+                             ", Velocity: " + rb.velocity +
+                             ", Position: " + rb.position +
+                             ", Collider Bounds: " + GetComponent<Collider2D>().bounds);
+        }
     }
 
     private void CheckDirection()
@@ -97,5 +107,30 @@ public class TruckEnemy : MonoBehaviour
             }
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        DrawGroundCheckGizmo();
+        DrawObstacleCheckGizmo();
+    }
+
+    private void DrawGroundCheckGizmo()
+    {
+        float frontOffset = movingRight ? GetComponent<Collider2D>().bounds.extents.x : -GetComponent<Collider2D>().bounds.extents.x;
+        Vector2 boxCastOrigin = (Vector2)transform.position + new Vector2(frontOffset, 0) + Vector2.down * (GetComponent<Collider2D>().bounds.extents.y - groundCheckDistance / 2);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(boxCastOrigin, new Vector3(groundCheckSize.x, groundCheckSize.y, 1f));
+    }
+
+    private void DrawObstacleCheckGizmo()
+    {
+        Vector2 direction = movingRight ? Vector2.right : Vector2.left;
+        Vector2 boxCastOrigin = (Vector2)transform.position + direction * (GetComponent<Collider2D>().bounds.extents.x + obstacleCheckDistance);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(boxCastOrigin, new Vector3(obstacleCheckSize.x, obstacleCheckSize.y, 1f));
+    }
+
 
 }
