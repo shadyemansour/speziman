@@ -5,6 +5,8 @@ public class Shot : MonoBehaviour
 {
     public Transform target;
     public float speed = 5f;
+    public bool isPaused = false;
+
 
     public void Init(Transform targetTransform)
     {
@@ -20,6 +22,10 @@ public class Shot : MonoBehaviour
 
         while (true)
         {
+            while (isPaused)
+            {
+                yield return null;
+            }
             if (moveAlongY)
             {
                 // Move along the y-axis towards the player's position
@@ -42,7 +48,19 @@ public class Shot : MonoBehaviour
 
     IEnumerator DestroyAfterAttack()
     {
-        yield return new WaitForSeconds(3);
+
+        float elapsed = 0f;
+
+        while (elapsed < 5f)
+        {
+            while (isPaused)
+            {
+                yield return null;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
         Destroy(gameObject);
     }
 

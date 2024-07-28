@@ -28,4 +28,9 @@ public class AloisiusField : MonoBehaviour
         }
 
     }
+
+    public void SetPaused(bool isPaused)
+    {
+        flying.isPaused = isPaused;
+    }
 }

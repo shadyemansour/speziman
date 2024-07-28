@@ -81,7 +81,7 @@ public class SettingsController : MonoBehaviour
             }
             else
             {
-                GameManager.Instance.ToggleTimer();
+                GameManager.Instance.ToggleGamePause();
             }
             pauseAnimator.Play("ZoomInAndFadeInSettings");
             backgroundAnimator.Play("ZoomInAndFadeInSettings");
@@ -134,7 +134,7 @@ public class SettingsController : MonoBehaviour
                 }
                 else
                 {
-                    GameManager.Instance.ToggleTimer();
+                    GameManager.Instance.ToggleGamePause();
                 }
             }
             else

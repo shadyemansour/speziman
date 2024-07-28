@@ -518,14 +518,56 @@ public class GameManager : MonoBehaviour
         TriggerGameOver();
     }
 
-    public void ToggleTimer()
+
+    public void ToggleGamePause()
     {
         bool paused = timerInstance.TogglePause();
         currentPlayer.GetComponent<PlayerMovement>().SetIsStopped(paused);
+        PauseEnemies(paused);
+    }
+
+    public void PauseEnemies(bool isPaused)
+    {
         HelicopterController copter = FindObjectOfType<HelicopterController>();
         if (copter != null)
         {
-            copter.isPaused = paused;
+            copter.isPaused = isPaused;
+        }
+
+        TruckEnemy[] trucks = FindObjectsOfType<TruckEnemy>();
+        if (trucks != null)
+        {
+            foreach (TruckEnemy truck in trucks)
+            {
+                truck.SetIsPaused(isPaused);
+            }
+        }
+
+        FaxField[] faxes = FindObjectsOfType<FaxField>();
+        if (faxes != null)
+        {
+            foreach (FaxField fax in faxes)
+            {
+                fax.SetIsPaused(isPaused);
+            }
+        }
+
+        AloisiusField[] aloisiuses = FindObjectsOfType<AloisiusField>();
+        if (aloisiuses != null)
+        {
+            foreach (AloisiusField aloisius in aloisiuses)
+            {
+                aloisius.SetPaused(isPaused);
+            }
+        }
+
+        Shot[] shots = FindObjectsOfType<Shot>();
+        if (shots != null)
+        {
+            foreach (Shot shot in shots)
+            {
+                shot.isPaused = isPaused;
+            }
         }
     }
 

@@ -17,6 +17,8 @@ public class TruckEnemy : MonoBehaviour
     private Vector3 startPosition;
     private bool movingRight = true;
     private SpriteRenderer spriteRenderer;
+    public bool isPaused = false;
+
 
     private void Start()
     {
@@ -36,8 +38,11 @@ public class TruckEnemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move();
-        CheckDirection();
+        if (!isPaused)
+        {
+            Move();
+            CheckDirection();
+        }
     }
 
     private void Move()
@@ -132,5 +137,13 @@ public class TruckEnemy : MonoBehaviour
         Gizmos.DrawWireCube(boxCastOrigin, new Vector3(obstacleCheckSize.x, obstacleCheckSize.y, 1f));
     }
 
+    public void SetIsPaused(bool isPaused)
+    {
+        this.isPaused = isPaused;
+        if (isPaused)
+        {
+            rb.velocity = Vector2.zero;
+        }
+    }
 
 }

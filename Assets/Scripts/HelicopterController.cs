@@ -32,7 +32,7 @@ public class HelicopterController : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!isPaused)
         {

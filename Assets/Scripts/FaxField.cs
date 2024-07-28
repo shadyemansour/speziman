@@ -28,4 +28,9 @@ public class FaxField : MonoBehaviour
         }
 
     }
+
+    public void SetIsPaused(bool isPaused)
+    {
+        flying.isPaused = isPaused;
+    }
 }

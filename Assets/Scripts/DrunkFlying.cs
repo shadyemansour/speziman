@@ -18,6 +18,7 @@ public class DrunkFlying : MonoBehaviour
     private Vector3 attackTargetPosition;
     private bool hasAttacked = false;
     private Vector3 velocity = Vector3.zero;
+    public bool isPaused = false;
 
     void Start()
     {
@@ -26,12 +27,17 @@ public class DrunkFlying : MonoBehaviour
 
     void Update()
     {
+        if (isPaused)
+        {
+            return;
+        }
+
         if (player != null)
         {
             if (isActive)
             {
                 StartCoroutine(FlyRoutine());
-                
+
                 if (!hasAttacked)
                 {
                     if (!isFlyingErratically)
@@ -52,7 +58,7 @@ public class DrunkFlying : MonoBehaviour
                         // Fly erratically
                         transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized * drunkFlySpeed * Time.deltaTime;
                     }
-                } 
+                }
             }
         }
         else
@@ -66,8 +72,18 @@ public class DrunkFlying : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(attackInterval);
+            while (isPaused)
+            {
+                yield return null;
+            }
+
             isFlyingErratically = true;
             yield return new WaitForSeconds(drunkFlyDuration);
+            while (isPaused)
+            {
+                yield return null;
+            }
+
             isFlyingErratically = false;
 
             if (!hasAttacked)
@@ -88,8 +104,14 @@ public class DrunkFlying : MonoBehaviour
 
         while (true)
         {
+            while (isPaused)
+            {
+                yield return null;
+            }
+
             if (moveAlongY)
             {
+
                 // Move along the y-axis towards the player's position
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, attackTargetPosition.y, transform.position.z), attackSpeed * Time.deltaTime);
                 if (Mathf.Approximately(transform.position.y, attackTargetPosition.y))
@@ -108,7 +130,18 @@ public class DrunkFlying : MonoBehaviour
 
     IEnumerator DestroyAfterAttack()
     {
-        yield return new WaitForSeconds(destroyAfterSeconds);
+        float elapsed = 0f;
+
+        while (elapsed < destroyAfterSeconds)
+        {
+            while (isPaused)
+            {
+                yield return null;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
         Destroy(gameObject);
     }
 }

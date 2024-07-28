@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Flying : MonoBehaviour
@@ -15,6 +12,8 @@ public class Flying : MonoBehaviour
     public bool isActive = false;
     private Weapon weapon;
 
+    public bool isPaused = false;
+
     void Start()
     {
         player = GameObject.FindWithTag("Player")?.transform;
@@ -23,6 +22,10 @@ public class Flying : MonoBehaviour
 
     void Update()
     {
+        if (isPaused)
+        {
+            return;
+        }
         if (player != null)
         {
             if (isActive)
@@ -48,14 +51,18 @@ public class Flying : MonoBehaviour
 
     private void MoveTowardsPlayer()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
-        targetPosition = player.position - direction * Mathf.Min(maintainDistanceX, maintainDistanceY);
+        float distance = Vector3.Distance(player.position, transform.position);
+        float adaptiveDampTime = Mathf.Clamp(distance / 5, 0.3f, 1f);  // Adjust these values based on desired responsiveness
+
+        float horizontalDirection = Mathf.Sign(player.position.x - transform.position.x);
+        float verticalDirection = Mathf.Sign(player.position.y - transform.position.y);
+
         targetPosition = new Vector3(
-            player.position.x + Mathf.Sign(transform.position.x - player.position.x) * maintainDistanceX,
-            player.position.y + Mathf.Sign(transform.position.y - player.position.y) * maintainDistanceY,
+            player.position.x - horizontalDirection * maintainDistanceX,
+            player.position.y - verticalDirection * maintainDistanceY,
             transform.position.z
         );
 
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, 0.3f);
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, adaptiveDampTime);
     }
 }
